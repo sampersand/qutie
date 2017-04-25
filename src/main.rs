@@ -1,7 +1,8 @@
 #![allow(dead_code, unused)]
 mod parsing;
+mod objects;
 
 fn main() {
-   let s = parsing::stream::Stream::from("1 + 2".to_string());
-   println!("{}", s);
+   let frame = parsing::parser::parse("1 + 2");
+   println!("frame: {:?}", frame);
 }

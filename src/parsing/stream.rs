@@ -16,7 +16,7 @@ impl Display for Stream {
 }
 
 impl Stream {
-   pub fn from(inp: String) -> Stream {
+   pub fn from(inp: &str) -> Stream {
       let mut list = SourceT::new();
       for chr in inp.chars() {
          list.push_back(chr);
