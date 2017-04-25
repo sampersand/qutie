@@ -1,27 +1,16 @@
-use std::fmt::{Debug, Display};
-use std::rc::Rc;
+use std::fmt::Debug;
+use objects::rc_object::RcObject;
+use objects::traits::operator::QtAdd;
 
-use std::hash::{Hash, Hasher};
-
-pub type RcObject = Rc<Object>;
-
-#[derive(Clone, Debug)]
-pub struct RcObjWrapper(pub RcObject);
-impl PartialEq for RcObjWrapper {
-   fn eq(&self, other: &RcObjWrapper) -> bool {
-      (self.0)._eql((other.0).clone())
-   }
-}
-
-impl Eq for RcObjWrapper{}
-impl Hash for RcObjWrapper {
-   fn hash<T: Hasher>(&self, hasher: &mut T){
-      hasher.write(&[(self.0)._hash()]);
+pub trait Object: Debug + QtAdd {
+   // fn is_a(&self, other: )
+   fn _eql(&self, other: RcObject) -> bool;
+   fn hash(&self) -> u8;
+   fn equals(&self, other: RcObject) -> bool {
+      self.hash() == other.hash() && self._eql(other)
    }
 }
 
 
-pub trait Object: Debug + Display {
-   fn _eql(&self, other: RcObject) -> bool { false }
-   fn _hash(&self) -> u8;
-}
+
+
