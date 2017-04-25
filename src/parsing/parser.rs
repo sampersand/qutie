@@ -1,7 +1,7 @@
 use parsing::frame::Frame;
 use objects::number::Number;
 use objects::operators::binary_operator::BinaryOperator;
-use objects::traits::misc::TryFrom;
+use objects::traits::misc::{TryFrom, ToRc};
 
 fn is_numeric(token: &str) -> bool {
    for chr in token.chars(){

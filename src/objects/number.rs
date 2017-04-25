@@ -1,5 +1,7 @@
 use objects::object::Object;
 use objects::rc_object::RcObject;
+use objects::result::ObjResult;
+use parsing::frame::Frame;
 
 pub struct Number {
    num: i32
@@ -31,11 +33,18 @@ impl Object for Number {
    }
 }
 macro_rules! impl_num_oper {
-   ($trait:ident, $oper:ty) => ({
+   ($_trait:ident, $func:ident, $oper:tt) => {
+      use objects::traits::operator::$_trait;
+      impl $_trait for Number {
+         fn $func(&self, other: RcObject, _: &mut Frame) -> ObjResult {
+            todo!("oper for number");
+         }
+      }
+   }
+}
+impl_num_oper!(QtAdd, qt_add, +);
 
-   })
-}o
-use objects::traits::misc::QtAdd;
+
 
 
 
