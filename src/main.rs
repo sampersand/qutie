@@ -1,7 +1,7 @@
 #![allow(dead_code, unused)]
-mod stream;
+mod parsing;
 
 fn main() {
-   let s = stream::Stream::from("1 + 2".to_string());
+   let s = parsing::stream::Stream::from("1 + 2".to_string());
    println!("{}", s);
 }
