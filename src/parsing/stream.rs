@@ -58,24 +58,16 @@ impl Stream {
       Stream{ source: list }
    }
 
-   // pub fn peek(&mut self) -> Option<CharWrapper> {
-   //    let chr = match self.source.front() {
-   //       Some(chr) => chr.clone(),
-   //       None => return None
-   //    };
-   //    Some(CharWrapper(chr, self))
-   // }
+   pub fn peek(&mut self) -> Option<CharWrapper> {
+      let chr = match self.source.front() {
+         Some(chr) => chr.clone(),
+         None => return None
+      };
+      Some(CharWrapper(chr, self))
+   }
 
    pub fn is_empty(&self) -> bool {
       self.source.is_empty()
-   }
-
-   pub fn next_token(&mut self) -> Option<String> {
-      if self.is_empty() {
-         return None;
-      }
-      /* this only does one character rn */
-      Some(self.source.pop_front().unwrap().to_string())
    }
 }
 

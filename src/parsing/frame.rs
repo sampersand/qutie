@@ -29,7 +29,7 @@ impl <'a> Frame<'a> {
    }
 
    pub fn exec(&mut self) {
-      parser::exec(self);
+      parser::exec_frame(self);
    }
    pub fn push_stack(&mut self, new_obj: RcObject) {
       self.stack.push(new_obj);
