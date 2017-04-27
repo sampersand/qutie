@@ -4,7 +4,8 @@ macro_rules! exception {
    }
 }
 macro_rules! todo {
-   ($msg:expr) => ( panic!("TODO: {}", $msg) )
+   ($msg:expr) => ( panic!("TODO: {}", $msg) );
+   () => ( todo!("this") )
 }
 macro_rules! derive_impl {
    (Display; $obj:ident, $item:ident) => {
