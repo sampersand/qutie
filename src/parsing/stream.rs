@@ -33,6 +33,9 @@ impl Stream {
       assert_eq!(Some(expected), self.source.pop_front());
       expected
    }
+   pub fn next(&mut self) -> Option<char> {
+      self.source.pop_front()
+   }
 
    pub fn is_empty(&self) -> bool {
       self.source.is_empty()
