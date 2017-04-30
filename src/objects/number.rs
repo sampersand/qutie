@@ -37,6 +37,7 @@ macro_rules! impl_num_oper {
       use objects::traits::operator::$_trait;
       impl $_trait for Number {
          fn $func(&self, other: RcObject, _: &mut Frame) -> ObjResult {
+            
             todo!("oper for number");
          }
       }

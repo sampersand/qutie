@@ -29,6 +29,11 @@ impl Stream {
          None => None
       }
    }
+
+   pub fn feed(&mut self, c: char) {
+      self.source.push_front(c);
+   }
+
    pub fn take(&mut self, expected: char) -> char {
       assert_eq!(Some(expected), self.source.pop_front());
       expected

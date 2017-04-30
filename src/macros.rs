@@ -24,6 +24,15 @@ macro_rules! derive_impl {
       }
    };
 
+   (Castable; $obj:ident) => {
+      use objects::traits::misc::Castable
+      impl $obj {
+         pub fn new($item: $item_type) -> $obj {
+            $obj{ $item: $item }
+         }
+      }
+   };
+
    (NEW; $obj:ident, $item:ident, $item_type:ty) => {
       impl $obj {
          pub fn new($item: $item_type) -> $obj {
