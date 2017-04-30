@@ -4,44 +4,6 @@ use std::iter::IntoIterator;
 use std::fmt::{Formatter, Error, Display};
 
 #[derive(Debug)]
-pub struct CharWrapper<'a>{
-   pub chr: char,
-   stream: &'a mut Stream
-}
-
-
-impl <'a> CharWrapper<'a> {
-   pub fn take(&mut self) -> char {
-      #[cfg(test)]
-      {
-         assert_eq!(self.chr, self.stream.source.pop_front().unwrap());
-      };
-      #[cfg(not(test))]
-      {
-         self.stream.source.pop_front();
-      }
-      self.chr
-   }
-}
-
-
-impl <'a> Display for CharWrapper<'a> {
-   fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-      write!(f, "{}", self.chr)
-   }
-}
-
-use std::ops::Deref;
-impl <'a> Deref for CharWrapper<'a> {
-   type Target = char;
-   fn deref(&self) -> &char {
-      &self.chr
-   }
-}
-
-
-
-#[derive(Debug)]
 pub struct Stream {
    source: LinkedList<char>
 }
@@ -61,16 +23,15 @@ impl Stream {
       Stream{ source: list }
    }
 
-   pub fn peek_chr(&self) -> char {
-      self.source.front().expect("attempted to peek_chr at end of file").clone()
+   pub fn peek(&self) -> Option<char> {
+      match self.source.front() {
+         Some(chr) => Some(chr.clone()),
+         None => None
+      }
    }
-
-   pub fn peek(&mut self) -> Option<CharWrapper> {
-      let chr = match self.source.front() {
-         Some(chr) => chr.clone(),
-         None => return None
-      };
-      Some(CharWrapper{ chr: chr, stream: self })
+   pub fn take(&mut self, expected: char) -> char {
+      assert_eq!(Some(expected), self.source.pop_front());
+      expected
    }
 
    pub fn is_empty(&self) -> bool {
