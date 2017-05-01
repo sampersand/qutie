@@ -21,8 +21,8 @@ impl BinaryOperator {
    }
 
    pub fn exec(&self, frame: &mut Frame) {
-      let rhs = frame.pop().expect("bad args for operator");
-      let lhs = frame.pop().expect("bad args for operator");
+      let rhs = frame.pop().expect("bad rhs for operator");
+      let lhs = frame.pop().expect("bad lhs for operator");
       let res = ((self.func)(lhs, rhs, frame)).expect("problem with exec of function");
       frame.push(res);
    }

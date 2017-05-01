@@ -12,13 +12,13 @@ fn next_token(frame: &mut Frame) -> Option<String> {
    while !frame.stream.borrow().is_empty() {
       let c = frame.stream.borrow_mut().next().expect("we just checked for this");
       match c {
-         '(' =>
+         '(' => 
             if let Some(obj) = frame.fork().exec().pop() {
                frame.push(obj);
                /* what todo here */
                return None
             },
-         ')' => return None,
+         ')' => break,
          _ if c.is_whitespace() && acc.is_empty() => {},
          _ if c.is_whitespace()                   => break,
          _ if acc.is_empty() => { is_alphanumeric = c.is_alphanumeric(); acc.push(c) },
