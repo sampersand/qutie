@@ -12,7 +12,7 @@ derive_impl!(Display; Number, num);
 derive_impl!(Debug; Number, "N");
 derive_impl!(ToRc; Number);
 derive_impl!(NEW; Number, num, i32);
-
+derive_impl!(Castable; Number);
 
 use objects::traits::misc::TryFrom;
 impl TryFrom for Number {
@@ -23,6 +23,14 @@ impl TryFrom for Number {
       }
    }
 }
+use objects::traits::types::ToNumber;
+use std::rc::Rc;
+impl ToNumber for Number {
+   fn to_number(&self) -> Rc<Number> {
+      Number::new(self.num).to_rc()
+   }
+}
+
 
 impl Object for Number {
    fn hash(&self) -> u8 {
@@ -32,13 +40,13 @@ impl Object for Number {
       todo!("_eql for number")
    }
 }
+
 macro_rules! impl_num_oper {
    ($_trait:ident, $func:ident, $oper:tt) => {
       use objects::traits::operator::$_trait;
       impl $_trait for Number {
          fn $func(&self, other: RcObject, _: &mut Frame) -> ObjResult {
-            
-            todo!("oper for number");
+            Ok(Number::new(self.num $oper other.to_number().num).to_rc())
          }
       }
    }

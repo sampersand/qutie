@@ -7,6 +7,7 @@ pub type RcObject = Rc<Object>;
 
 #[derive(Clone, Debug)]
 pub struct RcObjWrapper(pub RcObject);
+
 impl PartialEq for RcObjWrapper {
    fn eq(&self, other: &RcObjWrapper) -> bool {
       (self.0).equals((other.0).clone())

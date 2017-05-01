@@ -7,6 +7,8 @@ macro_rules! todo {
    ($msg:expr) => ( panic!("TODO: {}", $msg) );
    () => ( todo!("this") )
 }
+
+
 macro_rules! derive_impl {
    (Display; $obj:ident, $item:ident) => {
       impl std::fmt::Display for $obj {
@@ -25,10 +27,18 @@ macro_rules! derive_impl {
    };
 
    (Castable; $obj:ident) => {
-      use objects::traits::misc::Castable
-      impl $obj {
-         pub fn new($item: $item_type) -> $obj {
-            $obj{ $item: $item }
+      static mut __TYPE_ID: u8 = 0;
+      use objects::traits::misc::Castable;
+      impl Castable for $obj {
+         fn type_id() -> u8 {
+            unsafe{
+            use globals::CURRENT_TYPE_ID;
+               if __TYPE_ID == 0 {
+                  CURRENT_TYPE_ID += 1;
+                  __TYPE_ID = CURRENT_TYPE_ID;
+               }
+               __TYPE_ID
+            }
          }
       }
    };

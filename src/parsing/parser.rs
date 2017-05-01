@@ -36,14 +36,12 @@ fn next_token(frame: &mut Frame) -> Option<String> {
 
 pub fn exec_frame(frame: &mut Frame){
    let mut oper_stack: Vec<BinaryOperator> = vec![];
-   let mut token_stack: Vec<RcObject> = vec![];
-
    while let Some(token) = next_token(frame) {
       if let Some(num) = Number::try_from(&token) {
-         token_stack.push(num.to_rc());
+         frame.push(num.to_rc());
       } else if let Some(oper) = BinaryOperator::try_from(&token) {
          while let Some(oper2) = oper_stack.pop() {
-            if oper2.should_exec(&oper) { oper2.exec(&mut token_stack, frame); }
+            if oper2.should_exec(&oper) { oper2.exec(frame); }
             else { oper_stack.push(oper2); break }
          }
          oper_stack.push(oper);
@@ -53,7 +51,7 @@ pub fn exec_frame(frame: &mut Frame){
    }
 
    while let Some(oper) = oper_stack.pop() {
-      oper.exec(&mut token_stack, frame);
+      oper.exec(frame);
    }
 }
 

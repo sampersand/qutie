@@ -8,23 +8,15 @@ pub trait TryFrom : Sized {
    fn try_from(inp: &str) -> Option<Self>;
 }
 
-pub trait Castable {
-   fn is_a<T: Castable>(&self) -> bool { self.cast_as::<T>().is_some() }
-   fn cast_as<T: Castable>(&self) -> Option<T>;
-}
-
-struct Foo {}
-impl Castable for Foo {
-   fn cast_as<T: Castable>(&self) -> Option<T> { panic!() }
-}
-
-struct Bar {}
-impl Castable for Bar {
-   fn cast_as<T: Castable>(&self) -> Option<T> { panic!() }
-}
-
-
-fn foobar(){
-   let foo = Foo{};
-   let bar: Bar = foo.cast_as::<Bar>().unwrap();
+pub trait Castable : Sized {
+   fn type_id() -> u8;
+   fn is_a<T: Castable>(&self) -> bool { Self::type_id() == T::type_id() }
+   fn cast<'a, T: Castable>(&'a self) -> &'a T {
+      if !self.is_a::<T>() { 
+         panic!("cannot cast `{}` to `{}`", Self::type_id(), T::type_id());
+      }
+      use std::mem;
+      assert_eq!(mem::size_of::<Self>(), mem::size_of::<T>(), "bad types!");
+      unsafe { mem::transmute(self) }
+   }
 }

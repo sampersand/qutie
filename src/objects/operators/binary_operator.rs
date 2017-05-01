@@ -23,10 +23,11 @@ impl BinaryOperator {
       (!other.is_left_assoc && other.priority < self.priority)
    }
 
-   pub fn exec(&self, stack: &mut Vec<RcObject>, frame: &mut Frame) {
-      let rhs = stack.pop().expect("bad args for operator");
-      let lhs = stack.pop().expect("bad args for operator");
-      stack.push(((self.func)(lhs, rhs, frame)).expect("problem with exec of function"));
+   pub fn exec(&self, frame: &mut Frame) {
+      let rhs = frame.pop().expect("bad args for operator");
+      let lhs = frame.pop().expect("bad args for operator");
+      let res = ((self.func)(lhs, rhs, frame)).expect("problem with exec of function");
+      frame.push(res);
    }
 }
 
@@ -59,14 +60,14 @@ new_oper!(ADD, "+", 10, false, qt_add);
 
 
 
-impl Object for BinaryOperator {
-   fn hash(&self) -> u8 {
-      todo!("hash for operator");
-   }
-   fn _eql(&self, other: RcObject) -> bool {
-      todo!("_eql for operator")
-   }
-}
+// impl Object for BinaryOperator {
+//    fn hash(&self) -> u8 {
+//       todo!("hash for operator");
+//    }
+//    fn _eql(&self, other: RcObject) -> bool {
+//       todo!("_eql for operator")
+//    }
+// }
 
 
 
