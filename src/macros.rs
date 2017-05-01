@@ -56,11 +56,17 @@ macro_rules! derive_impl {
       impl ToRc for $obj {}
    };
 
-   (OPER: +; $obj:ident) => {
+   (+; $obj:ident) => {
       use objects::traits::operator::QtAdd;
       impl QtAdd for $obj {}
    };
+   
+   (*; $obj:ident) => {
+      use objects::traits::operator::QtMul;
+      impl QtMul for $obj {}
+   };
 }
+
 
 
 

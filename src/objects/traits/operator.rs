@@ -7,3 +7,8 @@ pub trait QtAdd {
       Err(ObjError::NotImplemented)
    }
 }
+pub trait QtMul {
+   fn qt_mul(&self, _: RcObject, _: &mut Frame) -> ObjResult {
+      Err(ObjError::NotImplemented)
+   }
+}

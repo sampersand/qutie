@@ -1,6 +1,5 @@
 use parsing::frame::Frame;
 
-use objects::object::Object;
 use objects::result::ObjResult;
 use objects::rc_object::RcObject;
 
@@ -14,8 +13,6 @@ pub struct BinaryOperator {
 use std;
 derive_impl!(Display; BinaryOperator, sigil);
 derive_impl!(Debug; BinaryOperator, "Ob");
-derive_impl!(ToRc; BinaryOperator);
-derive_impl!(OPER: +; BinaryOperator);
 
 impl BinaryOperator {
    pub fn should_exec(&self, other: &BinaryOperator) -> bool {
@@ -36,6 +33,7 @@ impl TryFrom for BinaryOperator {
    fn try_from(inp: &str) -> Option<BinaryOperator> {
       match inp {
          "+" => Some(ADD),
+         "*" => Some(MUL),
          _ => None
       }
    }
@@ -57,6 +55,7 @@ macro_rules! new_oper {
 }
 
 new_oper!(ADD, "+", 10, false, qt_add);
+new_oper!(MUL, "*", 11, false, qt_mul);
 
 
 

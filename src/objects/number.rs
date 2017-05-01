@@ -52,6 +52,7 @@ macro_rules! impl_num_oper {
    }
 }
 impl_num_oper!(QtAdd, qt_add, +);
+impl_num_oper!(QtMul, qt_mul, *);
 
 
 
