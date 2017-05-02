@@ -1,8 +1,11 @@
-use objects::number::Number;
+use objects::result::ObjError;
 use std::rc::Rc;
 
+use objects::number::Number;
 pub trait ToNumber {
-   fn to_number(&self) -> Rc<Number>;
+   fn to_number(&self) -> Result<Rc<Number>, ObjError> {
+      Err(ObjError::NotImplemented)
+   }
 }
 
 pub trait ToText {

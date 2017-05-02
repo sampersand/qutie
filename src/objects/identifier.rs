@@ -15,15 +15,18 @@ derive_impl!(Castable; Identifier);
 use traits::misc::TryFrom;
 impl TryFrom for Identifier {
    fn try_from(inp: &str) -> Option<Identifier> {
-      match inp.chars().get(0) {
-         Some(c) => {}
-      }
+
+      match inp.chars().nth(0) {
+         Some(c) if is_char!(alphabetic; c) => {},
+         _ => return None
+      };
+
       for c in inp.chars() {
-         if !c.is_alphanumeric() {
+         if !is_char!(alphanumeric; c) {
             return None
          }
       }
-      return Some(Identifier{id: inp})
+      Some(Identifier{id: inp.to_string()})
    }
 }
 use std::rc::Rc;
@@ -31,7 +34,7 @@ use std::rc::Rc;
 
 impl Object for Identifier {
    fn hash(&self) -> u8 {
-      self.sym.get(0).unwrap()
+      self.id.chars().nth(0).unwrap() as u8
    }
    fn _eql(&self, other: RcObject) -> bool {
       todo!("_eql for number")
@@ -43,7 +46,7 @@ macro_rules! impl_num_oper {
       use traits::operator::$_trait;
       impl $_trait for Identifier {
          fn $func(&self, other: RcObject, _: &mut Frame) -> ObjResult {
-            Ok(Identifier::new(self.num $oper other.to_number().num).to_rc())
+            Ok(Identifier{id: "".to_string()}.to_rc())
          }
       }
    }
@@ -57,8 +60,9 @@ impl_num_oper!(OperPow, oper_pow, &);
 
 derive_impl!(Opers; Identifier);
 derive_impl!(Types; Identifier);
-derive_impl!(ToText; Identifier, num);
-derive_impl!(ToBool; Identifier, num);
+derive_impl!(ToText; Identifier, id);
+derive_impl!(ToNumber; Identifier);
+derive_impl!(ToBool; Identifier, id);
 
 
 

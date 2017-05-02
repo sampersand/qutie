@@ -1,5 +1,5 @@
 use objects::object::{Object, RcObject};
-use objects::result::ObjResult;
+use objects::result::{ObjResult, ObjError};
 use parsing::frame::Frame;
 
 pub struct Number {
@@ -24,8 +24,8 @@ impl TryFrom for Number {
 use traits::types::ToNumber;
 use std::rc::Rc;
 impl ToNumber for Number {
-   fn to_number(&self) -> Rc<Number> {
-      Number::new(self.num).to_rc()
+   fn to_number(&self) -> Result<Rc<Number>, ObjError> {
+      Ok(Number{num: self.num}.to_rc())
    }
 }
 
@@ -44,7 +44,11 @@ macro_rules! impl_num_oper {
       use traits::operator::$_trait;
       impl $_trait for Number {
          fn $func(&self, other: RcObject, _: &mut Frame) -> ObjResult {
-            Ok(Number::new(self.num $oper other.to_number().num).to_rc())
+            if let Ok(other_num) = other.to_number() {
+               Ok(Number{num: self.num $oper other_num.num}.to_rc())
+            } else {
+               Err(ObjError::NotImplemented)
+            }
          }
       }
    }

@@ -1,3 +1,9 @@
+macro_rules! is_char {
+   (number; $c:ident) => ( $c.is_digit(10) );
+   (alphabetic; $c:ident) => ($c.is_alphabetic() || $c == '_');
+   (alphanumeric; $c:ident) => (is_char!(alphabetic; $c) || is_char!(number; $c))
+}
+
 macro_rules! exception {
    (SYNTAX; $msg:expr, $($args:expr),*) => {
       panic!($msg, $($args,)*)
@@ -53,6 +59,8 @@ macro_rules! derive_impl {
       use traits::types::ToBool;
       impl ToBool for $obj {}
    };
+   (ToNumber; $obj:ident) => { use traits::types::ToNumber; impl ToNumber for $obj {} };
+
    (+; $obj:ident) => { use traits::operator::OperAdd; impl OperAdd for $obj {} };
       
    (*; $obj:ident) => {
