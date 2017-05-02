@@ -14,7 +14,7 @@ derive_impl!(ToRc; Number);
 derive_impl!(NEW; Number, num, i32);
 derive_impl!(Castable; Number);
 
-use objects::traits::misc::TryFrom;
+use traits::misc::TryFrom;
 impl TryFrom for Number {
    fn try_from(inp: &str) -> Option<Number> {
       match inp.parse::<i32>() {
@@ -23,7 +23,7 @@ impl TryFrom for Number {
       }
    }
 }
-use objects::traits::types::ToNumber;
+use traits::types::ToNumber;
 use std::rc::Rc;
 impl ToNumber for Number {
    fn to_number(&self) -> Rc<Number> {
@@ -43,7 +43,7 @@ impl Object for Number {
 
 macro_rules! impl_num_oper {
    ($_trait:ident, $func:ident, $oper:tt) => {
-      use objects::traits::operator::$_trait;
+      use traits::operator::$_trait;
       impl $_trait for Number {
          fn $func(&self, other: RcObject, _: &mut Frame) -> ObjResult {
             Ok(Number::new(self.num $oper other.to_number().num).to_rc())
@@ -51,8 +51,8 @@ macro_rules! impl_num_oper {
       }
    }
 }
-impl_num_oper!(QtAdd, qt_add, +);
-impl_num_oper!(QtMul, qt_mul, *);
+impl_num_oper!(OperAdd, add, +);
+impl_num_oper!(OperMul, mul, *);
 
 
 

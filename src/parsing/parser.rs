@@ -3,7 +3,7 @@ use parsing::frame::Frame;
 use parsing::stream::Stream;
 use objects::number::Number;
 use objects::operators::binary_operator::BinaryOperator;
-use objects::traits::misc::{TryFrom, ToRc};
+use traits::misc::{TryFrom, ToRc};
 use objects::rc_object::RcObject;
 
 fn next_token(frame: &mut Frame) -> Option<String> {

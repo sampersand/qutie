@@ -2,13 +2,13 @@ use objects::rc_object::RcObject;
 use objects::result::{ObjResult, ObjError};
 use parsing::frame::Frame;
 
-pub trait QtAdd {
-   fn qt_add(&self, _: RcObject, _: &mut Frame) -> ObjResult {
+pub trait OperAdd {
+   fn add(&self, _: RcObject, _: &mut Frame) -> ObjResult {
       Err(ObjError::NotImplemented)
    }
 }
-pub trait QtMul {
-   fn qt_mul(&self, _: RcObject, _: &mut Frame) -> ObjResult {
+pub trait OperMul {
+   fn mul(&self, _: RcObject, _: &mut Frame) -> ObjResult {
       Err(ObjError::NotImplemented)
    }
 }

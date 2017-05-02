@@ -28,7 +28,7 @@ macro_rules! derive_impl {
 
    (Castable; $obj:ident) => {
       static mut __TYPE_ID: u8 = 0;
-      use objects::traits::misc::Castable;
+      use traits::misc::Castable;
       impl Castable for $obj {
          fn type_id() -> u8 {
             unsafe{
@@ -52,18 +52,18 @@ macro_rules! derive_impl {
    };
 
    (ToRc; $obj:ident) => {
-      use objects::traits::misc::ToRc;
+      use traits::misc::ToRc;
       impl ToRc for $obj {}
    };
 
    (+; $obj:ident) => {
-      use objects::traits::operator::QtAdd;
-      impl QtAdd for $obj {}
+      use traits::operator::OperAdd;
+      impl OperAdd for $obj {}
    };
-   
+      
    (*; $obj:ident) => {
-      use objects::traits::operator::QtMul;
-      impl QtMul for $obj {}
+      use traits::operator::OperMul;
+      impl OperMul for $obj {}
    };
 }
 

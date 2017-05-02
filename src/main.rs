@@ -8,6 +8,7 @@ mod globals {
 mod macros;
 mod parsing;
 mod objects;
+mod traits;
 
 fn main() {
 

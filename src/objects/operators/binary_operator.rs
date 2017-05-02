@@ -28,7 +28,7 @@ impl BinaryOperator {
    }
 }
 
-use objects::traits::misc::TryFrom;
+use traits::misc::TryFrom;
 impl TryFrom for BinaryOperator {
    fn try_from(inp: &str) -> Option<BinaryOperator> {
       match inp {
@@ -37,6 +37,14 @@ impl TryFrom for BinaryOperator {
          _ => None
       }
    }
+}
+
+
+use std::rc::Rc;
+use objects::object::Object;
+use objects::
+fn Foo(lhs: Rc<Object + OperAdd>, rhs: Rc<Object + OperAdd>, frame: &mut Frame) -> ObjResult {
+   lhs.$func_name(rhs, frame)
 }
 
 
@@ -54,8 +62,8 @@ macro_rules! new_oper {
    }
 }
 
-new_oper!(ADD, "+", 10, false, qt_add);
-new_oper!(MUL, "*", 11, false, qt_mul);
+new_oper!(ADD, "+", 10, false, add);
+new_oper!(MUL, "*", 11, false, mul);
 
 
 
