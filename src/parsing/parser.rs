@@ -72,6 +72,8 @@ fn process_token(token: String, oper_stack: &mut Vec<BinaryOperator>, frame: &mu
       frame.pop(); // and do nothing
    } else if token == "," {
       // do nothing
+   } else if is_control_keyword(token) {
+      process_control_keyword(token)
    } else if let Some(obj) = try_obj_from(&token) {
       if is_a!(obj, identifier) {
          match next_token(frame) {
