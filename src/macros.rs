@@ -8,7 +8,6 @@ macro_rules! todo {
    () => ( todo!("this") )
 }
 
-
 macro_rules! derive_impl {
    (Display; $obj:ident, $item:ident) => {
       impl std::fmt::Display for $obj {
@@ -51,15 +50,18 @@ macro_rules! derive_impl {
       }
    };
 
-   (ToRc; $obj:ident) => {
-      use traits::misc::ToRc;
-      impl ToRc for $obj {}
+   (ToRc; $obj:ident) => { use traits::misc::ToRc; impl ToRc for $obj {} };
+   (Opers; $obj:ident) => { use traits::operator::Opers; impl Opers for $obj {} };
+   (Types; $obj:ident) => { use traits::types::Types; impl Types for $obj {} };
+   (ToText; $obj:ident, $item:ident) => {
+      use traits::types::ToText;
+      impl ToText for $obj {}
    };
-
-   (+; $obj:ident) => {
-      use traits::operator::OperAdd;
-      impl OperAdd for $obj {}
+   (ToBool; $obj:ident, $item:ident) => {
+      use traits::types::ToBool;
+      impl ToBool for $obj {}
    };
+   (+; $obj:ident) => { use traits::operator::OperAdd; impl OperAdd for $obj {} };
       
    (*; $obj:ident) => {
       use traits::operator::OperMul;

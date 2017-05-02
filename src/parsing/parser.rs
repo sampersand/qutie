@@ -37,6 +37,7 @@ fn next_token(frame: &mut Frame) -> Option<String> {
 pub fn exec_frame(frame: &mut Frame){
    let mut oper_stack: Vec<BinaryOperator> = vec![];
    while let Some(token) = next_token(frame) {
+
       if let Some(num) = Number::try_from(&token) {
          frame.push(num.to_rc());
       } else if let Some(oper) = BinaryOperator::try_from(&token) {
@@ -48,6 +49,7 @@ pub fn exec_frame(frame: &mut Frame){
       } else {
          panic!("bad token: `{}`", token)
       }
+
    }
 
    while let Some(oper) = oper_stack.pop() {

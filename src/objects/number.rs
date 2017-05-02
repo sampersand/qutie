@@ -51,9 +51,17 @@ macro_rules! impl_num_oper {
       }
    }
 }
-impl_num_oper!(OperAdd, add, +);
-impl_num_oper!(OperMul, mul, *);
+impl_num_oper!(OperAdd, oper_add, +);
+impl_num_oper!(OperSub, oper_sub, -);
+impl_num_oper!(OperMul, oper_mul, *);
+impl_num_oper!(OperDiv, oper_div, /);
+impl_num_oper!(OperMod, oper_mod, %);
+impl_num_oper!(OperPow, oper_pow, &);
 
+derive_impl!(Opers; Number);
+derive_impl!(Types; Number);
+derive_impl!(ToText; Number, num);
+derive_impl!(ToBool; Number, num);
 
 
 

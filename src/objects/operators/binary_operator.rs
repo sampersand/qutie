@@ -10,14 +10,42 @@ pub struct BinaryOperator {
    func: fn(RcObject, RcObject, &mut Frame) -> ObjResult
 }
 
+
+mod opers {
+   use objects::operators::binary_operator::BinaryOperator;
+   use objects::rc_object::RcObject;
+   use objects::result::ObjResult;
+   use parsing::frame::Frame;
+
+   macro_rules! new_oper {
+      ($oper_name:ident, $sigil:expr, $priority:expr, $is_left:ident, $func_name:ident) => {
+         fn $func_name(lhs: RcObject, rhs: RcObject, frame: &mut Frame) -> ObjResult {
+            lhs.$func_name(rhs, frame)
+         }
+         pub const $oper_name: BinaryOperator = BinaryOperator {
+            sigil: $sigil,
+            func: $func_name,
+            priority: $priority,
+            is_left_assoc: $is_left
+         };
+      }
+   }
+   new_oper!(ADD, "+", 12, false, oper_add);
+   new_oper!(SUB, "-", 12, false, oper_sub);
+   new_oper!(MUL, "*", 11, false, oper_mul);
+   new_oper!(DIV, "/", 11, false, oper_div);
+   new_oper!(MOD, "%", 11, false, oper_mod);
+   new_oper!(POW, "**", 10, true, oper_pow);
+}
+
 use std;
 derive_impl!(Display; BinaryOperator, sigil);
 derive_impl!(Debug; BinaryOperator, "Ob");
 
 impl BinaryOperator {
    pub fn should_exec(&self, other: &BinaryOperator) -> bool {
-      (other.is_left_assoc && other.priority <= self.priority) ||
-      (!other.is_left_assoc && other.priority < self.priority)
+      (other.is_left_assoc && other.priority >= self.priority) ||
+      (!other.is_left_assoc && other.priority > self.priority)
    }
 
    pub fn exec(&self, frame: &mut Frame) {
@@ -32,50 +60,16 @@ use traits::misc::TryFrom;
 impl TryFrom for BinaryOperator {
    fn try_from(inp: &str) -> Option<BinaryOperator> {
       match inp {
-         "+" => Some(ADD),
-         "*" => Some(MUL),
+         "+" => Some(opers::ADD),
+         "-" => Some(opers::SUB),
+         "*" => Some(opers::MUL),
+         "/" => Some(opers::DIV),
+         "%" => Some(opers::MOD),
+         "**" => Some(opers::POW),
          _ => None
       }
    }
 }
-
-
-use std::rc::Rc;
-use objects::object::Object;
-use objects::
-fn Foo(lhs: Rc<Object + OperAdd>, rhs: Rc<Object + OperAdd>, frame: &mut Frame) -> ObjResult {
-   lhs.$func_name(rhs, frame)
-}
-
-
-macro_rules! new_oper {
-   ($oper_name:ident, $sigil:expr, $priority:expr, $is_left:ident, $func_name:ident) => {
-      fn $func_name(lhs: RcObject, rhs: RcObject, frame: &mut Frame) -> ObjResult {
-         lhs.$func_name(rhs, frame)
-      }
-      const $oper_name: BinaryOperator = BinaryOperator{
-         sigil: $sigil,
-         func: $func_name,
-         priority: $priority,
-         is_left_assoc: $is_left
-      };
-   }
-}
-
-new_oper!(ADD, "+", 10, false, add);
-new_oper!(MUL, "*", 11, false, mul);
-
-
-
-// impl Object for BinaryOperator {
-//    fn hash(&self) -> u8 {
-//       todo!("hash for operator");
-//    }
-//    fn _eql(&self, other: RcObject) -> bool {
-//       todo!("_eql for operator")
-//    }
-// }
-
 
 
 
