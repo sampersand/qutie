@@ -10,14 +10,13 @@ use std;
 derive_impl!(Display; Number, num);
 derive_impl!(Debug; Number, "N");
 derive_impl!(ToRc; Number);
-derive_impl!(NEW; Number, num, i32);
 derive_impl!(Castable; Number);
 
 use traits::misc::TryFrom;
 impl TryFrom for Number {
    fn try_from(inp: &str) -> Option<Number> {
       match inp.parse::<i32>() {
-         Ok(num) => Some(Number::new(num)),
+         Ok(num) => Some(Number{num: num}),
          Err(_) => None
       }
    }

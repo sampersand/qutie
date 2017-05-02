@@ -42,14 +42,6 @@ macro_rules! derive_impl {
       }
    };
 
-   (NEW; $obj:ident, $item:ident, $item_type:ty) => {
-      impl $obj {
-         pub fn new($item: $item_type) -> $obj {
-            $obj{ $item: $item }
-         }
-      }
-   };
-
    (ToRc; $obj:ident) => { use traits::misc::ToRc; impl ToRc for $obj {} };
    (Opers; $obj:ident) => { use traits::operator::Opers; impl Opers for $obj {} };
    (Types; $obj:ident) => { use traits::types::Types; impl Types for $obj {} };
