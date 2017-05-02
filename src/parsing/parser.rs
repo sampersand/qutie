@@ -1,6 +1,7 @@
 use std::rc::Rc;
 use parsing::frame::Frame;
 use parsing::stream::Stream;
+use parsing::control_functions;
 use objects::number::Number;
 use objects::identifier::Identifier;
 use objects::operators::binary_operator::BinaryOperator;
@@ -72,8 +73,8 @@ fn process_token(token: String, oper_stack: &mut Vec<BinaryOperator>, frame: &mu
       frame.pop(); // and do nothing
    } else if token == "," {
       // do nothing
-   } else if is_control_keyword(token) {
-      process_control_keyword(token)
+   } else if control_functions::try_handle_control_function(&token, frame) {
+      // do nothing, was already handled
    } else if let Some(obj) = try_obj_from(&token) {
       if is_a!(obj, identifier) {
          match next_token(frame) {

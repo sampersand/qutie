@@ -53,6 +53,25 @@ derive_impl!(*; Identifier);
 derive_impl!(/; Identifier);
 derive_impl!(%; Identifier);
 derive_impl!(**; Identifier);
+derive_impl!(==; Identifier);
+derive_impl!(!=; Identifier);
+derive_impl!( <; Identifier);
+derive_impl!(<=; Identifier);
+derive_impl!( >; Identifier);
+derive_impl!(>=; Identifier);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

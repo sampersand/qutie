@@ -65,6 +65,12 @@ macro_rules! derive_impl {
    (/; $obj:ident)  => { use traits::operator::OperDiv; impl OperDiv for $obj {} };
    (%; $obj:ident)  => { use traits::operator::OperMod; impl OperMod for $obj {} };
    (**; $obj:ident) => { use traits::operator::OperPow; impl OperPow for $obj {} };
+   (==; $obj:ident) => { use traits::operator::OperEql; impl OperEql for $obj {} };
+   (!=; $obj:ident) => { use traits::operator::OperNeq; impl OperNeq for $obj {} };
+   (<; $obj:ident)  => { use traits::operator::OperLth; impl OperLth for $obj {} };
+   (<=; $obj:ident) => { use traits::operator::OperLeq; impl OperLeq for $obj {} };
+   (>; $obj:ident)  => { use traits::operator::OperGth; impl OperGth for $obj {} };
+   (>=; $obj:ident) => { use traits::operator::OperGeq; impl OperGeq for $obj {} };
 }
 
 macro_rules! is_a {
@@ -73,6 +79,7 @@ macro_rules! is_a {
       $obj.type_id() == unsafe{ $module::__TYPE_ID }
    }}
 }
+
 macro_rules! cast_as {
    ($obj:ident, $into:ident) => {{
       // use objects::$module;

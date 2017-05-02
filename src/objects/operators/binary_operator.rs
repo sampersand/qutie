@@ -1,21 +1,28 @@
 use parsing::frame::Frame;
 
 use objects::object::RcObject;
-use objects::result::ObjResult;
+use objects::result::{ObjResult, BoolResult};
+
+enum FuncType {
+   Obj(fn(RcObject, RcObject, &mut Frame) -> ObjResult),
+   Bool(fn(RcObject, RcObject, &mut Frame) -> BoolResult)
+}
+
 
 pub struct BinaryOperator {
    sigil: &'static str,
    priority: u32,
    is_left_assoc: bool,
-   func: fn(RcObject, RcObject, &mut Frame) -> ObjResult
+   func: FuncType
 }
 
 
 mod opers {
    use objects::operators::binary_operator::BinaryOperator;
    use objects::object::RcObject;
-   use objects::result::ObjResult;
+   use objects::result::{ObjResult, BoolResult};
    use parsing::frame::Frame;
+   use objects::operators::binary_operator::FuncType;
 
    macro_rules! new_oper {
       ($oper_name:ident, $sigil:expr, $priority:expr, $is_left:ident, $func_name:ident) => {
@@ -24,11 +31,23 @@ mod opers {
          }
          pub const $oper_name: BinaryOperator = BinaryOperator {
             sigil: $sigil,
-            func: $func_name,
+            func: FuncType::Obj($func_name),
+            priority: $priority,
+            is_left_assoc: $is_left
+         };
+      };
+      (BOOL; $oper_name:ident, $sigil:expr, $priority:expr, $is_left:ident, $func_name:ident) => {
+         fn $func_name(lhs: RcObject, rhs: RcObject, frame: &mut Frame) -> BoolResult {
+            lhs.$func_name(rhs, frame)
+         }
+         pub const $oper_name: BinaryOperator = BinaryOperator {
+            sigil: $sigil,
+            func: FuncType::Bool($func_name),
             priority: $priority,
             is_left_assoc: $is_left
          };
       }
+
    }
    new_oper!(ADD, "+", 12, false, oper_add);
    new_oper!(SUB, "-", 12, false, oper_sub);
@@ -36,6 +55,13 @@ mod opers {
    new_oper!(DIV, "/", 11, false, oper_div);
    new_oper!(MOD, "%", 11, false, oper_mod);
    new_oper!(POW, "**", 10, true, oper_pow);
+
+   new_oper!(BOOL; EQL, "==", 15, true, oper_eql);
+   new_oper!(BOOL; NEQ, "!=", 15, true, oper_neq);
+   new_oper!(BOOL; LTH, "<",  15, true, oper_lth);
+   new_oper!(BOOL; LEQ, "<=", 15, true, oper_leq);
+   new_oper!(BOOL; GTH, ">",  15, true, oper_gth);
+   new_oper!(BOOL; GEQ, ">=", 15, true, oper_geq);
 }
 
 use std;
@@ -51,7 +77,11 @@ impl BinaryOperator {
    pub fn exec(&self, frame: &mut Frame) {
       let rhs = frame.pop().expect("bad rhs for operator");
       let lhs = frame.pop().expect("bad lhs for operator");
-      let res = ((self.func)(lhs, rhs, frame)).expect("problem with exec of function");
+      let res = 
+         match self.func {
+            FuncType::Obj(func) => (func)(lhs, rhs, frame).expect("problem with exec of function"),
+            FuncType::Bool(func) => (func)(lhs, rhs, frame).expect("problem with exec of function"),
+         };
       frame.push(res);
    }
 }
@@ -66,10 +96,24 @@ impl TryFrom for BinaryOperator {
          "/" => Some(opers::DIV),
          "%" => Some(opers::MOD),
          "**" => Some(opers::POW),
+         "==" => Some(opers::EQL),
+         "!=" => Some(opers::NEQ),
+         "<"  => Some(opers::LTH),
+         "<=" => Some(opers::LEQ),
+         ">"  => Some(opers::GTH),
+         ">=" => Some(opers::GEQ),
          _ => None
       }
    }
 }
+
+
+
+
+
+
+
+
 
 
 

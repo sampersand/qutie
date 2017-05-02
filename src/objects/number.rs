@@ -1,6 +1,7 @@
 use objects::object::{Object, RcObject};
-use objects::result::{ObjResult, ObjError};
+use objects::result::{ObjResult, ObjError, BoolResult};
 use parsing::frame::Frame;
+use objects::boolean::Boolean;
 
 pub struct Number {
    num: i32
@@ -57,12 +58,33 @@ macro_rules! impl_num_oper {
       }
    }
 }
+macro_rules! impl_bool_oper {
+   ($_trait:ident, $func:ident, $oper:tt) => {
+      use traits::operator::$_trait;
+      impl $_trait for Number {
+         fn $func(&self, other: RcObject, _: &mut Frame) -> BoolResult {
+            if let Ok(other_num) = other.to_number() {
+               Ok(Boolean::from(self.num $oper other_num.num).to_rc())
+            } else {
+               Err(ObjError::NotImplemented)
+            }
+         }
+      }
+   }
+}
+
 impl_num_oper!(OperAdd, oper_add, +);
 impl_num_oper!(OperSub, oper_sub, -);
 impl_num_oper!(OperMul, oper_mul, *);
 impl_num_oper!(OperDiv, oper_div, /);
 impl_num_oper!(OperMod, oper_mod, %);
 impl_num_oper!(OperPow, oper_pow, &);
+impl_bool_oper!(OperEql, oper_eql, ==);
+impl_bool_oper!(OperNeq, oper_neq, !=);
+impl_bool_oper!(OperLth, oper_lth,  <);
+impl_bool_oper!(OperLeq, oper_leq, <=);
+impl_bool_oper!(OperGth, oper_gth,  >);
+impl_bool_oper!(OperGeq, oper_geq, >=);
 
 
 
