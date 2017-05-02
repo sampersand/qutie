@@ -11,6 +11,10 @@ derive_impl!(Display; Number, num);
 derive_impl!(Debug; Number, "N");
 derive_impl!(ToRc; Number);
 derive_impl!(Castable; Number);
+derive_impl!(Opers; Number);
+derive_impl!(Types; Number);
+derive_impl!(ToText; Number, num);
+derive_impl!(ToBool; Number);
 
 use traits::misc::TryFrom;
 impl TryFrom for Number {
@@ -59,11 +63,6 @@ impl_num_oper!(OperMul, oper_mul, *);
 impl_num_oper!(OperDiv, oper_div, /);
 impl_num_oper!(OperMod, oper_mod, %);
 impl_num_oper!(OperPow, oper_pow, &);
-
-derive_impl!(Opers; Number);
-derive_impl!(Types; Number);
-derive_impl!(ToText; Number, num);
-derive_impl!(ToBool; Number, num);
 
 
 

@@ -55,18 +55,15 @@ macro_rules! derive_impl {
       use traits::types::ToText;
       impl ToText for $obj {}
    };
-   (ToBool; $obj:ident, $item:ident) => {
-      use traits::types::ToBool;
-      impl ToBool for $obj {}
-   };
+   (ToBool; $obj:ident) => { use traits::types::ToBool; impl ToBool for $obj {} };
    (ToNumber; $obj:ident) => { use traits::types::ToNumber; impl ToNumber for $obj {} };
 
-   (+; $obj:ident) => { use traits::operator::OperAdd; impl OperAdd for $obj {} };
-      
-   (*; $obj:ident) => {
-      use traits::operator::OperMul;
-      impl OperMul for $obj {}
-   };
+   (+; $obj:ident)  => { use traits::operator::OperAdd; impl OperAdd for $obj {} };
+   (-; $obj:ident)  => { use traits::operator::OperSub; impl OperSub for $obj {} };
+   (*; $obj:ident)  => { use traits::operator::OperMul; impl OperMul for $obj {} };
+   (/; $obj:ident)  => { use traits::operator::OperDiv; impl OperDiv for $obj {} };
+   (%; $obj:ident)  => { use traits::operator::OperMod; impl OperMod for $obj {} };
+   (**; $obj:ident) => { use traits::operator::OperPow; impl OperPow for $obj {} };
 }
 
 

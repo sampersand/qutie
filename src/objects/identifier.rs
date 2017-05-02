@@ -11,6 +11,12 @@ derive_impl!(Display; Identifier, id);
 derive_impl!(Debug; Identifier, "I");
 derive_impl!(ToRc; Identifier);
 derive_impl!(Castable; Identifier);
+derive_impl!(Opers; Identifier);
+derive_impl!(Types; Identifier);
+derive_impl!(ToText; Identifier, id);
+derive_impl!(ToNumber; Identifier);
+derive_impl!(ToBool; Identifier);
+
 
 use traits::misc::TryFrom;
 impl TryFrom for Identifier {
@@ -41,28 +47,12 @@ impl Object for Identifier {
    }
 }
 
-macro_rules! impl_num_oper {
-   ($_trait:ident, $func:ident, $oper:tt) => {
-      use traits::operator::$_trait;
-      impl $_trait for Identifier {
-         fn $func(&self, other: RcObject, _: &mut Frame) -> ObjResult {
-            Ok(Identifier{id: "".to_string()}.to_rc())
-         }
-      }
-   }
-}
-impl_num_oper!(OperAdd, oper_add, +);
-impl_num_oper!(OperSub, oper_sub, -);
-impl_num_oper!(OperMul, oper_mul, *);
-impl_num_oper!(OperDiv, oper_div, /);
-impl_num_oper!(OperMod, oper_mod, %);
-impl_num_oper!(OperPow, oper_pow, &);
-
-derive_impl!(Opers; Identifier);
-derive_impl!(Types; Identifier);
-derive_impl!(ToText; Identifier, id);
-derive_impl!(ToNumber; Identifier);
-derive_impl!(ToBool; Identifier, id);
+derive_impl!(+; Identifier);
+derive_impl!(-; Identifier);
+derive_impl!(*; Identifier);
+derive_impl!(/; Identifier);
+derive_impl!(%; Identifier);
+derive_impl!(**; Identifier);
 
 
 
