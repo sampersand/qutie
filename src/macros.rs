@@ -1,7 +1,7 @@
 macro_rules! exception {
-   (SYNTAX; $msg:expr $(,$args:expr)*) => {
-      panic!($msg $(,$args)*)
-   }
+   (SYNTAX; $msg:expr $(,$args:expr)*) => { panic!($msg $(,$args)*) };
+   (ASSIGNMENT; $msg:expr $(,$args:expr)*) => { panic!($msg $(,$args)*) };
+   (RETRIEVAL; $msg:expr $(,$args:expr)*) => { panic!($msg $(,$args)*) }
 }
 
 macro_rules! is_char {
@@ -71,6 +71,18 @@ macro_rules! is_a {
    ($obj:ident, $module:ident) => {{
       use objects::$module;
       $obj.type_id() == unsafe{ $module::__TYPE_ID }
+   }}
+}
+macro_rules! cast_as {
+   ($obj:ident, $into:ident) => {{
+      // use objects::$module;
+      // if is_a!($obj, $module) { 
+      //    panic!("cannot cast `{}` to `{}`", $obj.type_id(), unsafe{$module::__TYPE_ID} );
+      // }
+      use std::mem;
+      // use obejcts::object::RcObject;
+      // assert_eq!(mem::size_of::<Self>(), mem::size_of::<T>(), "bad types!");
+      unsafe { mem::transmute::<&RcObject, &Rc<$into>>(&$obj).clone() }
    }}
 }
 

@@ -44,23 +44,50 @@ fn try_obj_from(token: &str) -> Option<RcObject> {
       None
    }
 }
-
+fn assign(key: Rc<Identifier>, frame: &mut Frame) {
+   let next_token = 
+      if let Some(next_token) = next_token(frame) {
+         next_token 
+      } else {
+         exception!(ASSIGNMENT; "Can't find rhs of equals sign");
+      };
+   frame.assign(key, 
+      if let Some(next_obj) = try_obj_from(&next_token) {
+         next_obj
+      } else {
+         exception!(ASSIGNMENT; "can't turn rhs of equals sign into an object!")
+      });
+}
 fn process_token(token: String, oper_stack: &mut Vec<BinaryOperator>, frame: &mut Frame) {
-   if token == "=" {
-      let stack_top = 
-         if let Some(top) = frame.pop() {
-            top
+   macro_rules! retrieve {
+      ($obj:ident) => {
+         if let Ok(val) = frame.retrieve($obj.clone()) {
+            val
          } else {
-            exception!(SYNTAX; "invalid equals sign! ");
-         };
-
-      if !is_a!(stack_top, identifier) {
-         panic!("can only assign to identifiers!")
+            exception!(RETRIEVAL; "can't retrieve key of {:?}", $obj)
+         }
       }
-      let next_token = next_token(frame).expect("Can't find rhs of equals sign");
-      frame.assign(stack_top, try_obj_from(&next_token).expect("Can't convert rhs to object"));
-   } else if let Some(obj) = try_obj_from(&token) {
-      frame.push(obj)
+   }
+   if let Some(obj) = try_obj_from(&token) {
+      if is_a!(obj, identifier) {
+         match next_token(frame) {
+            Some(next_token) => 
+               if next_token == "=" {
+                  assign(cast_as!(obj, Identifier), frame)
+               } else {
+                  let to_push = retrieve!(obj);
+                  frame.push(to_push);
+                  process_token(next_token, oper_stack, frame);
+               },
+            None => 
+               {
+                  let to_push = retrieve!(obj);
+                  frame.push(to_push);
+               },
+         }
+      } else {
+         frame.push(obj);
+      };
    } else if let Some(oper) = BinaryOperator::try_from(&token) {
       while let Some(oper2) = oper_stack.pop() {
          if oper2.should_exec(&oper) { oper2.exec(frame); }

@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 use std::cell::RefCell;
 use std::rc::Rc;
+use objects::result::{ObjResult, ObjError};
 
 use objects::object::{RcObject, RcObjWrapper};
 pub type StackType = Vec<RcObject>;
@@ -44,8 +45,16 @@ impl <'a> Frame<'a> {
    pub fn pop(&mut self) -> Option<RcObject> {
       self.stack.pop()
    }
-   pub fn assign(&mut self, key: RcObject, val: RcObject) {
-      self.locals.insert(RcObjWrapper(key), val);
+   pub fn assign(&mut self, key: RcObject, val: RcObject) -> ObjResult {
+      self.locals.insert(RcObjWrapper(key), val.clone());
+      Ok(val)
+   }
+   pub fn retrieve(&mut self, key: RcObject) -> ObjResult {
+      if let Some(val) = self.locals.get(&RcObjWrapper(key.clone())) {
+         Ok(val.clone())
+      } else {
+         Err(ObjError::NoSuchKey(key))
+      }
    }
 }
 
