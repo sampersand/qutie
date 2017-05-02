@@ -1,14 +1,15 @@
+macro_rules! exception {
+   (SYNTAX; $msg:expr $(,$args:expr)*) => {
+      panic!($msg $(,$args)*)
+   }
+}
+
 macro_rules! is_char {
    (number; $c:ident) => ( $c.is_digit(10) );
    (alphabetic; $c:ident) => ($c.is_alphabetic() || $c == '_');
    (alphanumeric; $c:ident) => (is_char!(alphabetic; $c) || is_char!(number; $c))
 }
 
-macro_rules! exception {
-   (SYNTAX; $msg:expr, $($args:expr),*) => {
-      panic!($msg, $($args,)*)
-   }
-}
 macro_rules! todo {
    ($msg:expr) => ( panic!("TODO: {}", $msg) );
    () => ( todo!("this") )
@@ -32,10 +33,10 @@ macro_rules! derive_impl {
    };
 
    (Castable; $obj:ident) => {
-      static mut __TYPE_ID: u8 = 0;
+      pub static mut __TYPE_ID: u8 = 0;
       use traits::misc::Castable;
       impl Castable for $obj {
-         fn type_id() -> u8 {
+         fn type_id(&self) -> u8 {
             unsafe{
             use globals::CURRENT_TYPE_ID;
                if __TYPE_ID == 0 {
@@ -66,11 +67,30 @@ macro_rules! derive_impl {
    (**; $obj:ident) => { use traits::operator::OperPow; impl OperPow for $obj {} };
 }
 
+macro_rules! is_a {
+   ($obj:ident, $module:ident) => {{
+      use objects::$module;
+      $obj.type_id() == unsafe{ $module::__TYPE_ID }
+   }}
+}
+
+/*
 
 
-
-
-
+   fn cls_type_id() -> u8;
+   fn is_a<T: Castable>(inp: &T) -> bool {
+      Self::cls_type_id() == inp.self_cls_type_id()
+   }
+   fn cast_to<'a, T: Castable>(inp: &'a T) -> &'a Self {
+      if !Self::is_a(inp) { 
+         panic!("cannot cast `{}` to `{}`", Self::cls_type_id(), T::cls_type_id());
+      }
+      use std::mem;
+      assert_eq!(mem::size_of::<Self>(), mem::size_of::<T>(), "bad types!");
+      unsafe { mem::transmute(inp) }
+   }
+}
+*/
 
 
 

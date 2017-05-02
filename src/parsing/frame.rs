@@ -44,6 +44,9 @@ impl <'a> Frame<'a> {
    pub fn pop(&mut self) -> Option<RcObject> {
       self.stack.pop()
    }
+   pub fn assign(&mut self, key: RcObject, val: RcObject) {
+      self.locals.insert(RcObjWrapper(key), val);
+   }
 }
 
 

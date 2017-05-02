@@ -1,8 +1,9 @@
 use std::fmt::Debug;
 use traits::operator::Opers;
 use traits::types::Types;
+use traits::misc::Castable;
 
-pub trait Object: Debug + Opers + Types {
+pub trait Object: Debug + Opers + Types + Castable {
    fn _eql(&self, other: RcObject) -> bool;
    fn hash(&self) -> u8;
    fn equals(&self, other: RcObject) -> bool {
