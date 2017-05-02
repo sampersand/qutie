@@ -1,7 +1,7 @@
 use parsing::frame::Frame;
 
+use objects::object::RcObject;
 use objects::result::ObjResult;
-use objects::rc_object::RcObject;
 
 pub struct BinaryOperator {
    sigil: &'static str,
@@ -13,7 +13,7 @@ pub struct BinaryOperator {
 
 mod opers {
    use objects::operators::binary_operator::BinaryOperator;
-   use objects::rc_object::RcObject;
+   use objects::object::RcObject;
    use objects::result::ObjResult;
    use parsing::frame::Frame;
 

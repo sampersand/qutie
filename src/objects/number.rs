@@ -1,5 +1,4 @@
-use objects::object::Object;
-use objects::rc_object::RcObject;
+use objects::object::{Object, RcObject};
 use objects::result::ObjResult;
 use parsing::frame::Frame;
 

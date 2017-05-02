@@ -3,7 +3,7 @@ use parsing::frame::Frame;
 use objects::number::Number;
 use objects::operators::binary_operator::BinaryOperator;
 use traits::misc::{TryFrom, ToRc};
-use objects::rc_object::RcObject;
+use objects::object::RcObject;
 
 enum Token {
    LParen(char),

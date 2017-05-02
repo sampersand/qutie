@@ -4,7 +4,7 @@ use parsing::stream::Stream;
 use objects::number::Number;
 use objects::operators::binary_operator::BinaryOperator;
 use traits::misc::{TryFrom, ToRc};
-use objects::rc_object::RcObject;
+use objects::object::RcObject;
 
 fn next_token(frame: &mut Frame) -> Option<String> {
    let mut acc = String::new();

@@ -1,4 +1,4 @@
-use objects::rc_object::RcObject;
+use objects::object::RcObject;
 use objects::result::{ObjResult, ObjError};
 use parsing::frame::Frame;
 

@@ -1,4 +1,4 @@
-use objects::rc_object::RcObject;
+use objects::object::RcObject;
 
 #[derive(Debug)]
 pub enum ObjError {

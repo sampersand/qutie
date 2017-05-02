@@ -1,5 +1,5 @@
 pub mod object;
 pub mod number;
+pub mod symbol;
 pub mod operators;
-pub mod rc_object;
 pub mod result;

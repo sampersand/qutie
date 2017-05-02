@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use objects::rc_object::{RcObject, RcObjWrapper};
+use objects::object::{RcObject, RcObjWrapper};
 pub type StackType = Vec<RcObject>;
 pub type LocalsType = HashMap<RcObjWrapper, RcObject>;
 
