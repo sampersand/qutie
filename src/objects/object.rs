@@ -17,8 +17,14 @@ use std::rc::Rc;
 
 pub type RcObject = Rc<Object>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct RcObjWrapper(pub RcObject);
+use std;
+impl std::fmt::Debug for RcObjWrapper {
+   fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+      write!(f, "{:?}", self.0)
+   }
+}
 
 impl PartialEq for RcObjWrapper {
    fn eq(&self, other: &RcObjWrapper) -> bool {

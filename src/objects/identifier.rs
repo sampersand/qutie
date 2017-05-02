@@ -43,7 +43,7 @@ impl Object for Identifier {
       self.id.chars().nth(0).unwrap() as u8
    }
    fn _eql(&self, other: RcObject) -> bool {
-      todo!("_eql for number")
+      is_a!(other, identifier) && self.id == cast_as!(other, Identifier).id
    }
 }
 

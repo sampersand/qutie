@@ -39,7 +39,7 @@ impl Object for Number {
       self.num as u8
    }
    fn _eql(&self, other: RcObject) -> bool {
-      todo!("_eql for number")
+      is_a!(other, number) && self.num == cast_as!(other, Number).num
    }
 }
 

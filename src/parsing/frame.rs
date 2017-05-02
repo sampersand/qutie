@@ -9,7 +9,6 @@ use objects::object::{RcObject, RcObjWrapper};
 pub type StackType = Vec<RcObject>;
 pub type LocalsType = HashMap<RcObjWrapper, RcObject>;
 
-#[derive(Debug)]
 pub struct Frame<'a> {
    pub stream: Rc<RefCell<Stream>>,
    parent: Option<&'a Frame<'a>>,
@@ -59,7 +58,12 @@ impl <'a> Frame<'a> {
 }
 
 
-
+use std;
+impl <'a> std::fmt::Debug for Frame<'a> {
+   fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+      write!(f, "Frame({:?} | {:?})", self.stack, self.locals)
+   }
+}
 
 
 
