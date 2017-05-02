@@ -12,8 +12,13 @@ pub trait ToText {
    // fn to_text(&self) -> Rc<Text>;
 }
 
+use objects::boolean::Boolean;
+use traits::misc::ToRc;
+
 pub trait ToBool {
-   // fn to_number(&self) -> Rc<Bool>;
+   fn to_boolean(&self) -> Rc<Boolean> {
+      Boolean::from(true).to_rc()
+   }
 }
 
 pub trait Types : ToNumber + ToText + ToBool {}
