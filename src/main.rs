@@ -12,7 +12,9 @@ mod traits;
 
 fn main() {
 
-   let inp = "!true";
+   let inp = "
+a = [];
+";
    let mut stream = parsing::stream::Stream::from(inp);
    let mut frame = parsing::frame::Frame::new(stream);
    frame.exec();
