@@ -4,8 +4,9 @@ pub trait ToRc : Sized {
       Rc::new(self)
    }
 }
-pub trait TryFrom : Sized {
-   fn try_from(inp: &str) -> Option<Self>;
+
+pub trait TryFrom<T> : Sized {
+   fn try_from(inp: T) -> Option<Self>;
 }
 
 pub trait Castable {

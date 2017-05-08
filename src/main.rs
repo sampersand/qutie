@@ -12,10 +12,14 @@ mod traits;
 
 fn main() {
 
-   let inp = "if (3 == 3)";
+   let inp = "
+if(1){
+ a = 1;
+}
+a == 1";
    let mut stream = parsing::stream::Stream::from(inp);
    let mut frame = parsing::frame::Frame::new(stream);
-   frame = frame.exec();
+   frame.exec();
    println!("frame: {:?}", frame);
 }
 

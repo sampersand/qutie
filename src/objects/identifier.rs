@@ -15,12 +15,12 @@ derive_impl!(Opers; Identifier);
 derive_impl!(Types; Identifier);
 derive_impl!(ToText; Identifier, id);
 derive_impl!(ToNumber; Identifier);
-derive_impl!(ToBool; Identifier);
+derive_impl!(ToBoolean; Identifier);
 
 
 use traits::misc::TryFrom;
-impl TryFrom for Identifier {
-   fn try_from(inp: &str) -> Option<Identifier> {
+impl <'a> TryFrom<&'a str> for Identifier {
+   fn try_from(inp: &'a str) -> Option<Identifier> {
 
       match inp.chars().nth(0) {
          Some(c) if is_char!(alphabetic; c) => {},

@@ -15,10 +15,10 @@ pub trait ToText {
 use objects::boolean::Boolean;
 use traits::misc::ToRc;
 
-pub trait ToBool {
-   fn to_boolean(&self) -> Rc<Boolean> {
-      Boolean::from(true).to_rc()
+pub trait ToBoolean {
+   fn to_boolean(&self) -> Result<Rc<Boolean>, ObjError> {
+      Ok(Boolean::from(true).to_rc())
    }
 }
 
-pub trait Types : ToNumber + ToText + ToBool {}
+pub trait Types : ToNumber + ToText + ToBoolean {}

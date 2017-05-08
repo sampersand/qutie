@@ -1,7 +1,7 @@
 macro_rules! exception {
-   (SYNTAX; $msg:expr $(,$args:expr)*) => { panic!($msg $(,$args)*) };
-   (ASSIGNMENT; $msg:expr $(,$args:expr)*) => { panic!($msg $(,$args)*) };
-   (RETRIEVAL; $msg:expr $(,$args:expr)*) => { panic!($msg $(,$args)*) }
+   (SYNTAX; $frame:expr, $msg:expr $(,$args:expr)*) => { panic!($msg $(,$args)*) };
+   (ASSIGNMENT; $frame:expr, $msg:expr $(,$args:expr)*) => { panic!($msg $(,$args)*) };
+   (RETRIEVAL; $frame:expr, $msg:expr $(,$args:expr)*) => { panic!($msg $(,$args)*) }
 }
 
 macro_rules! is_char {
@@ -56,7 +56,7 @@ macro_rules! derive_impl {
       use traits::types::ToText;
       impl ToText for $obj {}
    };
-   (ToBool; $obj:ident) => { use traits::types::ToBool; impl ToBool for $obj {} };
+   (ToBoolean; $obj:ident) => { use traits::types::ToBoolean; impl ToBoolean for $obj {} };
    (ToNumber; $obj:ident) => { use traits::types::ToNumber; impl ToNumber for $obj {} };
 
    (+; $obj:ident)  => { use traits::operator::OperAdd; impl OperAdd for $obj {} };

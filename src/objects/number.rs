@@ -15,11 +15,10 @@ derive_impl!(Castable; Number);
 derive_impl!(Opers; Number);
 derive_impl!(Types; Number);
 derive_impl!(ToText; Number, num);
-derive_impl!(ToBool; Number);
 
 use traits::misc::TryFrom;
-impl TryFrom for Number {
-   fn try_from(inp: &str) -> Option<Number> {
+impl <'a> TryFrom<&'a str> for Number {
+   fn try_from(inp: &'a str) -> Option<Number> {
       match inp.parse::<i32>() {
          Ok(num) => Some(Number{num: num}),
          Err(_) => None
@@ -31,6 +30,12 @@ use std::rc::Rc;
 impl ToNumber for Number {
    fn to_number(&self) -> Result<Rc<Number>, ObjError> {
       Ok(Number{num: self.num}.to_rc())
+   }
+}
+use traits::types::ToBoolean;
+impl ToBoolean for Number {
+   fn to_boolean(&self) -> Result<Rc<Boolean>, ObjError> {
+      Ok(Boolean::from(self.num != 0).to_rc())
    }
 }
 

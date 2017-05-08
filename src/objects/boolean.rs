@@ -15,16 +15,19 @@ derive_impl!(Opers; Boolean);
 derive_impl!(Types; Boolean);
 derive_impl!(ToText; Boolean, val);
 derive_impl!(ToNumber; Boolean);
-derive_impl!(ToBool; Boolean);
+derive_impl!(ToBoolean; Boolean);
 impl Boolean {
    pub fn from(inp: bool) -> Boolean {
       Boolean{val: inp}
    }
+   pub fn to_bool(&self) -> bool {
+      self.val
+   }
 }
 
 use traits::misc::TryFrom;
-impl TryFrom for Boolean {
-   fn try_from(inp: &str) -> Option<Boolean> {
+impl <'a> TryFrom<&'a str> for Boolean {
+   fn try_from(inp: &'a str) -> Option<Boolean> {
       match inp {
          "true" => Some(Boolean{val: true}),
          "false" => Some(Boolean{val: false}),

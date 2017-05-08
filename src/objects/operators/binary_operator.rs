@@ -87,8 +87,8 @@ impl BinaryOperator {
 }
 
 use traits::misc::TryFrom;
-impl TryFrom for BinaryOperator {
-   fn try_from(inp: &str) -> Option<BinaryOperator> {
+impl <'a> TryFrom<&'a str> for BinaryOperator {
+   fn try_from(inp: &'a str) -> Option<BinaryOperator> {
       match inp {
          "+" => Some(opers::ADD),
          "-" => Some(opers::SUB),
