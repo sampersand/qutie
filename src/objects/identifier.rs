@@ -1,5 +1,5 @@
 use objects::object::{Object, RcObject};
-use objects::result::ObjResult;
+use objects::result::{ObjResult, BoolResult};
 use parsing::frame::Frame;
 
 pub struct Identifier {
@@ -53,12 +53,12 @@ derive_impl!(*; Identifier);
 derive_impl!(/; Identifier);
 derive_impl!(%; Identifier);
 derive_impl!(**; Identifier);
-derive_impl!(==; Identifier);
-derive_impl!(!=; Identifier);
+derive_impl!(==/!=; Identifier);
 derive_impl!( <; Identifier);
 derive_impl!(<=; Identifier);
 derive_impl!( >; Identifier);
 derive_impl!(>=; Identifier);
+derive_impl!(!; Identifier);
 
 
 

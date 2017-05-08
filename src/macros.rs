@@ -66,11 +66,39 @@ macro_rules! derive_impl {
    (%; $obj:ident)  => { use traits::operator::OperMod; impl OperMod for $obj {} };
    (**; $obj:ident) => { use traits::operator::OperPow; impl OperPow for $obj {} };
    (==; $obj:ident) => { use traits::operator::OperEql; impl OperEql for $obj {} };
+   (==/!=; $obj:ident) => {
+      use traits::operator::{OperEql, OperNeq};
+      impl OperEql for $obj {
+         fn oper_eql(&self, other: RcObject, _: &mut Frame) -> BoolResult {
+            use objects::boolean;
+            Ok(boolean::Boolean::from(self._eql(other)).to_rc())
+         }
+      }
+      impl OperNeq for $obj {
+         fn oper_neq(&self, other: RcObject, frame: &mut Frame) -> BoolResult {
+            match self.oper_eql(other, frame) {
+               Ok(bool_) => bool_.oper_not(frame),
+               Err(err) => Err(err)
+            }
+         }
+      }
+   };
    (!=; $obj:ident) => { use traits::operator::OperNeq; impl OperNeq for $obj {} };
    (<; $obj:ident)  => { use traits::operator::OperLth; impl OperLth for $obj {} };
    (<=; $obj:ident) => { use traits::operator::OperLeq; impl OperLeq for $obj {} };
    (>; $obj:ident)  => { use traits::operator::OperGth; impl OperGth for $obj {} };
    (>=; $obj:ident) => { use traits::operator::OperGeq; impl OperGeq for $obj {} };
+   (!; $obj:ident)  => {
+      use traits::operator::OperNot;
+      impl OperNot for $obj {
+         fn oper_not(&self, frame: &mut Frame) -> BoolResult {
+            match self.to_boolean(){
+               Ok(bool_) => Ok(bool_._not().to_rc()),
+               Err(err) => Err(err)
+            }
+         }
+      }
+   };
 }
 
 macro_rules! is_a {

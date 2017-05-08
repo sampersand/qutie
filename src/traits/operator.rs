@@ -33,9 +33,15 @@ bool_oper_trait!(OperLth, oper_lth);
 bool_oper_trait!(OperLeq, oper_leq);
 bool_oper_trait!(OperGth, oper_gth);
 bool_oper_trait!(OperGeq, oper_geq);
+pub trait OperNot {
+   fn oper_not(&self, _: &mut Frame) -> BoolResult {
+      Err(ObjError::NotImplemented)
+   }
+}
 
 pub trait Opers : OperAdd + OperSub +
                   OperMul + OperDiv + OperMod +
                   OperPow + 
-                  OperEql + OperNeq + OperLth + OperLeq + OperGth + OperGeq
+                  OperEql + OperNeq + OperLth + OperLeq + OperGth + OperGeq +
+                  OperNot
                   {}

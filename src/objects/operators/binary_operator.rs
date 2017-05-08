@@ -3,7 +3,7 @@ use parsing::frame::Frame;
 use objects::object::RcObject;
 use objects::result::{ObjResult, BoolResult};
 
-enum FuncType {
+pub enum FuncType {
    Obj(fn(RcObject, RcObject, &mut Frame) -> ObjResult),
    Bool(fn(RcObject, RcObject, &mut Frame) -> BoolResult)
 }
@@ -11,7 +11,7 @@ enum FuncType {
 
 pub struct BinaryOperator {
    sigil: &'static str,
-   priority: u32,
+   priority: u8,
    is_left_assoc: bool,
    func: FuncType
 }
@@ -68,13 +68,14 @@ use std;
 derive_impl!(Display; BinaryOperator, sigil);
 derive_impl!(Debug; BinaryOperator, "Ob");
 
-impl BinaryOperator {
-   pub fn should_exec(&self, other: &BinaryOperator) -> bool {
-      (other.is_left_assoc && other.priority >= self.priority) ||
-      (!other.is_left_assoc && other.priority > self.priority)
+use objects::operators::Operator;
+impl Operator for BinaryOperator {
+   fn should_exec(&self, other: &Operator) -> bool {
+      (other.is_left_assoc() && other.priority() >= self.priority()) ||
+      (!other.is_left_assoc() && other.priority() > self.priority())
    }
 
-   pub fn exec(&self, frame: &mut Frame) {
+   fn exec(&self, frame: &mut Frame) {
       let rhs = frame.pop().expect("bad rhs for operator");
       let lhs = frame.pop().expect("bad lhs for operator");
       let res = 
@@ -84,6 +85,8 @@ impl BinaryOperator {
          };
       frame.push(res);
    }
+   fn priority(&self) -> u8 { self.priority }
+
 }
 
 use traits::misc::TryFrom;

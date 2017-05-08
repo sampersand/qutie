@@ -12,13 +12,7 @@ mod traits;
 
 fn main() {
 
-   let inp = "
-if(0){
-  a = 1;
-} else {
-  a = 2;
-}
-a == 2";
+   let inp = "!true";
    let mut stream = parsing::stream::Stream::from(inp);
    let mut frame = parsing::frame::Frame::new(stream);
    frame.exec();

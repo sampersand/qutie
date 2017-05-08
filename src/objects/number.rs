@@ -90,6 +90,7 @@ impl_bool_oper!(OperLth, oper_lth,  <);
 impl_bool_oper!(OperLeq, oper_leq, <=);
 impl_bool_oper!(OperGth, oper_gth,  >);
 impl_bool_oper!(OperGeq, oper_geq, >=);
+derive_impl!(!; Number);
 
 
 

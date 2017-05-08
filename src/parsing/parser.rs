@@ -4,6 +4,8 @@ use parsing::stream::Stream;
 use objects::number::Number;
 use objects::identifier::Identifier;
 use objects::operators::binary_operator::BinaryOperator;
+use objects::operators::unary_operator::UnaryOperator;
+use objects::operators::Operator;
 use traits::misc::{TryFrom, ToRc};
 use objects::object::RcObject;
 
@@ -101,7 +103,7 @@ fn try_obj_from(token: &str) -> Option<RcObject> {
    }
 }
 
-fn process_token(token: String, oper_stack: &mut Vec<BinaryOperator>, frame: &mut Frame) {
+fn process_token(token: String, oper_stack: &mut Vec<Box<Operator>>, frame: &mut Frame) {
    macro_rules! retrieve {
       ($obj:ident) => {
          expect!(Ok; frame.retrieve($obj.clone()); 
@@ -112,9 +114,11 @@ fn process_token(token: String, oper_stack: &mut Vec<BinaryOperator>, frame: &mu
       frame.pop(); // and do nothing
    } else if token == "," {
       // do nothing
-   } else if token == "$" {
+   } else if token == "$" { // debug
       panic!("found $ ({:?})", frame.pop());
    } else if try_handle_control_function(&token, frame) {
+      // do nothing, was already handled
+   } else if try_handle_constant(&token, frame) {
       // do nothing, was already handled
    } else if let Some(obj) = try_obj_from(&token) {
       if is_a!(obj, identifier) {
@@ -145,7 +149,13 @@ fn process_token(token: String, oper_stack: &mut Vec<BinaryOperator>, frame: &mu
          if oper2.should_exec(&oper) { oper2.exec(frame); }
          else { oper_stack.push(oper2); break }
       }
-      oper_stack.push(oper);
+      oper_stack.push(Box::new(oper));
+   } else if let Some(oper) = UnaryOperator::try_from(&token) {
+      while let Some(oper2) = oper_stack.pop() {
+         if oper2.should_exec(&oper) { oper2.exec(frame); }
+         else { oper_stack.push(oper2); break }
+      }
+      oper_stack.push(Box::new(oper));
    } else if let Some(mut new_frame) = frame.try_from(&token) {
       new_frame.exec();
    } else {
@@ -153,7 +163,7 @@ fn process_token(token: String, oper_stack: &mut Vec<BinaryOperator>, frame: &mu
    }
 }
 pub fn exec_frame(frame: &mut Frame){
-   let mut oper_stack: Vec<BinaryOperator> = vec![];
+   let mut oper_stack: Vec<Box<Operator>> = vec![];
    while let Some(token) = next_token(frame) {
       process_token(token, &mut oper_stack, frame);
    }
@@ -206,6 +216,14 @@ fn if_fn(frame: &mut Frame) {
 
 }
 
+fn try_handle_constant(constant: &str, frame: &mut Frame) -> bool {
+   use objects::boolean::Boolean;
+   match constant {
+      "true" => { frame.push(Boolean::from(true).to_rc()); true },
+      "false" => { frame.push(Boolean::from(false).to_rc()); true },
+      _ => false
+   }
+}
 fn try_handle_control_function(func: &str, frame: &mut Frame) -> bool {
    match func {
       "if" => if_fn(frame),
