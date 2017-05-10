@@ -20,8 +20,10 @@ mod traits;
 fn main() {
 
    let inp = "
-14 15;
-#1 = { 3 + 5 '}' /* foo } */ }
+14 + 5;
+1 = { 3 + 5 
+   'ab\\'cd'
+}
 ";
    let mut stream = parsing::stream::Stream::new(inp);
    println!("{:?}\n", parsing::parser::parse(&mut stream));

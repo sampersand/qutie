@@ -8,9 +8,9 @@ use objects::object::Object;
 
 pub fn parse<'a>(stream: &'a mut Stream<'a>) {
    let ref mut frame = Frame::new();
-   // while !stream.is_empty() {
+   while !stream.is_empty() {
       parse_expr(stream, frame);
-   // }
+   }
    print!("frame: {:?}", frame);
 }
 
@@ -22,16 +22,12 @@ fn parse_expr(stream: &mut Stream, frame: &mut Frame) {
 fn next_expr(stream: &mut Stream) -> Vec<Token> {
    use parsing::Token::*;
    let mut ret = vec![];
-   let mut i = 0;
-   while !stream.is_empty() {
-      i += 1;
-      if i >200 { panic!()}
-      match stream.next() {
+   while let Some(token) = stream.next() {
+      match token {
          LineTerminator(_) =>  break,
          Unknown(chr) => panic!("Unknown character: {:?}", chr),
          token @ _ => ret.push(token)
       }
-      println!("ret: {:?}", ret);
    }
    ret
 }

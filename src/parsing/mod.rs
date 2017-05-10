@@ -1,10 +1,14 @@
 #[derive(Debug)]
 pub enum Token {
    Identifier(String),
-   LineTerminator(char),
+   Path(String),
+   Assignment(String),
+   LineTerminator(String),
    Number(String),
    Operator(String),
-   Unknown(char),
+   Unknown(String),
+   Block((char, char), Vec<Token>),
+   Text(char, String)
 }
 
 pub mod stream;
