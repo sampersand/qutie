@@ -2,6 +2,7 @@ use std::iter::{Iterator, Peekable};
 use std::str::Chars;
 use parsing::token::{Token, Assignments, LineTerminators};
 use obj::objects::block;
+use parsing::identifier;
 
 pub struct Stream<'a> {
    source: Peekable<Chars<'a>>
@@ -61,7 +62,7 @@ impl <'a> Stream <'a> {
          if acc.chars().last().unwrap() == '.' { panic!("bad identifier: {:?}", acc) }
          Token::Path(acc)
       } else {
-         Token::Identifier(acc)
+         Token::Identifier(identifier::Identifier::from(acc))
       }
    }
    fn next_number(&mut self) -> Token {

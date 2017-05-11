@@ -1,5 +1,6 @@
 use parsing::operator::Operator;
 use obj::objects::block;
+use parsing::identifier;
 use std;
 
 #[derive(Debug, Clone, Copy)]
@@ -56,8 +57,8 @@ impl_defaults!(Display; to_string; LineTerminators);
 /*****************/
 
 pub enum Token {
-   Identifier(String),
-   Path(String),
+   Identifier(identifier::Identifier),
+   Path(String), /* todo: this */
    Assignment(Assignments),
    LineTerminator(LineTerminators),
    Number(String),

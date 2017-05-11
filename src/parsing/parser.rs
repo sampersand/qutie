@@ -6,7 +6,7 @@ use obj::traits::ToRc;
 use std::rc::Rc;
 use obj::objects::number::Number;
 use obj::objects::object::Object;
-use obj::objects::identifier::Identifier;
+
 
 pub fn parse<'a>(stream: &'a mut Stream<'a>) {
    let ref mut frame = Frame::new();
@@ -33,7 +33,14 @@ fn parse_expr(tokens: Vec<Token>, frame: &mut Frame) {
    for token in tokens {
       println!("token: {:?}", token);
       match token {
-         Token::Identifier(id)        => frame.push(Identifier::from(id).to_rc()),
+         Token::Identifier(id)        => 
+            {
+               if let Some(val) = frame.get(&id) {
+                  frame.push(val)
+               } else {
+                  panic!("unknown identifier: {:?}", id)
+               }
+            },
          Token::Number(num)           => frame.push(Number::from(num).to_rc()),
          Token::Operator(oper)        => 
          {
