@@ -34,7 +34,10 @@ fn next_expr(stream: &mut Stream) -> Vec<Token> {
 }
 
 fn handle_identifier(id: Identifier, frame: &mut Frame) {
-   if let Some(val) = frame.get(&id) {
+   use obj::constants;
+   if let Some(constant) = constants::get_constant(&id) {
+      frame.push(constant);
+   } else if let Some(val) = frame.get(&id) {
       if false /*val is a function */ {
          /* val.call next argument in tokens */ panic!()
       } else {
@@ -68,7 +71,7 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
 
    let is_assignment = 
       2 < tokens.len() && 
-      match tokens.get(1).expect("no assignment!") {
+      match tokens.get(1).unwrap() {
          &Token::Assignment(_) => true,
          _ => false
       };

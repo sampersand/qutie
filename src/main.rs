@@ -1,5 +1,8 @@
 #![allow(dead_code, unused)]
 
+#[macro_use]
+extern crate lazy_static;
+
 /*
 Car = class(){
    __init = func(self, maker, wheels, doors){
@@ -20,7 +23,7 @@ mod obj;
 
 fn main() {
    let inp = "
-1 < 2
+true
 ";
    let mut stream = parsing::stream::Stream::new(inp);
    println!("{:?}\n", parsing::parser::parse(&mut stream));

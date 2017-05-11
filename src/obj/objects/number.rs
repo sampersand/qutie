@@ -47,7 +47,7 @@ macro_rules! num_operator {
             if !other.is_a(ObjType::Number) {
                return Err(ObjError::NotImplemented)
             }
-            Ok(Boolean::new(self.num $oper cast_as!(other, Number).num).to_rc())
+            Ok(Boolean::get(self.num $oper cast_as!(other, Number).num).to_rc())
          }
       }
    }
