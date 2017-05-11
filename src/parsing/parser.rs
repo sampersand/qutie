@@ -44,10 +44,15 @@ fn handle_identifier(id: Identifier, tokens: &mut Vec<Token>, frame: &mut Frame)
       return
    }
    if &*id == "return" {
-      match tokens.get(0) {
-         None => {},
-         Some(e) => handle(vec![e.clone()], frame)
+      let mut acc = vec![];
+      while !tokens.is_empty() {
+         match tokens.remove(0) {
+            Token::LineTerminator => break,
+            token @ _ => acc.push(token)
+         }
       };
+      print!("acc: {:?}", acc);
+      handle(acc, frame);
       tokens.clear();
       return
    }
@@ -61,6 +66,7 @@ fn handle_identifier(id: Identifier, tokens: &mut Vec<Token>, frame: &mut Frame)
       }
       return
    }
+   println!("frame: {:?}", frame);
    panic!("unknown identifier: {:?}", id);
 }
 

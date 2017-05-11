@@ -29,8 +29,8 @@ impl <'a> Frame<'a> {
             }
       }
    }
-   pub fn spawn_child<'b>(&self) -> Frame<'b> {
-      Frame::new(None) // TODO: parent = this one 
+   pub fn spawn_child<'b>(&'b self) -> Frame<'b> {
+      Frame::new(Some(self)) // TODO: parent = this one 
    }
 
    pub fn is_empty(&self) -> bool {
@@ -49,7 +49,7 @@ impl <'a> Frame<'a> {
       self.stack.pop()
    }
 
-   pub fn stack_len(&mut self) -> usize {
+   pub fn stack_len(&self) -> usize {
       self.stack.len()
    }
 

@@ -26,11 +26,14 @@ fn main() {
 
 factorial = func(inp) {
    if ( inp <= 1) {
-      return [1]
-   }
+      return 1;
+   } else {
+      inp * factorial(inp - 1)
+   };
+   __debug inp
 };
 
-__debug(factorial(1))
+__debug(factorial(5))
 
 ";
    let mut stream = parsing::stream::Stream::new(inp);

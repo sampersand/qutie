@@ -23,11 +23,15 @@ impl Function {
       /* this is kinda hacky way to do things */
       let orig_length = frame.stack_len();
       parser::handle(args, frame);
-      let mut new_frame = frame.spawn_child();
       let mut self_args = self.args.clone();
       let mut i = 0;
+      let mut acc = vec![];
       while orig_length < frame.stack_len()  {
-         new_frame.set(self_args.pop().unwrap(), frame.pop().unwrap());
+         acc.insert(0, frame.pop().unwrap());
+      }
+      let mut new_frame = frame.spawn_child();
+      while !acc.is_empty() {
+         new_frame.set(self_args.pop().unwrap(), acc.pop().unwrap());
       }
       parser::handle(self.body.clone(), &mut new_frame);
       if let Some(ret) = new_frame.pop() {
