@@ -37,6 +37,7 @@ macro_rules! is_numeric { ($c:expr) => ( $c.is_numeric() || $c == '_' ) }
 macro_rules! is_aplhanumeric { ($c:expr) => ( is_alpha!($c) || is_numeric!($c) ) }
 macro_rules! is_quote { ($c:expr) => ( vec!['`', '\'', '"'].contains(&$c) ) }
 macro_rules! is_block_start { ($c:expr) => ( vec!['(', '[', '{'].contains(&$c) ) }
+macro_rules! is_block_end { ($c:expr) => ( vec![')', ']', '}'].contains(&$c) ) }
 macro_rules! get_rparen {
    ($l:expr) => (match $l {
       '(' => ')', 
@@ -138,29 +139,26 @@ impl <'a> Stream <'a> {
    fn next_block(&mut self) -> Token {
       let lparen = self.source.next().unwrap();
       let rparen = get_rparen!(lparen);
-
-      if *self.source.peek().unwrap() == rparen {
-         return Token::Block((lparen, rparen), vec![])
-      }
-
       let mut ret = vec![];
       loop {
          match self.next() {
             None => panic!("no rhs found for lparen: {:?}", lparen),
-            Some(token) => {
-               ret.push(token);
-               self.strip_whitespace();
-               match self.source.peek() {
-                  Some(c) if *c == rparen => break,
-                  _ => {}
+            Some(token) => 
+               match token {
+                  Token::RParen(p) => 
+                     if p == rparen {
+                        break
+                     } else {
+                        panic!("bad rparen {:?} for lparen {:?}", p, lparen)
+                     },
+                  _ => ret.push(token)
                }
-            }
          }
       }
-      assert_eq!(get_rparen!(lparen), self.source.next().expect("bad"));
       Token::Block((lparen, rparen), ret)
    }
    fn handle_comment(&mut self) -> Option<Token> {
+      assert!(is_comment!(self.source.next().unwrap()));
       loop {
          match self.source.peek() {
             Some(c) if *c == '\n' => break,
@@ -168,12 +166,12 @@ impl <'a> Stream <'a> {
             _ => {}
          }
          self.source.next();
-      } 
+      }
       self.next()
    }
 
    pub fn next(&mut self) -> Option<Token> {
-      macro_rules! next_chr { () => (self.source.next().unwrap().to_string()) }
+      macro_rules! next_chr { () => (self.source.next().unwrap()) }
       self.strip_whitespace();
       if self.is_empty() {
          return None
@@ -181,15 +179,16 @@ impl <'a> Stream <'a> {
       let c = *self.source.peek().unwrap();
 
       match c {
-         _ if is_assignment!(c)  => Some(Token::Assignment(next_chr!())),
-         _ if is_terminator!(c)  => Some(Token::LineTerminator(next_chr!())),
+         _ if is_assignment!(c)  => Some(Token::Assignment(next_chr!().to_string())),
+         _ if is_terminator!(c)  => Some(Token::LineTerminator(next_chr!().to_string())),
          _ if is_comment!(c)     =>      self.handle_comment() /* will be some or none*/,
          _ if is_alpha!(c)       => Some(self.next_identifier()),
          _ if is_numeric!(c)     => Some(self.next_number()),
          _ if is_quote!(c)       => Some(self.next_text()),
          _ if is_block_start!(c) => Some(self.next_block()),
+         _ if is_block_end!(c)   => Some(Token::RParen(next_chr!())),
          _ if is_oper_start!(c)  => Some(self.next_oper()),
-         _                       => Some(Token::Unknown(next_chr!()))
+         _                       => Some(Token::Unknown(next_chr!().to_string()))
       }
    }
 }
