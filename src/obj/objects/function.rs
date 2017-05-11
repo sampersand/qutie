@@ -20,7 +20,6 @@ impl Function {
       concat_all!("<", self.file, ">")
    }
    pub fn qt_call(&self, args: Vec<Token>, frame: &mut Frame) -> Rc<Object> {
-      println!("frame: {:?}", frame);
       /* this is kinda hacky way to do things */
       let orig_length = frame.stack_len();
       parser::handle(args, frame);

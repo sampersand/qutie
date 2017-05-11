@@ -43,6 +43,14 @@ fn handle_identifier(id: Identifier, tokens: &mut Vec<Token>, frame: &mut Frame)
       /* do nothing, was already handeled */
       return
    }
+   if &*id == "return" {
+      match tokens.get(0) {
+         None => {},
+         Some(e) => handle(vec![e.clone()], frame)
+      };
+      tokens.clear();
+      return
+   }
    if let Some(ref val) = frame.get(&id) {
       if val.is_a(ObjType::Function) {
          let args = next_block!(tokens);

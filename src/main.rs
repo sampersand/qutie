@@ -24,10 +24,13 @@ mod obj;
 fn main() {
    let inp = "
 
-add = func(a, b){
-   a + b
+factorial = func(inp) {
+   if ( inp <= 1) {
+      return [1]
+   }
 };
-1 + add(2, 3)
+
+__debug(factorial(1))
 
 ";
    let mut stream = parsing::stream::Stream::new(inp);
@@ -35,6 +38,11 @@ add = func(a, b){
    // println!("{:?}\n", res);
    println!("\n--[done]--");
 }
+
+
+
+
+
 
 
 
