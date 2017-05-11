@@ -11,10 +11,20 @@ impl <'a> Frame<'a> {
    pub fn new() -> Frame<'a> {
       Frame {
          parent: None,
-         stack: vec![],
+         stack: Vec::<Rc<Object>>::new(),
       }
    }
+
    pub fn push(&mut self, obj: Rc<Object>) {
       self.stack.push(obj);
    }
+
+   pub fn is_empty(&self) -> bool {
+      self.stack.is_empty()
+   }
+
+   pub fn pop(&mut self) -> Option<Rc<Object>> {
+      self.stack.pop()
+   }
+
 }

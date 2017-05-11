@@ -22,7 +22,6 @@ fn handle_assignment(tokens: Vec<Token>, frame: &mut Frame) {
 
 fn parse_expr(tokens: Vec<Token>, frame: &mut Frame) {
    if tokens.is_empty() { return }
-   let mut stack = Vec::<Rc<Object>>::new();
    let mut oper_stack = Vec::<Operator>::new();
 
    let is_assignment = 
@@ -34,15 +33,15 @@ fn parse_expr(tokens: Vec<Token>, frame: &mut Frame) {
    for token in tokens {
       println!("token: {:?}", token);
       match token {
-         Token::Identifier(id)        => stack.push(Identifier::from(id).to_rc()),
-         Token::Number(num)           => stack.push(Number::from(num).to_rc()),
+         Token::Identifier(id)        => frame.push(Identifier::from(id).to_rc()),
+         Token::Number(num)           => frame.push(Number::from(num).to_rc()),
          Token::Operator(oper)        => 
          {
             while !oper_stack.is_empty() {
                if !oper_stack.last().unwrap().should_exec(&oper) {
                   break
                }
-               oper_stack.pop().unwrap().exec(&mut stack);
+               oper_stack.pop().unwrap().exec(frame);
             }
             oper_stack.push(oper)
          }
@@ -57,11 +56,11 @@ fn parse_expr(tokens: Vec<Token>, frame: &mut Frame) {
       }
    };
    while let Some(oper) = oper_stack.pop() {
-      oper.exec(&mut stack);
+      oper.exec(frame);
    }
 
    println!("opers: {:?}", oper_stack);
-   println!("stack: {:?}", stack);
+   println!("stack: {:?}", frame);
 }
 
 fn next_expr(stream: &mut Stream) -> Vec<Token> {

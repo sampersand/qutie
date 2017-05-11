@@ -1,4 +1,5 @@
 use parsing::token::Token;
+use parsing::frame::Frame;
 use std::rc::Rc;
 use obj::objects::object::Object;
 use obj::result::{ObjResult, ObjError};
@@ -28,22 +29,22 @@ impl Operator {
       2
    }
 
-   fn exec_binary(&self, stack: &mut Vec<Rc<Object>>) -> ObjResult {
+   fn exec_binary(&self, stack: &mut Frame) -> ObjResult {
       let rhs = stack.pop().expect("Stack has too few operands!");
       let lhs = stack.pop().expect("Stack has too few operands!");
       use self::Operator::*;
       use obj::traits::operators::*;
       match *self {
-         Add => lhs.qt_add(rhs),
-         Sub => lhs.qt_sub(rhs),
-         Mul => lhs.qt_mul(rhs),
-         Div => lhs.qt_div(rhs),
-         Mod => lhs.qt_mod(rhs),
-         Pow => lhs.qt_pow(rhs),
+         Add => lhs.qt_add(&rhs),
+         Sub => lhs.qt_sub(&rhs),
+         Mul => lhs.qt_mul(&rhs),
+         Div => lhs.qt_div(&rhs),
+         Mod => lhs.qt_mod(&rhs),
+         Pow => lhs.qt_pow(&rhs),
       }
    }
 
-   pub fn exec(&self, stack: &mut Vec<Rc<Object>>) {
+   pub fn exec(&self, stack: &mut Frame) {
       if self.operands() == 2 {
          match self.exec_binary(stack) {
             Ok(obj) => stack.push(obj),

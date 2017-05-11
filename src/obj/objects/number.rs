@@ -33,7 +33,7 @@ macro_rules! num_operator {
    ($oper_trait:ident, $func:ident, $oper:tt) => {
       use obj::traits::operators::$oper_trait;
       impl $oper_trait for Number {
-         fn $func(&self, other: Rc<Object>) -> ObjResult {
+         fn $func(&self, other: &Rc<Object>) -> ObjResult {
             if !other.is_a(ObjType::Number) {
                return Err(ObjError::NotImplemented)
             }

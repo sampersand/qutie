@@ -13,7 +13,7 @@ pub mod operators {
    macro_rules! def_binary_oper {
       ($name:ident, $func:ident) => {
          pub trait $name {
-            fn $func(&self, other: Rc<Object>) -> ObjResult{
+            fn $func(&self, other: &Rc<Object>) -> ObjResult{
                Err(ObjError::NotImplemented)
             }
          }
