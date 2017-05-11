@@ -1,4 +1,4 @@
-use objects::object::Object;
+use obj::objects::object::Object;
 
 pub struct Number {
    num: i32
@@ -17,7 +17,7 @@ impl std::fmt::Display for Number {
    }
 }
 
-use objects::traits::ToRc;
+use obj::traits::ToRc;
 
 impl From<String> for Number {
    fn from(inp: String) -> Number {
@@ -31,10 +31,10 @@ impl ToRc for Number {}
 impl Object for Number {}
 
 use std::rc::Rc;
-use objects::result::ObjResult;
+use obj::result::ObjResult;
 macro_rules! num_operator {
    ($oper:ident, $func:ident) => {
-      use objects::traits::operators::$oper;
+      use obj::traits::operators::$oper;
       impl $oper for Number {
          fn $func(&self, _: Rc<Object>) -> ObjResult {
             panic!("todo: oper")

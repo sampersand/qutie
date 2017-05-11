@@ -1,7 +1,7 @@
 use std::iter::{Iterator, Peekable};
 use std::str::Chars;
 use parsing::token::{Token, Assignments, LineTerminators};
-use objects::block;
+use obj::objects::block;
 
 pub struct Stream<'a> {
    source: Peekable<Chars<'a>>

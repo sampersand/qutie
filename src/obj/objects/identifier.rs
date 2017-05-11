@@ -1,4 +1,4 @@
-use objects::object::Object;
+use obj::objects::object::Object;
 
 pub struct Identifier {
    id: String
@@ -17,7 +17,7 @@ impl std::fmt::Display for Identifier {
    }
 }
 
-use objects::traits::ToRc;
+use obj::traits::ToRc;
 
 impl From<String> for Identifier {
    fn from(inp: String) -> Identifier {

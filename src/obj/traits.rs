@@ -7,8 +7,8 @@ pub trait ToRc : Sized {
 /************* operators *************/
 pub mod operators {
    use std::rc::Rc;
-   use objects::object::Object;
-   use objects::result::{ObjResult, ObjError};
+   use obj::objects::object::Object;
+   use obj::result::{ObjResult, ObjError};
    macro_rules! def_binary_oper {
       ($name:ident, $func:ident) => {
          pub trait $name {

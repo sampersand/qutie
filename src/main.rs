@@ -16,7 +16,7 @@ Car = class(){
 #[macro_use]
 mod macros;
 mod parsing;
-mod objects;
+mod obj;
 
 fn main() {
    let inp = " 1 + 2 ";

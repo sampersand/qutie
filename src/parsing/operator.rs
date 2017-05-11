@@ -1,7 +1,7 @@
 use parsing::token::Token;
 use std::rc::Rc;
-use objects::object::Object;
-use objects::result::{ObjResult, ObjError};
+use obj::objects::object::Object;
+use obj::result::{ObjResult, ObjError};
 
 #[derive(Debug)]
 pub enum Operator {
@@ -32,7 +32,7 @@ impl Operator {
       let rhs = stack.pop().expect("Stack has too few operands!");
       let lhs = stack.pop().expect("Stack has too few operands!");
       use self::Operator::*;
-      use objects::traits::operators::*;
+      use obj::traits::operators::*;
       match *self {
          Add => lhs.qt_add(rhs),
          Sub => lhs.qt_sub(rhs),

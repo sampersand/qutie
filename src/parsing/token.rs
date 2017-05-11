@@ -1,5 +1,5 @@
 use parsing::operator::Operator;
-use objects::block;
+use obj::objects::block;
 use std;
 
 #[derive(Debug, Clone, Copy)]

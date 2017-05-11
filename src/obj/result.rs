@@ -1,5 +1,5 @@
 use std::rc::Rc;
-use objects::object::Object;
+use obj::objects::object::Object;
 #[derive(Debug)]
 pub enum ObjError {
    NotImplemented,

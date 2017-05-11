@@ -2,11 +2,11 @@ use parsing::stream::Stream;
 use parsing::frame::Frame;
 use parsing::token::Token;
 use parsing::operator::Operator;
-use objects::traits::ToRc;
+use obj::traits::ToRc;
 use std::rc::Rc;
-use objects::number::Number;
-use objects::object::Object;
-use objects::identifier::Identifier;
+use obj::objects::number::Number;
+use obj::objects::object::Object;
+use obj::objects::identifier::Identifier;
 
 pub fn parse<'a>(stream: &'a mut Stream<'a>) {
    let ref mut frame = Frame::new();

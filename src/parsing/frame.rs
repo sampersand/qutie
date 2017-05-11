@@ -1,4 +1,4 @@
-use objects::object::Object;
+use obj::objects::object::Object;
 use std::rc::Rc;
 
 #[derive(Debug)]

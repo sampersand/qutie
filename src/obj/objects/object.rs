@@ -1,12 +1,12 @@
 use std::fmt::Debug;
 use std::rc::Rc;
-use objects::result::{ObjResult, ObjError};
+use obj::result::{ObjResult, ObjError};
 
 pub trait Object: Debug {}
 
 macro_rules! default_oper {
    ($oper:ident, $func:ident) => {
-      use objects::traits::operators::$oper;
+      use obj::traits::operators::$oper;
       impl $oper for Object {
          fn $func(&self, _: Rc<Object>) -> ObjResult {
             Err(ObjError::NotImplemented)
