@@ -13,6 +13,8 @@ pub fn parse<'a>(stream: &'a mut Stream<'a>) {
    let ref mut frame = Frame::new();
    while !stream.is_empty() {
       parse_expr(next_expr(stream), frame);
+      frame.pop(); /* get rid of the thing on the stack,
+                      since we just finished a line there should be nothing there */
    }
    println!("frame: {:?}", frame);
 }
@@ -21,7 +23,7 @@ fn next_expr(stream: &mut Stream) -> Vec<Token> {
    let mut ret = vec![];
    while let Some(token) = stream.next() {
       match token {
-         Token::LineTerminator(end) => { ret.push(Token::LineTerminator(end)); break },
+         Token::LineTerminator(_) => break,
          Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
          token @ _ => ret.push(token)
       }
@@ -97,14 +99,14 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
                LParen::Curly => panic!("What to do with curly?"),
             },
          Token::Unknown(_)        => unreachable!(),
-         Token::LineTerminator(_) =>
-            {
-               while let Some(oper) = oper_stack.pop() {
-                  oper.exec(frame);
-               }
-               frame.pop();
-               return
-            },
+         Token::LineTerminator(_) => unreachable!(),
+            // {
+            //    while let Some(oper) = oper_stack.pop() {
+            //       oper.exec(frame);
+            //    }
+            //    frame.pop();
+            //    return
+            // },
          Token::Assignment(_)     => unreachable!(),
          Token::RParen(_)         => unreachable!(), 
       }
