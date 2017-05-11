@@ -3,14 +3,15 @@ use parsing::token::Token;
 use parsing::frame::Frame;
 use obj::objects::object::{Object, ObjType};
 use obj::objects::boolean;
+use obj::objects::function::Function;
 use obj::traits::ToRc;
 use std::rc::Rc;
-use parsing::parser::parse_expr;
+use parsing::parser::handle;
 use obj::objects::block::Block;
 
 macro_rules! exec {
    ($tokens:expr, $frame:expr) => {{
-      parse_expr($tokens, $frame);
+      handle($tokens, $frame);
       $frame.pop().unwrap()
    }}
 }
@@ -49,14 +50,14 @@ fn handle_if(tokens: &mut Vec<Token>, frame: &mut Frame) {
       };
    if cond.to_boolean().expect("can't convert condition to boolean").val {
       if if_true.is_a(ObjType::Block) {
-         parse_expr(cast_as!(&if_true, Block).body.clone(), frame);
+         handle(cast_as!(&if_true, Block).body.clone(), frame);
       } else {
          frame.push(if_true)
       }
    } else {
       if let Some(if_false) = if_false {
          if if_false.is_a(ObjType::Block) {
-            parse_expr(cast_as!(&if_false, Block).body.clone(), frame);
+            handle(cast_as!(&if_false, Block).body.clone(), frame);
          } else {
             frame.push(if_false)
          }
@@ -65,29 +66,37 @@ fn handle_if(tokens: &mut Vec<Token>, frame: &mut Frame) {
 }
 
 fn handle_while(tokens: &mut Vec<Token>, frame: &mut Frame) {
-   let cond = next_arg!(tokens, frame, "no condition"); /* could go til we get a squiggly block */
-   let body = next_arg!(tokens, frame, "no body");
-   let cond = cast_as!(&cond, Block);
-   let body = cast_as!(&body, Block);
-   while exec!(cond.body.clone(), frame).
+   let cond = next_block!(tokens);
+   let body = next_block!(tokens);
+   while exec!(cond.clone(), frame).
             to_boolean().
             expect("can't convert condition to boolean").
             val {
-      parse_expr(body.body.clone(), frame);
+      handle(body.clone(), frame);
    }
-fn handle_debug(tokens: &mut Vec<Token>, frame: &mut Frame) {
-   let args = next_arg!(tokens, frame, "no debug arg");
-   println!("debug: {:?}", args);
 }
+fn handle_func(tokens: &mut Vec<Token>, frame: &mut Frame) {
+   let mut args = next_block!(tokens);
+   let mut ident_args = vec![];
+   while !args.is_empty() {
+      match args.remove(0) {
+         Token::Identifier(ident) => ident_args.push(ident),
+         Token::Separator => { /* do nothing cause its a separator */ }
+         arg @ _ => panic!("unexpected non-ident token type: {:?}", arg)
+      }   
+   }
+   let body = next_block!(tokens);
+   let file = frame.file.clone();
+   let lineno = frame.lineno;
+   frame.push(Function::new(file, lineno, ident_args, body.clone()).to_rc());
 }
-
-
 
 pub fn handle_control(inp: &Identifier, tokens: &mut Vec<Token>, frame: &mut Frame) -> bool {
    match &**inp {
       "__debug" => handle_debug(tokens, frame),
       "if" => handle_if(tokens, frame),
       "while" => handle_while(tokens, frame),
+      "func" => handle_func(tokens, frame),
       _ => return false
    } ;
    true

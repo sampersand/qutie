@@ -24,11 +24,10 @@ mod obj;
 fn main() {
    let inp = "
 
-i = 0;
-while { i < 5 } {
-   __debug i;
-   i = i + 1;
-}
+add = func(a, b){
+   a + b
+};
+1 + add(2, 3)
 
 ";
    let mut stream = parsing::stream::Stream::new(inp);

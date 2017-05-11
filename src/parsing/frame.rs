@@ -5,18 +5,25 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Frame<'a> {
+   pub file: String,
+   pub lineno: usize,
    parent: Option<&'a Frame<'a>>,
    stack: Vec<Rc<Object>>,
    knowns: HashMap<Identifier, Rc<Object>>
 }
 
 impl <'a> Frame<'a> {
-   pub fn new() -> Frame<'a> {
+   pub fn new(parent: Option<&'a Frame>) -> Frame<'a> {
       Frame {
-         parent: None,
+         file: "<todo: file>".to_string(),
+         lineno: 0,
+         parent: parent,
          stack: Vec::new(),
          knowns: HashMap::new()
       }
+   }
+   pub fn spawn_child<'b>(&self) -> Frame<'b> {
+      Frame::new(None) // TODO: parent = this one 
    }
 
    pub fn push(&mut self, obj: Rc<Object>) {
@@ -38,6 +45,9 @@ impl <'a> Frame<'a> {
    }
    pub fn set(&mut self, key: Identifier, val: Rc<Object>) {
       self.knowns.insert(key, val);
+   }
+   pub fn stack_len(&mut self) -> usize {
+      self.stack.len()
    }
 }
 

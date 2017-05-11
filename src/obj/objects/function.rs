@@ -1,18 +1,41 @@
 use obj::objects::object::{Object, ObjType};
 use obj::objects::block::Block;
+use parsing::identifier::Identifier;
+use parsing::frame::Frame;
+use parsing::token::Token;
+use parsing::parser;
 use std::rc::Rc;
 pub struct Function {
    file: String, /* todo: update this */
    line: usize,
-   body: Rc<Block>
+   args: Vec<Identifier>,
+   body: Vec<Token>
 }
 
 impl Function {
-   pub fn new(file: String, line: usize, body: Rc<Block>) -> Function {
-      Function{ file: file, line: line, body: body }
+   pub fn new(file: String, line: usize, args: Vec<Identifier>, body: Vec<Token>) -> Function {
+      Function{ file: file, line: line, args: args, body: body }
    }
    pub fn to_string(&self) -> String {
       concat_all!("<", self.file, ">")
+   }
+   pub fn qt_call(&self, args: Vec<Token>, frame: &mut Frame) -> Rc<Object> {
+      println!("frame: {:?}", frame);
+      /* this is kinda hacky way to do things */
+      let orig_length = frame.stack_len();
+      parser::handle(args, frame);
+      let mut new_frame = frame.spawn_child();
+      let mut self_args = self.args.clone();
+      let mut i = 0;
+      while orig_length < frame.stack_len()  {
+         new_frame.set(self_args.pop().unwrap(), frame.pop().unwrap());
+      }
+      parser::handle(self.body.clone(), &mut new_frame);
+      if let Some(ret) = new_frame.pop() {
+         ret
+      } else {
+         panic!("todo: None")
+      }
    }
 }
 

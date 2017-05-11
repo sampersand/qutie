@@ -1,3 +1,12 @@
+macro_rules! next_block {
+    ($tokens:expr) => {
+      match $tokens.remove(0) {
+         Token::Block((_, _), body) => body,
+         o @ _ => panic!("expected a block, not {:?}", o)
+      }
+    }
+}
+
 macro_rules! concat_all {
    ($start:expr $(, $child:expr)+ ) => {{
       let mut ret = String::new();
@@ -14,7 +23,7 @@ macro_rules! cast_as {
       unsafe {
          transmute::<&Rc<Object>, &Rc<$ty>>($obj)
       }
-   }}
+   }};
 }
 macro_rules! todo {
    ($msg:expr $(,$arg:expr)*) => {{
