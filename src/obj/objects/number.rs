@@ -15,8 +15,8 @@ impl Number {
       Number{num: inp}
    }
 }
-impl From<String> for Number {
-   fn from(inp: String) -> Number {
+impl <'a> From<&'a str> for Number {
+   fn from(inp: &'a str) -> Number {
       match inp.parse::<i32>() {
          Ok(num) => Number::new(num),
          Err(_) => panic!("can't convert {} to a number", inp)

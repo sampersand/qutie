@@ -1,5 +1,6 @@
 use parsing::stream::Stream;
 use parsing::frame::Frame;
+use parsing::identifier::Identifier;
 use parsing::token::Token;
 use parsing::operator::Operator;
 use obj::traits::ToRc;
@@ -20,15 +21,28 @@ pub fn parse<'a>(stream: &'a mut Stream<'a>) {
 }
 
 fn next_expr(stream: &mut Stream) -> Vec<Token> {
-   let mut ret = vec![];
+   let mut expr = vec![];
    while let Some(token) = stream.next() {
       match token {
          Token::LineTerminator(_) => break,
          Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
-         token @ _ => ret.push(token)
+         token @ _ => expr.push(token)
       }
    }
-   ret
+   println!("next_expr: {:?}", expr);
+   expr
+}
+
+fn handle_identifier(id: Identifier, frame: &mut Frame) {
+   if let Some(val) = frame.get(&id) {
+      if false /*val is a function */ {
+         /* val.call next argument in tokens */ panic!()
+      } else {
+         frame.push(val)
+      }
+   } else {
+      panic!("unknown identifier: {:?}", id)
+   }
 }
 
 fn handle_assignment(mut tokens: Vec<Token>, frame: &mut Frame) {
@@ -67,19 +81,8 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
    let mut oper_stack = Vec::<Operator>::new();
    for token in tokens {
       match token {
-         Token::Identifier(id)        => 
-            {
-               if let Some(val) = frame.get(&id) {
-                  if false /*val is a function */ {
-                     /* val.call next argument in tokens */ panic!()
-                  } else {
-                     frame.push(val)
-                  }
-               } else {
-                  panic!("unknown identifier: {:?}", id)
-               }
-            },
-         Token::Number(num)           => frame.push(Number::from(num).to_rc()),
+         Token::Identifier(id)        => handle_identifier(id, frame),
+         Token::Number(num)           => frame.push(Number::from(num.as_str()).to_rc()),
          Token::Operator(oper)        => 
             {
                while !oper_stack.is_empty() {

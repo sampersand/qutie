@@ -19,4 +19,5 @@ pub enum ObjType {
    Text,
    Block,
    Constant,
+   Boolean,
 }
