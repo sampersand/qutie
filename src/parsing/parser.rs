@@ -110,13 +110,16 @@ pub fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
                LParen::Curly => frame.push(Block::new((lp, rp), body).to_rc()),
             },
          Token::Unknown(_)        => unreachable!(),
-         Token::LineTerminator(_) => unreachable!(),
          Token::Assignment(_)     => unreachable!(),
          Token::RParen(_)         => unreachable!(), 
+         Token::LineTerminator(_) => break
       }
    };
    while let Some(oper) = oper_stack.pop() {
       oper.exec(frame);
+   }
+   if !tokens.is_empty() {
+      parse_expr(tokens, frame)
    }
 }
 

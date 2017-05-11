@@ -73,6 +73,14 @@ impl Block {
    pub fn new(parens: (LParen, RParen), body: Vec<Token>) -> Block {
       Block{ parens: parens, body: body }
    }
+   pub fn to_string(&self) -> String {
+      let mut ret = String::new();
+      ret.push_str(self.parens.0.to_string().as_str());
+      // ret.push_str(self.body.to_string().as_str());
+      ret.push_str("...");
+      ret.push_str(self.parens.1.to_string().as_str());
+      return ret
+   }
 }
 
 use obj::objects::object::{Object, ObjType};
