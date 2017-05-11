@@ -56,6 +56,7 @@ impl_defaults!(Display; to_string; LineTerminators);
 
 /*****************/
 
+#[derive(Clone)]
 pub enum Token {
    Identifier(identifier::Identifier),
    Path(String), /* todo: this */

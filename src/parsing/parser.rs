@@ -7,17 +7,15 @@ use obj::traits::ToRc;
 use std::rc::Rc;
 use obj::objects::number::Number;
 use obj::objects::object::Object;
-use obj::objects::block::LParen;
+use obj::objects::block::{LParen, Block};
 
 
 pub fn parse<'a>(stream: &'a mut Stream<'a>) {
    let ref mut frame = Frame::new();
    while !stream.is_empty() {
       parse_expr(next_expr(stream), frame);
-      frame.pop(); /* get rid of the thing on the stack,
-                     since we just finished a line there should be nothing there */
+      frame.pop(); /* since we finished a line, there should be one thing on the stack */
    }
-   println!("frame: {:?}", frame);
 }
 
 fn next_expr(stream: &mut Stream) -> Vec<Token> {
@@ -29,23 +27,29 @@ fn next_expr(stream: &mut Stream) -> Vec<Token> {
          token @ _ => expr.push(token)
       }
    }
-   println!("next_expr: {:?}", expr);
    expr
 }
 
-fn handle_identifier(id: Identifier, frame: &mut Frame) {
+fn handle_identifier(id: Identifier, tokens: &mut Vec<Token>, frame: &mut Frame) {
    use obj::constants;
+   use obj::control_statements;
    if let Some(constant) = constants::get_constant(&id) {
       frame.push(constant);
-   } else if let Some(val) = frame.get(&id) {
+      return
+   }
+   if control_statements::handle_control(&id, tokens, frame) {
+      /* do nothing, was already handeled */
+      return
+   }
+   if let Some(val) = frame.get(&id) {
       if false /*val is a function */ {
          /* val.call next argument in tokens */ panic!()
       } else {
          frame.push(val)
       }
-   } else {
-      panic!("unknown identifier: {:?}", id)
+      return
    }
+   panic!("unknown identifier: {:?}", id);
 }
 
 fn handle_assignment(mut tokens: Vec<Token>, frame: &mut Frame) {
@@ -66,7 +70,7 @@ fn handle_assignment(mut tokens: Vec<Token>, frame: &mut Frame) {
    frame.set(identifier, val);
 }
 
-fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
+pub fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
    if tokens.is_empty() { return }
 
    let is_assignment = 
@@ -82,9 +86,10 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
    }
 
    let mut oper_stack = Vec::<Operator>::new();
-   for token in tokens {
+   while !tokens.is_empty() {
+      let token = tokens.remove(0);
       match token {
-         Token::Identifier(id)        => handle_identifier(id, frame),
+         Token::Identifier(id)        => handle_identifier(id, &mut tokens, frame),
          Token::Number(num)           => frame.push(Number::from(num.as_str()).to_rc()),
          Token::Operator(oper)        => 
             {
@@ -102,7 +107,7 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
             match lp {
                LParen::Round => parse_expr(body, frame),
                LParen::Square => panic!("what to do with square?"),
-               LParen::Curly => panic!("What to do with curly?"),
+               LParen::Curly => frame.push(Block::new((lp, rp), body).to_rc()),
             },
          Token::Unknown(_)        => unreachable!(),
          Token::LineTerminator(_) => unreachable!(),

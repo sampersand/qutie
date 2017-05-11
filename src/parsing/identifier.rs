@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Identifier {
    pub id: String
 }

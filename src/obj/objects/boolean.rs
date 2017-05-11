@@ -1,7 +1,7 @@
 use obj::objects::object::{Object, ObjType};
 
 pub struct Boolean {
-   val: bool
+   pub val: bool
 }
 
 pub const TRUE: Boolean = Boolean{val: true};
@@ -14,10 +14,14 @@ impl Boolean {
       if inp { TRUE } else { FALSE }
    }
 }
-
+impl From<Boolean> for bool {
+   fn from(inp: Boolean) -> bool {
+      inp.val
+   }
+}
 
 use std;
-impl_defaults!(Debug; Boolean, 'B');
+impl_defaults!(Debug; Boolean, "Bool");
 impl_defaults!(Display; Boolean, val);
 
 use obj::traits::operators::QtEql;
@@ -27,6 +31,12 @@ impl QtEql for Boolean {
    fn qt_eql(&self, other: &Rc<Object>) -> BoolResult {
       Ok(Boolean::get(other.is_a(ObjType::Boolean) &&
                       cast_as!(other, Boolean).val == self.val).to_rc())
+   }
+}
+use obj::traits::conversion::ToBoolean;
+impl ToBoolean for Boolean {
+   fn to_boolean(&self) -> BoolResult {
+      Ok(Boolean::get(self.val).to_rc())
    }
 }
 

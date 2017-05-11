@@ -23,10 +23,16 @@ mod obj;
 
 fn main() {
    let inp = "
-true
+foo = 3;
+bar = 4;
+
+__debug (if ( false ) { __debug 10 } else { __debug 11 }
+
 ";
    let mut stream = parsing::stream::Stream::new(inp);
-   println!("{:?}\n", parsing::parser::parse(&mut stream));
+   let res = parsing::parser::parse(&mut stream);
+   // println!("{:?}\n", res);
+   println!("\n--[done]--");
 }
 
 

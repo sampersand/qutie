@@ -31,7 +31,16 @@ pub mod operators {
    def_binary_oper!(QtLth, qt_lth, BoolResult);
    def_binary_oper!(QtGeq, qt_geq, BoolResult);
    def_binary_oper!(QtLeq, qt_leq, BoolResult);
-
+}
+pub mod conversion {
+   use std::rc::Rc;
+   use obj::objects::object::Object;
+   use obj::result::{ObjResult, BoolResult, ObjError};
+   pub trait ToBoolean {
+      fn to_boolean(&self) -> BoolResult {
+         Err(ObjError::NotImplemented)
+      }
+   }
 }
 
 

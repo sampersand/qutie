@@ -4,7 +4,7 @@ use std::rc::Rc;
 use obj::objects::object::Object;
 use obj::result::{ObjResult, ObjError};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Operator {
    Add, Sub, Mul, Div, Mod, Pow,
    Eql, Neq, Gth, Lth, Geq, Leq,

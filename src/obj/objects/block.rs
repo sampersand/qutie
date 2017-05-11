@@ -1,8 +1,8 @@
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum LParen {
    Round, Square, Curly
 }
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum RParen {
    Round, Square, Curly
 } 
@@ -62,6 +62,72 @@ impl_defaults!(to_string; char; LParen);
 impl_defaults!(to_string; char; RParen);
 impl_defaults!(Display; to_string; LParen);
 impl_defaults!(Display; to_string; RParen);
+
+use parsing::token::Token;
+pub struct Block {
+   parens: (LParen, RParen),
+   pub body: Vec<Token>,
+   // frame: /* TODO: FRAME so we can have a frame of reference when it's executed */
+}
+impl Block {
+   pub fn new(parens: (LParen, RParen), body: Vec<Token>) -> Block {
+      Block{ parens: parens, body: body }
+   }
+}
+
+use obj::objects::object::{Object, ObjType};
+impl_defaults!(Display; to_string; Block);
+impl_defaults!(Debug; Block, 'B');
+impl_defaults!(ToRc; Block);
+impl_defaults!(Object; Block);
+impl_defaults!(ToBoolean; Block);
+
+impl_defaults!(QtAdd; Block);
+impl_defaults!(QtSub; Block);
+impl_defaults!(QtMul; Block);
+impl_defaults!(QtDiv; Block);
+impl_defaults!(QtMod; Block);
+impl_defaults!(QtPow; Block);
+impl_defaults!(QtEql; Block);
+impl_defaults!(QtNeq; Block);
+impl_defaults!(QtLth; Block);
+impl_defaults!(QtGth; Block);
+impl_defaults!(QtLeq; Block);
+impl_defaults!(QtGeq; Block);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

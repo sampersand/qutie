@@ -51,7 +51,13 @@ macro_rules! num_operator {
          }
       }
    }
+}
 
+use obj::traits::conversion::ToBoolean;
+impl ToBoolean for Number {
+   fn to_boolean(&self) -> BoolResult {
+      Ok(Boolean::get(self.num != 0).to_rc())
+   }
 }
 
 num_operator!(QtAdd, qt_add, +, ObjResult);

@@ -64,6 +64,7 @@ macro_rules! impl_defaults {
          }
       }
    };
+   (ToBoolean; $obj:ident) => { use obj::traits::conversion::ToBoolean; impl ToBoolean for $obj {} };
    (QtAdd; $obj:ident) => { use obj::traits::operators::QtAdd; impl QtAdd for $obj {} };
    (QtSub; $obj:ident) => { use obj::traits::operators::QtSub; impl QtSub for $obj {} };
    (QtMul; $obj:ident) => { use obj::traits::operators::QtMul; impl QtMul for $obj {} };
