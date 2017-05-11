@@ -20,7 +20,7 @@ mod obj;
 
 fn main() {
    let inp = "
-a = b = 3;
+
 ";
    let mut stream = parsing::stream::Stream::new(inp);
    println!("{:?}\n", parsing::parser::parse(&mut stream));
