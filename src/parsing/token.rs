@@ -39,14 +39,14 @@ impl From<char> for LineTerminators {
    fn from(inp: char) -> LineTerminators {
       match inp {
          ';' => LineTerminators::Semicolon,
-         _ => unreachable!("Bad assignment char: {:?}", inp)
+         _ => unreachable!("Bad line terminator char: {:?}", inp)
       }
    }
 }
 impl <'a> From<&'a LineTerminators> for char {
    fn from(assign: &'a LineTerminators) -> char {
       match *assign {
-         LineTerminators::Semicolon => '=',
+         LineTerminators::Semicolon => ';',
       }
    }
 }

@@ -49,7 +49,6 @@ fn handle_assignment(mut tokens: Vec<Token>, frame: &mut Frame) {
 
 fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
    if tokens.is_empty() { return }
-   let mut oper_stack = Vec::<Operator>::new();
 
    let is_assignment = 
       2 < tokens.len() && 
@@ -64,7 +63,9 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
    }
 
    let mut oper_stack = Vec::<Operator>::new();
+   let mut should_pop = false;
    for token in tokens {
+      if should_pop { panic!("we've reached a token after reaching the end")}
       match token {
          Token::Identifier(id)        => 
             {
@@ -97,14 +98,18 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
                LParen::Square => panic!("what to do with square?"),
                LParen::Curly => panic!("What to do with curly?"),
             },
-         Token::Unknown(s)        => unreachable!(),
-         Token::LineTerminator(s) => unreachable!(),
-         Token::Assignment(s)     => unreachable!(),
-         Token::RParen(c)         => unreachable!(), 
+         Token::Unknown(_)        => unreachable!(),
+         Token::LineTerminator(_) => { should_pop = true; },
+         Token::Assignment(_)     => unreachable!(),
+         Token::RParen(_)         => unreachable!(), 
       }
    };
    while let Some(oper) = oper_stack.pop() {
       oper.exec(frame);
+   }
+   if should_pop {
+      frame.pop(); /* at the end of the frame, if we ended with a ';',
+                      pop after we're done with the operators */
    }
 }
 
