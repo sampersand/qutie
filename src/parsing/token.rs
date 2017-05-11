@@ -24,7 +24,7 @@ impl <'a> From<&'a Assignments> for char {
    }
 }
 
-impl_defaults!(TO_STRING; char; Assignments);
+impl_defaults!(to_string; char; Assignments);
 impl_defaults!(Display; to_string; Assignments);
 
 /*****************/
@@ -51,7 +51,7 @@ impl <'a> From<&'a LineTerminators> for char {
    }
 }
 
-impl_defaults!(TO_STRING; char; LineTerminators);
+impl_defaults!(to_string; char; LineTerminators);
 impl_defaults!(Display; to_string; LineTerminators);
 
 /*****************/

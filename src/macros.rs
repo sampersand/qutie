@@ -46,14 +46,14 @@ macro_rules! impl_defaults {
          }
       }
    };
-   (TO_STRING; char; $obj:ident) => {
+   (to_string; char; $obj:ident) => {
       impl $obj {
          pub fn to_string(&self) -> String {
             char::from(self).to_string()
          }
       }
    };
-   (TO_STRING; func=$func:ident; $obj:ident) => {
+   (to_string; func=$func:ident; $obj:ident) => {
       impl $obj {
          pub fn to_string(&self) -> String {
             self.$func().to_string()

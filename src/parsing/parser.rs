@@ -16,22 +16,54 @@ pub fn parse<'a>(stream: &'a mut Stream<'a>) {
    println!("frame: {:?}", frame);
 }
 
-fn handle_assignment(tokens: Vec<Token>, frame: &mut Frame) {
-   todo!("todo: assignment");
+fn next_expr(stream: &mut Stream) -> Vec<Token> {
+   let mut ret = vec![];
+   while let Some(token) = stream.next() {
+      match token {
+         Token::LineTerminator(_) =>  break,
+         Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
+         token @ _ => ret.push(token)
+      }
+   }
+   ret
 }
 
-fn parse_expr(tokens: Vec<Token>, frame: &mut Frame) {
+fn handle_assignment(mut tokens: Vec<Token>, frame: &mut Frame) {
+   assert!(2 < tokens.len(), "need at least 3 operands for assignment!");
+   let identifier = 
+      match tokens.remove(0) {
+         Token::Identifier(identifier) => identifier,
+         other @ _ => panic!("can only assign to identifiers not {:?}", other)
+      };
+   let assign_type = 
+      match tokens.remove(0) {
+         Token::Assignment(assign_type) => assign_type,
+         other @ _ => unreachable!("The second thing should always be an assignment value, not {:?}!", other)
+      };
+   parse_expr(tokens, frame);
+   let val = frame.pop().expect("cant set a key to nothing!");
+   frame.push(val.clone());
+   frame.set(identifier, val);
+}
+
+fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
    if tokens.is_empty() { return }
    let mut oper_stack = Vec::<Operator>::new();
 
    let is_assignment = 
-      match tokens.get(1).unwrap() {
+      2 < tokens.len() && 
+      match tokens.get(1).expect("no assignment!") {
          &Token::Assignment(_) => true,
          _ => false
       };
-   if is_assignment { handle_assignment(tokens, frame); return }
+
+   if is_assignment {
+      handle_assignment(tokens, frame);
+      return
+   }
+
+   let mut oper_stack = Vec::<Operator>::new();
    for token in tokens {
-      println!("token: {:?}", token);
       match token {
          Token::Identifier(id)        => 
             {
@@ -65,19 +97,4 @@ fn parse_expr(tokens: Vec<Token>, frame: &mut Frame) {
    while let Some(oper) = oper_stack.pop() {
       oper.exec(frame);
    }
-
-   println!("opers: {:?}", oper_stack);
-   println!("stack: {:?}", frame);
-}
-
-fn next_expr(stream: &mut Stream) -> Vec<Token> {
-   let mut ret = vec![];
-   while let Some(token) = stream.next() {
-      match token {
-         Token::LineTerminator(_) =>  break,
-         Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
-         token @ _ => ret.push(token)
-      }
-   }
-   ret
 }

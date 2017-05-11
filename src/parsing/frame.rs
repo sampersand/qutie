@@ -36,7 +36,17 @@ impl <'a> Frame<'a> {
          Some(val) => Some(val.clone()) /* so its not a reference */
       }
    }
+   pub fn set(&mut self, key: Identifier, val: Rc<Object>) {
+      self.knowns.insert(key, val);
+   }
 }
+
+
+
+
+
+
+
 
 
 

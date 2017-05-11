@@ -58,8 +58,8 @@ impl <'a> From<&'a RParen> for char {
    }
 }
 use std;
-impl_defaults!(TO_STRING; char; LParen);
-impl_defaults!(TO_STRING; char; RParen);
+impl_defaults!(to_string; char; LParen);
+impl_defaults!(to_string; char; RParen);
 impl_defaults!(Display; to_string; LParen);
 impl_defaults!(Display; to_string; RParen);
 
