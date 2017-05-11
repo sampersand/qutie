@@ -6,6 +6,7 @@ use obj::traits::ToRc;
 use std::rc::Rc;
 use obj::objects::number::Number;
 use obj::objects::object::Object;
+use obj::objects::block::LParen;
 
 
 pub fn parse<'a>(stream: &'a mut Stream<'a>) {
@@ -68,7 +69,11 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
          Token::Identifier(id)        => 
             {
                if let Some(val) = frame.get(&id) {
-                  frame.push(val)
+                  if false /*val is a function */ {
+                     /* val.call next argument in tokens */ panic!()
+                  } else {
+                     frame.push(val)
+                  }
                } else {
                   panic!("unknown identifier: {:?}", id)
                }
@@ -86,8 +91,12 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
          }
          Token::Text(quote, body)     => unimplemented!(),
          Token::Path(path)            => unimplemented!(),
-         Token::Block((lp, rp), body) => unimplemented!(),
-
+         Token::Block((lp, rp), body) => 
+            match lp {
+               LParen::Round => parse_expr(body, frame),
+               LParen::Square => panic!("what to do with square?"),
+               LParen::Curly => panic!("What to do with curly?"),
+            },
          Token::Unknown(s)        => unreachable!(),
          Token::LineTerminator(s) => unreachable!(),
          Token::Assignment(s)     => unreachable!(),
@@ -98,3 +107,9 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
       oper.exec(frame);
    }
 }
+
+
+
+
+
+
