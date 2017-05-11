@@ -20,7 +20,7 @@ mod obj;
 
 fn main() {
    let inp = "
-1 == 2
+1 < 2
 ";
    let mut stream = parsing::stream::Stream::new(inp);
    println!("{:?}\n", parsing::parser::parse(&mut stream));

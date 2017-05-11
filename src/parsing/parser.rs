@@ -15,7 +15,7 @@ pub fn parse<'a>(stream: &'a mut Stream<'a>) {
    while !stream.is_empty() {
       parse_expr(next_expr(stream), frame);
       frame.pop(); /* get rid of the thing on the stack,
-                      since we just finished a line there should be nothing there */
+                     since we just finished a line there should be nothing there */
    }
    println!("frame: {:?}", frame);
 }

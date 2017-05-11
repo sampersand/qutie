@@ -40,7 +40,6 @@ macro_rules! is_aplhanumeric { ($c:expr) => ( is_alpha!($c) || is_numeric!($c) )
 macro_rules! is_quote { ($c:expr) => ( vec!['`', '\'', '"'].contains(&$c) ) }
 macro_rules! is_block_start { ($c:expr) => ( vec!['(', '[', '{'].contains(&$c) ) }
 macro_rules! is_block_end { ($c:expr) => ( vec![')', ']', '}'].contains(&$c) ) }
-macro_rules! is_oper_start { ($c:expr) => ( vec!['+', '-', '*', '/'].contains(&$c) ) }
 macro_rules! is_symbol { ($c:expr) => (
    vec!['+', '-', '*', '/', '%', '<', '>', '=', '&', '|', '^', '~'].contains(&$c)
 ) }
@@ -170,7 +169,7 @@ impl <'a> Stream <'a> {
          _ if is_quote!(c)       => Some(self.next_text()),
          _ if is_block_start!(c) => Some(self.next_block()),
          _ if is_block_end!(c)   => Some(Token::RParen(block::RParen::from(next_chr!()))),
-         _ if is_oper_start!(c)  => Some(self.next_oper()),
+         _ if is_symbol!(c)      => Some(self.next_oper()),
          _                       => Some(Token::Unknown(next_chr!()))
       }
    }

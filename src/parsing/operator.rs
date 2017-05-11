@@ -6,7 +6,8 @@ use obj::result::{ObjResult, ObjError};
 
 #[derive(Debug)]
 pub enum Operator {
-   Add, Sub, Mul, Div, Mod, Pow
+   Add, Sub, Mul, Div, Mod, Pow,
+   Eql, Neq, Gth, Lth, Geq, Leq,
 }
 
 impl Operator {
@@ -19,11 +20,18 @@ impl Operator {
          Div => "/",
          Mod => "%",
          Pow => "**",
+         Eql => "==",
+         Neq => "!=",
+         Gth => ">",
+         Lth => "<",
+         Geq => ">=",
+         Leq => "<=",
       }
    }
    fn priority(&self) -> u8 {
       use self::Operator::*;
       match *self {
+         Eql | Neq | Gth | Lth | Geq | Leq => 4,
          Add | Sub => 3,
          Mul | Div | Mod => 2,
          Pow => 1,
@@ -49,6 +57,12 @@ impl Operator {
          Div => lhs.qt_div(&rhs),
          Mod => lhs.qt_mod(&rhs),
          Pow => lhs.qt_pow(&rhs),
+         Eql => match lhs.qt_eql(&rhs) { Ok(o) => Ok(o), Err(e) => Err(e) }, // so it casts
+         Neq => match lhs.qt_neq(&rhs) { Ok(o) => Ok(o), Err(e) => Err(e) }, // so it casts
+         Gth => match lhs.qt_gth(&rhs) { Ok(o) => Ok(o), Err(e) => Err(e) }, // so it casts
+         Lth => match lhs.qt_lth(&rhs) { Ok(o) => Ok(o), Err(e) => Err(e) }, // so it casts
+         Geq => match lhs.qt_geq(&rhs) { Ok(o) => Ok(o), Err(e) => Err(e) }, // so it casts
+         Leq => match lhs.qt_leq(&rhs) { Ok(o) => Ok(o), Err(e) => Err(e) }, // so it casts
       }
    }
 
@@ -74,6 +88,12 @@ impl <'a> From<&'a str> for Operator {
          "/" => Div,
          "%" => Mod,
          "**" => Pow,
+         "==" => Eql,
+         "!=" => Neq,
+         ">"  => Gth,
+         "<"  => Lth,
+         ">=" => Geq,
+         "<=" => Leq,
          _ => unreachable!("bad operator: {:?}", inp)
       }
    }

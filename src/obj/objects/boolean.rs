@@ -1,5 +1,4 @@
 use obj::objects::object::{Object, ObjType};
-use obj::traits::ToRc;
 
 pub struct Boolean {
    val: bool
@@ -24,19 +23,30 @@ impl <'a> From<&'a str> for Boolean {
       }
    }
 }
+use obj::traits::operators::QtEql;
+use std::rc::Rc;
+use obj::result::BoolResult;
+impl QtEql for Boolean {
+   fn qt_eql(&self, other: &Rc<Object>) -> BoolResult {
+      Ok(Boolean::new(other.is_a(ObjType::Boolean) &&
+                      cast_as!(other, Boolean).val == self.val).to_rc())
+   }
+}
 
-impl ToRc for Boolean {}
+impl_defaults!(ToRc; Boolean);
 impl_defaults!(Object; Boolean);
 
-use std::rc::Rc;
-use obj::result::{ObjResult, ObjError};
 impl_defaults!(QtAdd; Boolean);
 impl_defaults!(QtSub; Boolean);
 impl_defaults!(QtMul; Boolean);
 impl_defaults!(QtDiv; Boolean);
 impl_defaults!(QtMod; Boolean);
 impl_defaults!(QtPow; Boolean);
-
+impl_defaults!(QtNeq; Boolean);
+impl_defaults!(QtLth; Boolean);
+impl_defaults!(QtGth; Boolean);
+impl_defaults!(QtLeq; Boolean);
+impl_defaults!(QtGeq; Boolean);
 
 
 

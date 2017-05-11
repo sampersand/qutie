@@ -18,6 +18,10 @@ macro_rules! todo {
    }}
 }
 macro_rules! impl_defaults {
+   (ToRc; $obj:ident) => {
+      use obj::traits::ToRc;
+      impl ToRc for $obj {}
+   };
    (Object; $obj:ident) => {
       impl Object for $obj {
          fn obj_type(&self) -> ObjType {
@@ -66,7 +70,18 @@ macro_rules! impl_defaults {
    (QtDiv; $obj:ident) => { use obj::traits::operators::QtDiv; impl QtDiv for $obj {} };
    (QtMod; $obj:ident) => { use obj::traits::operators::QtMod; impl QtMod for $obj {} };
    (QtPow; $obj:ident) => { use obj::traits::operators::QtPow; impl QtPow for $obj {} };
+   (QtEql; $obj:ident) => { use obj::traits::operators::QtEql; impl QtEql for $obj {} };
+   (QtNeq; $obj:ident) => { use obj::traits::operators::QtNeq; impl QtNeq for $obj {} };
+   (QtLth; $obj:ident) => { use obj::traits::operators::QtLth; impl QtLth for $obj {} };
+   (QtGth; $obj:ident) => { use obj::traits::operators::QtGth; impl QtGth for $obj {} };
+   (QtLeq; $obj:ident) => { use obj::traits::operators::QtLeq; impl QtLeq for $obj {} };
+   (QtGeq; $obj:ident) => { use obj::traits::operators::QtGeq; impl QtGeq for $obj {} };
 }
+
+
+
+
+
 
 
 
