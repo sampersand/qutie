@@ -1,5 +1,5 @@
 use obj::objects::object::{Object, ObjType};
-use obj::traits::ToRc;
+
 
 pub struct Number {
    num: i32
