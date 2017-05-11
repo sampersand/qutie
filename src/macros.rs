@@ -5,7 +5,7 @@ macro_rules! cast_as {
       use std::mem::transmute;
       use std::rc::Rc;
       unsafe {
-         transmute::<Rc<Object>, Rc<$ty>>($obj)
+         transmute::<&Rc<Object>, &Rc<$ty>>($obj)
       }
    }}
 }
