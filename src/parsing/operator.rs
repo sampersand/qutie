@@ -21,9 +21,17 @@ impl Operator {
          Pow => "**",
       }
    }
+   fn priority(&self) -> u8 {
+      use self::Operator::*;
+      match *self {
+         Add | Sub => 3,
+         Mul | Div | Mod => 2,
+         Pow => 1,
+      }
+   }
    pub fn should_exec(&self, other: &Operator) -> bool {
-      todo!("should_exec for operator");
-      false
+      /* ignoring left/right associative for now */
+      self.priority() < other.priority()
    }
    fn operands(&self) -> u8 {
       2
