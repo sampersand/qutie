@@ -81,15 +81,15 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
             },
          Token::Number(num)           => frame.push(Number::from(num).to_rc()),
          Token::Operator(oper)        => 
-         {
-            while !oper_stack.is_empty() {
-               if !oper_stack.last().unwrap().should_exec(&oper) {
-                  break
+            {
+               while !oper_stack.is_empty() {
+                  if !oper_stack.last().unwrap().should_exec(&oper) {
+                     break
+                  }
+                  oper_stack.pop().unwrap().exec(frame);
                }
-               oper_stack.pop().unwrap().exec(frame);
-            }
-            oper_stack.push(oper)
-         }
+               oper_stack.push(oper)
+            },
          Token::Text(quote, body)     => unimplemented!(),
          Token::Path(path)            => unimplemented!(),
          Token::Block((lp, rp), body) => 
@@ -100,13 +100,6 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
             },
          Token::Unknown(_)        => unreachable!(),
          Token::LineTerminator(_) => unreachable!(),
-            // {
-            //    while let Some(oper) = oper_stack.pop() {
-            //       oper.exec(frame);
-            //    }
-            //    frame.pop();
-            //    return
-            // },
          Token::Assignment(_)     => unreachable!(),
          Token::RParen(_)         => unreachable!(), 
       }

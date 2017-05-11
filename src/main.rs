@@ -20,12 +20,21 @@ mod obj;
 
 fn main() {
    let inp = "
-a = (b = 5) * 4;
-a = 9;
+
 ";
    let mut stream = parsing::stream::Stream::new(inp);
    println!("{:?}\n", parsing::parser::parse(&mut stream));
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
