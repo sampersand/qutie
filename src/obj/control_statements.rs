@@ -67,13 +67,18 @@ fn handle_if(tokens: &mut Vec<Token>, frame: &mut Frame) {
 fn handle_while(tokens: &mut Vec<Token>, frame: &mut Frame) {
    let cond = next_arg!(tokens, frame, "no condition"); /* could go til we get a squiggly block */
    let body = next_arg!(tokens, frame, "no body");
-   assert!(cond.is_a(ObjType::Block), "cant call while on a non-block type");
-   assert!(body.is_a(ObjType::Block), "cant call while on a non-block type");
    let cond = cast_as!(&cond, Block);
    let body = cast_as!(&body, Block);
-   while exec!(cond.body.clone(), frame).to_boolean().expect("can't convert condition to boolean").val {
+   while exec!(cond.body.clone(), frame).
+            to_boolean().
+            expect("can't convert condition to boolean").
+            val {
       parse_expr(body.body.clone(), frame);
    }
+fn handle_debug(tokens: &mut Vec<Token>, frame: &mut Frame) {
+   let args = next_arg!(tokens, frame, "no debug arg");
+   println!("debug: {:?}", args);
+}
 }
 
 

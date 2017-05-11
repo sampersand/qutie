@@ -24,6 +24,6 @@ pub enum ObjType {
    Identifier, /* maybe path ? */
    Text,
    Block,
-   Constant,
    Boolean,
+   Function
 }
