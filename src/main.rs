@@ -23,20 +23,10 @@ mod obj;
 
 fn main() {
    let inp = "
-# foo = 3;
-# bar = 4;
-# if ( false ) {
-#    __debug foo 
-# } else { 
-#    __debug bar 
-# };
+
 i = 0;
-a = i * 100;
-i = i + 1;
-while {
-   i < 10
-} {
-   (__debug(i));
+while { i < 5 } {
+   __debug i;
    i = i + 1;
 }
 
