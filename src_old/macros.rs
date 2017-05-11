@@ -34,7 +34,7 @@ macro_rules! derive_impl {
 
    (Castable; $obj:ident) => {
       pub static mut __TYPE_ID: u8 = 0;
-      use traits::misc::Castable;
+      use objects::traits::misc::Castable;
       impl Castable for $obj {
          fn type_id(&self) -> u8 {
             unsafe{
@@ -49,25 +49,25 @@ macro_rules! derive_impl {
       }
    };
 
-   (ToRc; $obj:ident) => { use traits::misc::ToRc; impl ToRc for $obj {} };
-   (Opers; $obj:ident) => { use traits::operator::Opers; impl Opers for $obj {} };
-   (Types; $obj:ident) => { use traits::types::Types; impl Types for $obj {} };
+   (ToRc; $obj:ident) => { use objects::traits::misc::ToRc; impl ToRc for $obj {} };
+   (Opers; $obj:ident) => { use objects::traits::operator::Opers; impl Opers for $obj {} };
+   (Types; $obj:ident) => { use objects::traits::types::Types; impl Types for $obj {} };
    (ToText; $obj:ident, $item:ident) => {
-      use traits::types::ToText;
+      use objects::traits::types::ToText;
       impl ToText for $obj {}
    };
-   (ToBoolean; $obj:ident) => { use traits::types::ToBoolean; impl ToBoolean for $obj {} };
-   (ToNumber; $obj:ident) => { use traits::types::ToNumber; impl ToNumber for $obj {} };
+   (ToBoolean; $obj:ident) => { use objects::traits::types::ToBoolean; impl ToBoolean for $obj {} };
+   (ToNumber; $obj:ident) => { use objects::traits::types::ToNumber; impl ToNumber for $obj {} };
 
-   (+; $obj:ident)  => { use traits::operator::OperAdd; impl OperAdd for $obj {} };
-   (-; $obj:ident)  => { use traits::operator::OperSub; impl OperSub for $obj {} };
-   (*; $obj:ident)  => { use traits::operator::OperMul; impl OperMul for $obj {} };
-   (/; $obj:ident)  => { use traits::operator::OperDiv; impl OperDiv for $obj {} };
-   (%; $obj:ident)  => { use traits::operator::OperMod; impl OperMod for $obj {} };
-   (**; $obj:ident) => { use traits::operator::OperPow; impl OperPow for $obj {} };
-   (==; $obj:ident) => { use traits::operator::OperEql; impl OperEql for $obj {} };
+   (+; $obj:ident)  => { use objects::traits::operator::OperAdd; impl OperAdd for $obj {} };
+   (-; $obj:ident)  => { use objects::traits::operator::OperSub; impl OperSub for $obj {} };
+   (*; $obj:ident)  => { use objects::traits::operator::OperMul; impl OperMul for $obj {} };
+   (/; $obj:ident)  => { use objects::traits::operator::OperDiv; impl OperDiv for $obj {} };
+   (%; $obj:ident)  => { use objects::traits::operator::OperMod; impl OperMod for $obj {} };
+   (**; $obj:ident) => { use objects::traits::operator::OperPow; impl OperPow for $obj {} };
+   (==; $obj:ident) => { use objects::traits::operator::OperEql; impl OperEql for $obj {} };
    (==/!=; $obj:ident) => {
-      use traits::operator::{OperEql, OperNeq};
+      use objects::traits::operator::{OperEql, OperNeq};
       impl OperEql for $obj {
          fn oper_eql(&self, other: RcObject, _: &mut Frame) -> BoolResult {
             use objects::boolean;
@@ -83,13 +83,13 @@ macro_rules! derive_impl {
          }
       }
    };
-   (!=; $obj:ident) => { use traits::operator::OperNeq; impl OperNeq for $obj {} };
-   (<; $obj:ident)  => { use traits::operator::OperLth; impl OperLth for $obj {} };
-   (<=; $obj:ident) => { use traits::operator::OperLeq; impl OperLeq for $obj {} };
-   (>; $obj:ident)  => { use traits::operator::OperGth; impl OperGth for $obj {} };
-   (>=; $obj:ident) => { use traits::operator::OperGeq; impl OperGeq for $obj {} };
+   (!=; $obj:ident) => { use objects::traits::operator::OperNeq; impl OperNeq for $obj {} };
+   (<; $obj:ident)  => { use objects::traits::operator::OperLth; impl OperLth for $obj {} };
+   (<=; $obj:ident) => { use objects::traits::operator::OperLeq; impl OperLeq for $obj {} };
+   (>; $obj:ident)  => { use objects::traits::operator::OperGth; impl OperGth for $obj {} };
+   (>=; $obj:ident) => { use objects::traits::operator::OperGeq; impl OperGeq for $obj {} };
    (!; $obj:ident)  => {
-      use traits::operator::OperNot;
+      use objects::traits::operator::OperNot;
       impl OperNot for $obj {
          fn oper_not(&self, frame: &mut Frame) -> BoolResult {
             match self.to_boolean(){

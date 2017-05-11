@@ -6,7 +6,7 @@ use objects::identifier::Identifier;
 use objects::operators::binary_operator::BinaryOperator;
 use objects::operators::unary_operator::UnaryOperator;
 use objects::operators::Operator;
-use traits::misc::{TryFrom, ToRc};
+use objects::traits::misc::{TryFrom, ToRc};
 use objects::object::RcObject;
 
 macro_rules! expect {

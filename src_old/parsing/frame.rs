@@ -17,7 +17,7 @@ pub enum Parenthesis {
    Curly,
 }
 
-use traits::misc::TryFrom;
+use objects::traits::misc::TryFrom;
 impl TryFrom<char> for Parenthesis {
    fn try_from(inp: char) -> Option<Parenthesis> {
       match inp {

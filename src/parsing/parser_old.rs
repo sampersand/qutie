@@ -1,6 +1,6 @@
 use parsing::stream::Stream;
 use parsing::frame::Frame;
-use traits::ToRc;
+use objects::traits::ToRc;
 use std::rc::Rc;
 use objects::number::Number;
 use objects::object::Object;

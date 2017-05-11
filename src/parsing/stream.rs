@@ -1,6 +1,7 @@
 use std::iter::{Iterator, Peekable};
 use std::str::Chars;
-use parsing::Token;
+use parsing::token::{Token, Assignments, LineTerminators};
+use objects::block;
 
 pub struct Stream<'a> {
    source: Peekable<Chars<'a>>
@@ -14,7 +15,7 @@ impl <'a> Stream<'a> {
       self.source.peek().is_none()
    }
    pub fn peek(&self) -> Token {
-      panic!();
+      todo!("peek not implemented");
    }
 
    fn strip_whitespace(&mut self) {
@@ -38,16 +39,10 @@ macro_rules! is_aplhanumeric { ($c:expr) => ( is_alpha!($c) || is_numeric!($c) )
 macro_rules! is_quote { ($c:expr) => ( vec!['`', '\'', '"'].contains(&$c) ) }
 macro_rules! is_block_start { ($c:expr) => ( vec!['(', '[', '{'].contains(&$c) ) }
 macro_rules! is_block_end { ($c:expr) => ( vec![')', ']', '}'].contains(&$c) ) }
-macro_rules! get_rparen {
-   ($l:expr) => (match $l {
-      '(' => ')', 
-      '[' => ']', 
-      '{' => '}',
-      _ => unreachable!()}
-   )
-}
-
 macro_rules! is_oper_start { ($c:expr) => ( vec!['+', '-', '*', '/'].contains(&$c) ) }
+macro_rules! is_symbol { ($c:expr) => (
+   vec!['+', '-', '*', '/', '%', '<', '>', '=', '&', '|', '^', '~'].contains(&$c)
+) }
 
 impl <'a> Stream <'a> {
    fn next_identifier(&mut self) -> Token {
@@ -83,30 +78,17 @@ impl <'a> Stream <'a> {
    }
 
    fn next_oper(&mut self) -> Token {
-      let c = self.source.next().unwrap();
-      Token::Operator(
-         match c {
-            '+' => '+'.to_string(),
-            '-' => '-'.to_string(),
-            '/' => '/'.to_string(),
-            '*' =>
-               {
-                  let mut ret = String::new();
-                  ret.push('*');
-                  let is_pow = 
-                     match self.source.peek() {
-                        Some(n) if *n == '*' => true,
-                        _ => false
-                     };
-                  if is_pow {
-                     ret.push(self.source.next().unwrap());
-                  }
-                  ret
-               },
-            '%' => c.to_string(),
-            _ => panic!("bad oper start: {:?}", c)
+      use parsing::operator::Operator;
+      let mut acc = String::new();
+      loop {
+         match self.source.peek() {
+            Some(c) if is_symbol!(*c) => {},
+            _ => break
          }
-      )
+         acc.push(self.source.next().unwrap());
+      }
+      assert!(!acc.is_empty());
+      Token::Operator(Operator::from(acc.as_str()))
    }
 
    fn next_text(&mut self) -> Token {
@@ -137,8 +119,8 @@ impl <'a> Stream <'a> {
    }
 
    fn next_block(&mut self) -> Token {
-      let lparen = self.source.next().unwrap();
-      let rparen = get_rparen!(lparen);
+      let lparen = block::LParen::from(self.source.next().unwrap());
+      let rparen = lparen.get_rparen();
       let mut ret = vec![];
       loop {
          match self.next() {
@@ -179,16 +161,16 @@ impl <'a> Stream <'a> {
       let c = *self.source.peek().unwrap();
 
       match c {
-         _ if is_assignment!(c)  => Some(Token::Assignment(next_chr!().to_string())),
-         _ if is_terminator!(c)  => Some(Token::LineTerminator(next_chr!().to_string())),
+         _ if is_assignment!(c)  => Some(Token::Assignment(Assignments::from(next_chr!()))),
+         _ if is_terminator!(c)  => Some(Token::LineTerminator(LineTerminators::from(next_chr!()))),
          _ if is_comment!(c)     =>      self.handle_comment() /* will be some or none*/,
          _ if is_alpha!(c)       => Some(self.next_identifier()),
          _ if is_numeric!(c)     => Some(self.next_number()),
          _ if is_quote!(c)       => Some(self.next_text()),
          _ if is_block_start!(c) => Some(self.next_block()),
-         _ if is_block_end!(c)   => Some(Token::RParen(next_chr!())),
+         _ if is_block_end!(c)   => Some(Token::RParen(block::RParen::from(next_chr!()))),
          _ if is_oper_start!(c)  => Some(self.next_oper()),
-         _                       => Some(Token::Unknown(next_chr!().to_string()))
+         _                       => Some(Token::Unknown(next_chr!()))
       }
    }
 }

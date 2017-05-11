@@ -13,7 +13,7 @@ pub trait ToText {
 }
 
 use objects::boolean::Boolean;
-use traits::misc::ToRc;
+use objects::traits::misc::ToRc;
 
 pub trait ToBoolean {
    fn to_boolean(&self) -> Result<Rc<Boolean>, ObjError> {

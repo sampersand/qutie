@@ -78,7 +78,7 @@ impl Operator for UnaryOperator {
    fn priority(&self) -> u8 { self.priority }
 }
 
-use traits::misc::TryFrom;
+use objects::traits::misc::TryFrom;
 impl <'a> TryFrom<&'a str> for UnaryOperator {
    fn try_from(inp: &'a str) -> Option<UnaryOperator> {
       match inp {

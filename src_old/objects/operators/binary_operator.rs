@@ -89,7 +89,7 @@ impl Operator for BinaryOperator {
 
 }
 
-use traits::misc::TryFrom;
+use objects::traits::misc::TryFrom;
 impl <'a> TryFrom<&'a str> for BinaryOperator {
    fn try_from(inp: &'a str) -> Option<BinaryOperator> {
       match inp {

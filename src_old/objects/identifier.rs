@@ -18,7 +18,7 @@ derive_impl!(ToNumber; Identifier);
 derive_impl!(ToBoolean; Identifier);
 
 
-use traits::misc::TryFrom;
+use objects::traits::misc::TryFrom;
 impl <'a> TryFrom<&'a str> for Identifier {
    fn try_from(inp: &'a str) -> Option<Identifier> {
 

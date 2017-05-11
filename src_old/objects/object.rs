@@ -1,7 +1,8 @@
 use std::fmt::Debug;
-use traits::operator::Opers;
-use traits::types::Types;
-use traits::misc::Castable;
+
+use objects::traits::operator::Opers;
+use objects::traits::types::Types;
+use objects::traits::misc::Castable;
 
 pub trait Object: Debug + Opers + Types + Castable {
    fn _eql(&self, other: RcObject) -> bool;

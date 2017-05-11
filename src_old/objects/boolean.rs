@@ -28,7 +28,7 @@ impl Boolean {
    }
 }
 
-use traits::misc::TryFrom;
+use objects::traits::misc::TryFrom;
 impl <'a> TryFrom<&'a str> for Boolean {
    fn try_from(inp: &'a str) -> Option<Boolean> {
       match inp {

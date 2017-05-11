@@ -16,7 +16,7 @@ derive_impl!(Opers; Number);
 derive_impl!(Types; Number);
 derive_impl!(ToText; Number, num);
 
-use traits::misc::TryFrom;
+use objects::traits::misc::TryFrom;
 impl <'a> TryFrom<&'a str> for Number {
    fn try_from(inp: &'a str) -> Option<Number> {
       match inp.parse::<i32>() {
@@ -25,14 +25,14 @@ impl <'a> TryFrom<&'a str> for Number {
       }
    }
 }
-use traits::types::ToNumber;
+use objects::traits::types::ToNumber;
 use std::rc::Rc;
 impl ToNumber for Number {
    fn to_number(&self) -> Result<Rc<Number>, ObjError> {
       Ok(Number{num: self.num}.to_rc())
    }
 }
-use traits::types::ToBoolean;
+use objects::traits::types::ToBoolean;
 impl ToBoolean for Number {
    fn to_boolean(&self) -> Result<Rc<Boolean>, ObjError> {
       Ok(Boolean::from(self.num != 0).to_rc())
@@ -51,7 +51,7 @@ impl Object for Number {
 
 macro_rules! impl_num_oper {
    ($_trait:ident, $func:ident, $oper:tt) => {
-      use traits::operator::$_trait;
+      use objects::traits::operator::$_trait;
       impl $_trait for Number {
          fn $func(&self, other: RcObject, _: &mut Frame) -> ObjResult {
             if let Ok(other_num) = other.to_number() {
@@ -65,7 +65,7 @@ macro_rules! impl_num_oper {
 }
 macro_rules! impl_bool_oper {
    ($_trait:ident, $func:ident, $oper:tt) => {
-      use traits::operator::$_trait;
+      use objects::traits::operator::$_trait;
       impl $_trait for Number {
          fn $func(&self, other: RcObject, _: &mut Frame) -> BoolResult {
             if let Ok(other_num) = other.to_number() {
