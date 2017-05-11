@@ -21,7 +21,7 @@ fn next_expr(stream: &mut Stream) -> Vec<Token> {
    let mut ret = vec![];
    while let Some(token) = stream.next() {
       match token {
-         Token::LineTerminator(_) =>  break,
+         Token::LineTerminator(end) => { ret.push(Token::LineTerminator(end)); break },
          Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
          token @ _ => ret.push(token)
       }
@@ -63,9 +63,7 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
    }
 
    let mut oper_stack = Vec::<Operator>::new();
-   let mut should_pop = false;
    for token in tokens {
-      if should_pop { panic!("we've reached a token after reaching the end")}
       match token {
          Token::Identifier(id)        => 
             {
@@ -99,17 +97,20 @@ fn parse_expr(mut tokens: Vec<Token>, frame: &mut Frame) {
                LParen::Curly => panic!("What to do with curly?"),
             },
          Token::Unknown(_)        => unreachable!(),
-         Token::LineTerminator(_) => { should_pop = true; },
+         Token::LineTerminator(_) =>
+            {
+               while let Some(oper) = oper_stack.pop() {
+                  oper.exec(frame);
+               }
+               frame.pop();
+               return
+            },
          Token::Assignment(_)     => unreachable!(),
          Token::RParen(_)         => unreachable!(), 
       }
    };
    while let Some(oper) = oper_stack.pop() {
       oper.exec(frame);
-   }
-   if should_pop {
-      frame.pop(); /* at the end of the frame, if we ended with a ';',
-                      pop after we're done with the operators */
    }
 }
 
