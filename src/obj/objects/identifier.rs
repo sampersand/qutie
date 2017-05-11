@@ -1,23 +1,14 @@
-use obj::objects::object::Object;
+use obj::objects::object::{Object, ObjType};
+use obj::traits::ToRc;
 
 pub struct Identifier {
    id: String
 }
 
 use std;
-impl std::fmt::Debug for Identifier {
-   fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-      write!(f, "I({})", self)
-   }
-}
+impl_defaults!(Display; Identifier, id);
+impl_defaults!(Debug; Identifier, 'I');
 
-impl std::fmt::Display for Identifier {
-   fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-      write!(f, "{}", self.id)
-   }
-}
-
-use obj::traits::ToRc;
 
 impl From<String> for Identifier {
    fn from(inp: String) -> Identifier {
@@ -26,8 +17,13 @@ impl From<String> for Identifier {
 }
 impl ToRc for Identifier {}
 
-impl Object for Identifier {}
+impl_defaults!(Object; Identifier);
 
-
+impl_defaults!(QtAdd; Identifier);
+impl_defaults!(QtSub; Identifier);
+impl_defaults!(QtMul; Identifier);
+impl_defaults!(QtDiv; Identifier);
+impl_defaults!(QtMod; Identifier);
+impl_defaults!(QtPow; Identifier);
 
 

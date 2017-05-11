@@ -4,6 +4,7 @@ pub trait ToRc : Sized {
       Rc::new(self)
    }
 }
+
 /************* operators *************/
 pub mod operators {
    use std::rc::Rc;
@@ -25,3 +26,9 @@ pub mod operators {
    def_binary_oper!(QtMod, qt_mod);
    def_binary_oper!(QtPow, qt_pow);
 }
+
+
+
+
+
+

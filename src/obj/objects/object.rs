@@ -2,21 +2,21 @@ use std::fmt::Debug;
 use std::rc::Rc;
 use obj::result::{ObjResult, ObjError};
 
-pub trait Object: Debug {}
-
-macro_rules! default_oper {
-   ($oper:ident, $func:ident) => {
-      use obj::traits::operators::$oper;
-      impl $oper for Object {
-         fn $func(&self, _: Rc<Object>) -> ObjResult {
-            Err(ObjError::NotImplemented)
-         }
-      }
+use obj::traits::operators::{QtAdd, QtSub, QtMul, QtDiv, QtMod, QtPow};
+pub trait Object: Debug +
+                  QtAdd + QtSub +
+                  QtMul + QtDiv + QtMod +
+                  QtPow {
+   fn obj_type(&self) -> ObjType; /* should be a static method, but then object cant be a type */
+   fn is_a(&self, ty: ObjType) -> bool {
+      self.obj_type() == ty
    }
 }
-default_oper!(QtAdd, qt_add);
-default_oper!(QtSub, qt_sub);
-default_oper!(QtMul, qt_mul);
-default_oper!(QtDiv, qt_div);
-default_oper!(QtMod, qt_mod);
-default_oper!(QtPow, qt_pow);
+#[derive(Debug, PartialEq)]
+pub enum ObjType {
+   Number,
+   Identifier, /* maybe path ? */
+   Text,
+   Block,
+   Constant,
+}

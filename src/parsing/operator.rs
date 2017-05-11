@@ -71,7 +71,7 @@ impl <'a> From<&'a str> for Operator {
 }
 
 use std;
-impl_defaults!(DISPLAY; Operator);
+impl_defaults!(Display; to_string; Operator);
 impl_defaults!(TO_STRING; func=sigil; Operator);
 
 
