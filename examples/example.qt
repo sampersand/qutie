@@ -1,10 +1,7 @@
-factorial = func(n) {
-   if ( n < 2) {
-      1
-   } else {
-      n * factorial(n - 1)
-   }
+fac2 = func(n) {
+   __debug (0);
+   result = 1;;;;
+
 };
 
-__debug ( "factorial:" )
-__debug ( factorial(5) )
+__debug ( fac2(5) )

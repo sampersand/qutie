@@ -26,7 +26,7 @@ macro_rules! next_arg {
 }
 fn handle_debug(tokens: &mut Vec<Token>, frame: &mut Frame) {
    let args = next_arg!(tokens, frame, "no debug arg");
-   println!("debug: {:?}", args);
+   println!("debug: {:?} | {:?}", args, frame);
 }
 
 fn handle_if(tokens: &mut Vec<Token>, frame: &mut Frame) {

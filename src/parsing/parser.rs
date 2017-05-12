@@ -90,18 +90,18 @@ fn handle_assignment(mut tokens: Vec<Token>, frame: &mut Frame) {
 pub fn handle(mut tokens: Vec<Token>, frame: &mut Frame) {
    if tokens.is_empty() { return }
 
+   println!("handling: {:?}", tokens);
    let is_assignment = 
       2 < tokens.len() && 
       match tokens.get(1).unwrap() {
          &Token::Assignment(_) => true,
          _ => false
       };
-
+   println!("is assignment: {:?}", is_assignment);
    if is_assignment {
       handle_assignment(tokens, frame);
       return
    }
-
    let mut oper_stack = Vec::<Operator>::new();
    while !tokens.is_empty() {
       let token = tokens.remove(0);
