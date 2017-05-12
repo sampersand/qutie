@@ -26,7 +26,7 @@ fn main() {
 
 factorial = func(inp) {
    if ( inp <= 1) {
-      return 1;
+      1
    } else {
       inp * factorial(inp - 1)
    };
