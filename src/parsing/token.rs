@@ -1,6 +1,7 @@
 use parsing::operator::Operator;
 use obj::objects::{block, text};
 use parsing::identifier;
+use parsing::Expression;
 use std;
 
 #[derive(Debug, Clone, Copy)]
@@ -40,7 +41,7 @@ pub enum Token {
    Operator(Operator),
    Unknown(char),
    Text(text::Quote, String),
-   Block((block::LParen, block::RParen), Vec<Token>),
+   Block((block::LParen, block::RParen), Vec<Expression>),
    RParen(block::RParen),
 }
 

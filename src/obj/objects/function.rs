@@ -4,12 +4,13 @@ use parsing::identifier::Identifier;
 use parsing::frame::Frame;
 use parsing::token::Token;
 use parsing::parser;
+use parsing::Expression;
 use std::rc::Rc;
 pub struct Function {
    file: String, /* todo: update this */
    line: usize,
    args: Vec<Identifier>,
-   body: Vec<Token>
+   body: Vec<Expression>
 }
 
 impl Function {
@@ -19,7 +20,7 @@ impl Function {
    pub fn to_string(&self) -> String {
       concat_all!("<", self.file, ">")
    }
-   pub fn qt_call(&self, args: Vec<Token>, frame: &mut Frame) -> Rc<Object> {
+   pub fn qt_call(&self, args: Expression, frame: &mut Frame) -> Rc<Object> {
       /* this is kinda hacky way to do things */
       let orig_length = frame.stack_len();
       parser::handle(args, frame);

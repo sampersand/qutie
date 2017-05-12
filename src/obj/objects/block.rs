@@ -64,13 +64,14 @@ impl_defaults!(Display; to_string; LParen);
 impl_defaults!(Display; to_string; RParen);
 
 use parsing::token::Token;
+use parsing::Expression;
 pub struct Block {
    parens: (LParen, RParen),
-   pub body: Vec<Token>,
+   pub body: Vec<Expression>,
    // frame: /* TODO: FRAME so we can have a frame of reference when it's executed */
 }
 impl Block {
-   pub fn new(parens: (LParen, RParen), body: Vec<Token>) -> Block {
+   pub fn new(parens: (LParen, RParen), body: Vec<Expression>) -> Block {
       Block{ parens: parens, body: body }
    }
    pub fn to_string(&self) -> String {

@@ -6,12 +6,12 @@ use obj::objects::boolean;
 use obj::objects::function::Function;
 use obj::traits::ToRc;
 use std::rc::Rc;
-use parsing::parser::handle;
+use parsing::parser;
 use obj::objects::block::Block;
 
 macro_rules! exec {
    ($tokens:expr, $frame:expr) => {{
-      handle($tokens, $frame);
+      handle_expressions($tokens, $frame);
       $frame.pop().unwrap()
    }}
 }
@@ -50,14 +50,14 @@ fn handle_if(tokens: &mut Vec<Token>, frame: &mut Frame) {
       };
    if cond.to_boolean().expect("can't convert condition to boolean").val {
       if if_true.is_a(ObjType::Block) {
-         handle(cast_as!(&if_true, Block).body.clone(), frame);
+         parser::exec_exprs(cast_as!(&if_true, Block).body.clone(), frame);
       } else {
          frame.push(if_true)
       }
    } else {
       if let Some(if_false) = if_false {
          if if_false.is_a(ObjType::Block) {
-            handle(cast_as!(&if_false, Block).body.clone(), frame);
+            parser::exec_exprs(cast_as!(&if_false, Block).body.clone(), frame);
          } else {
             frame.push(if_false)
          }
@@ -72,7 +72,7 @@ fn handle_while(tokens: &mut Vec<Token>, frame: &mut Frame) {
             to_boolean().
             expect("can't convert condition to boolean").
             val {
-      handle(body.clone(), frame);
+      parser::exec_exprs(body.clone(), frame);
    }
 }
 fn handle_func(tokens: &mut Vec<Token>, frame: &mut Frame) {

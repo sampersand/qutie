@@ -72,7 +72,6 @@ impl <'a> Frame<'a> {
             transmute::<&HashMap<Identifier, Rc<Object>>, &mut HashMap<Identifier, Rc<Object>>>(&*self.globals)
          }.insert(key.clone(), val.clone());
       }
-      println!("key: {:?} / val: {:?} ", key, val);
       self.locals.insert(key, val);
    }
 }

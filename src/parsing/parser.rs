@@ -2,6 +2,7 @@ use parsing::stream::Stream;
 use parsing::frame::Frame;
 use parsing::identifier::Identifier;
 use parsing::token::Token;
+use parsing::Expression;
 use parsing::operator::Operator;
 use obj::traits::ToRc;
 use std::rc::Rc;
@@ -14,13 +15,18 @@ use obj::objects::function::Function;
 
 pub fn parse<'a>(stream: &'a mut Stream<'a>) {
    let ref mut frame = Frame::new(None);
-   while !stream.is_empty() {
-      handle(next_expr(stream), frame);
+   let exprs = get_exprs(stream);
+   exec_exprs(exprs, frame);
+}
+
+pub fn exec_exprs(exprs: Vec<Expression>, frame: &mut Frame) {
+   for expr in exprs {
+      exec_expr(expr, frame);
       frame.pop(); // since we finished a line, there should be one thing on the stack 
    }
 }
 
-fn next_expr(stream: &mut Stream) -> Vec<Token> {
+fn next_expr(stream: &mut Stream) -> Expression {
    let mut expr = vec![];
    while let Some(token) = stream.next() {
       match token {
@@ -32,7 +38,15 @@ fn next_expr(stream: &mut Stream) -> Vec<Token> {
    expr
 }
 
-fn handle_identifier(id: Identifier, tokens: &mut Vec<Token>, frame: &mut Frame) {
+fn get_exprs(stream: &mut Stream) -> Vec<Expression> {
+   let mut ret = vec![];
+   while !stream.is_empty() {
+      ret.push(next_expr(stream));
+   }
+   ret
+}
+
+fn handle_identifier(id: Identifier, tokens: &mut Expression, frame: &mut Frame) {
    use obj::constants;
    use obj::control_statements;
    if let Some(constant) = constants::get_constant(&id) {
@@ -52,7 +66,7 @@ fn handle_identifier(id: Identifier, tokens: &mut Vec<Token>, frame: &mut Frame)
          }
       };
       print!("acc: {:?}", acc);
-      handle(acc, frame);
+      exec_expr(acc, frame);
       tokens.clear();
       return
    }
@@ -69,7 +83,7 @@ fn handle_identifier(id: Identifier, tokens: &mut Vec<Token>, frame: &mut Frame)
    panic!("unknown identifier: {:?}", id);
 }
 
-fn handle_assignment(mut tokens: Vec<Token>, frame: &mut Frame) {
+fn handle_assignment(mut tokens: Expression, frame: &mut Frame) {
    assert!(2 < tokens.len(), "need at least 3 operands for assignment!");
    let identifier = 
       match tokens.remove(0) {
@@ -81,23 +95,21 @@ fn handle_assignment(mut tokens: Vec<Token>, frame: &mut Frame) {
          Token::Assignment(assign_type) => assign_type,
          other @ _ => unreachable!("The second thing should always be an assignment value, not {:?}!", other)
       };
-   handle(tokens, frame);
+   exec_expr(tokens, frame);
    let val = frame.pop().expect("cant set a key to nothing!");
    frame.push(val.clone());
    frame.set(identifier, val);
 }
 
-pub fn handle(mut tokens: Vec<Token>, frame: &mut Frame) {
+pub fn exec_expr(mut tokens: Expression, frame: &mut Frame) {
    if tokens.is_empty() { return }
 
-   println!("handling: {:?}", tokens);
    let is_assignment = 
       2 < tokens.len() && 
       match tokens.get(1).unwrap() {
          &Token::Assignment(_) => true,
          _ => false
       };
-   println!("is assignment: {:?}", is_assignment);
    if is_assignment {
       handle_assignment(tokens, frame);
       return
@@ -122,7 +134,7 @@ pub fn handle(mut tokens: Vec<Token>, frame: &mut Frame) {
          Token::Path(path)            => unimplemented!(),
          Token::Block((lp, rp), body) => 
             match lp {
-               LParen::Round => handle(body, frame),
+               LParen::Round => exec_expr(body, frame),
                LParen::Square => panic!("what to do with square?"),
                LParen::Curly => frame.push(Block::new((lp, rp), body).to_rc()),
             },
@@ -136,9 +148,7 @@ pub fn handle(mut tokens: Vec<Token>, frame: &mut Frame) {
    while let Some(oper) = oper_stack.pop() {
       oper.exec(frame);
    }
-   if !tokens.is_empty() {
-      handle(tokens, frame)
-   }
+   assert!(tokens.is_empty(), "ended without empty tokens: {:?}", tokens)
 }
 
 
