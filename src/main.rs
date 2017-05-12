@@ -21,26 +21,31 @@ mod macros;
 mod parsing;
 mod obj;
 
-fn main() {
-   let inp = "
-__debug 'foo: \"' __debug 1
-# 
-# factorial = func(inp) {
-#    if ( inp <= 1) {
-#       1
-#    } else {
-#       inp * factorial(inp - 1)
-#    }
-#    __debug inp
-# };
-# 
-# __debug(factorial(5))
 
-";
-   let mut stream = parsing::stream::Stream::new(inp);
+mod execute {
+   use std::fs::File;
+   use std::io::Read;
+   pub fn read_file(path: &str) -> String {
+      let mut text = String::new();
+      match File::open(path) {
+         Ok(mut file) => 
+            if let Err(err) = file.read_to_string(&mut text){
+               panic!("Cannot read file {:?} to string: {:?}", path, err)
+            },
+         Err(err) => panic!("Cannot open file {:?} for reading: {:?}", path, err)
+      };
+      text
+   }
+}
+
+
+
+fn main() {
+   let path = "/Users/westerhack/code/rust/qutie/examples/example.qt";
+   let inp = execute::read_file(path);
+   let mut stream = parsing::stream::Stream::new(&inp);
    let res = parsing::parser::parse(&mut stream);
    // println!("{:?}\n", res);
-   println!("\n--[done]--");
 }
 
 

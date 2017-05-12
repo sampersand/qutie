@@ -4,7 +4,7 @@ use obj::objects::boolean::Boolean;
 #[derive(Debug)]
 pub enum ObjError {
    NotImplemented,
-   PlaceHolderForFutureErrors
+   Return(Rc<Object>),
 }
 
 pub type ObjResult = Result<Rc<Object>, ObjError>;

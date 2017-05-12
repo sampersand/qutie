@@ -16,8 +16,7 @@ pub fn parse<'a>(stream: &'a mut Stream<'a>) {
    let ref mut frame = Frame::new(None);
    while !stream.is_empty() {
       handle(next_expr(stream), frame);
-      println!("popped: {:?}", frame.pop()); // since we finished a line, there should be one thing on the stack 
-      // frame.pop(); // since we finished a line, there should be one thing on the stack 
+      frame.pop(); // since we finished a line, there should be one thing on the stack 
    }
 }
 
@@ -67,7 +66,6 @@ fn handle_identifier(id: Identifier, tokens: &mut Vec<Token>, frame: &mut Frame)
       }
       return
    }
-   println!("frame: {:?}", frame);
    panic!("unknown identifier: {:?}", id);
 }
 

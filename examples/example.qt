@@ -1,0 +1,10 @@
+factorial = func(n) {
+   if ( n < 2) {
+      1
+   } else {
+      n * factorial(n - 1)
+   }
+};
+
+__debug ( "factorial:" )
+__debug ( factorial(5) )
