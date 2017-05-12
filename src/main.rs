@@ -29,7 +29,7 @@ factorial = func(inp) {
       1
    } else {
       inp * factorial(inp - 1)
-   };
+   }
    __debug inp
 };
 
