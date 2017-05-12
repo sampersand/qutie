@@ -9,18 +9,13 @@ use std::rc::Rc;
 use parsing::parser;
 use obj::objects::block::Block;
 
-macro_rules! exec {
-   ($tokens:expr, $frame:expr) => {{
-      handle_expressions($tokens, $frame);
-      $frame.pop().unwrap()
-   }}
-}
 macro_rules! next_arg {
    ($tokens:expr, $frame:expr, $err:expr) => {
       if $tokens.is_empty() {
          panic!($err)
       } else {
-         exec!(vec![$tokens.remove(0)], $frame)
+         parser::exec_expr(vec![$tokens.remove(0)], $frame);
+         $frame.pop().expect("can't find next arg")
       }
    }
 }
@@ -66,17 +61,18 @@ fn handle_if(tokens: &mut Vec<Token>, frame: &mut Frame) {
 }
 
 fn handle_while(tokens: &mut Vec<Token>, frame: &mut Frame) {
-   let cond = next_block!(tokens);
-   let body = next_block!(tokens);
-   while exec!(cond.clone(), frame).
-            to_boolean().
-            expect("can't convert condition to boolean").
-            val {
+   let cond = next_expr_vec!(tokens);
+   let body = next_expr_vec!(tokens);
+
+   while {parser::exec_exprs(cond.clone(), frame); frame.pop().unwrap() }
+            .to_boolean()
+            .expect("can't convert condition to boolean")
+            .val {
       parser::exec_exprs(body.clone(), frame);
    }
 }
 fn handle_func(tokens: &mut Vec<Token>, frame: &mut Frame) {
-   let mut args = next_block!(tokens);
+   let mut args = next_expr!(tokens);
    let mut ident_args = vec![];
    while !args.is_empty() {
       match args.remove(0) {
@@ -85,7 +81,7 @@ fn handle_func(tokens: &mut Vec<Token>, frame: &mut Frame) {
          arg @ _ => panic!("unexpected non-ident token type: {:?}", arg)
       }   
    }
-   let body = next_block!(tokens);
+   let body = next_expr_vec!(tokens);
    let file = frame.file.clone();
    let lineno = frame.lineno;
    frame.push(Function::new(file, lineno, ident_args, body.clone()).to_rc());

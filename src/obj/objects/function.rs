@@ -14,7 +14,7 @@ pub struct Function {
 }
 
 impl Function {
-   pub fn new(file: String, line: usize, args: Vec<Identifier>, body: Vec<Token>) -> Function {
+   pub fn new(file: String, line: usize, args: Vec<Identifier>, body: Vec<Expression>) -> Function {
       Function{ file: file, line: line, args: args, body: body }
    }
    pub fn to_string(&self) -> String {
@@ -23,7 +23,7 @@ impl Function {
    pub fn qt_call(&self, args: Expression, frame: &mut Frame) -> Rc<Object> {
       /* this is kinda hacky way to do things */
       let orig_length = frame.stack_len();
-      parser::handle(args, frame);
+      parser::exec_expr(args, frame);
       let mut self_args = self.args.clone();
       let mut i = 0;
       let mut acc = vec![];
@@ -34,7 +34,7 @@ impl Function {
       while !acc.is_empty() {
          new_frame.set(self_args.pop().unwrap(), acc.pop().unwrap());
       }
-      parser::handle(self.body.clone(), &mut new_frame);
+      parser::exec_exprs(self.body.clone(), &mut new_frame);
       if let Some(ret) = new_frame.pop() {
          ret
       } else {

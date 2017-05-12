@@ -57,22 +57,9 @@ fn handle_identifier(id: Identifier, tokens: &mut Expression, frame: &mut Frame)
       /* do nothing, was already handeled */
       return
    }
-   if &*id == "return" {
-      let mut acc = vec![];
-      while !tokens.is_empty() {
-         match tokens.remove(0) {
-            Token::LineTerminator => break,
-            token @ _ => acc.push(token)
-         }
-      };
-      print!("acc: {:?}", acc);
-      exec_expr(acc, frame);
-      tokens.clear();
-      return
-   }
    if let Some(ref val) = frame.get(&id) {
       if val.is_a(ObjType::Function) {
-         let args = next_block!(tokens);
+         let args = next_expr!(tokens);
          let res = cast_as!(val, Function).qt_call(args, frame);
          frame.push(res);
       } else {
@@ -134,7 +121,7 @@ pub fn exec_expr(mut tokens: Expression, frame: &mut Frame) {
          Token::Path(path)            => unimplemented!(),
          Token::Block((lp, rp), body) => 
             match lp {
-               LParen::Round => exec_expr(body, frame),
+               LParen::Round => exec_exprs(body, frame),
                LParen::Square => panic!("what to do with square?"),
                LParen::Curly => frame.push(Block::new((lp, rp), body).to_rc()),
             },
