@@ -137,7 +137,6 @@ impl <'a> Stream <'a> {
                      },
                   Token::LineTerminator =>
                      {
-                        acc.push(token);
                         ret.push(acc.clone());
                         acc.clear();
                      },

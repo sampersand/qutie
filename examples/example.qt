@@ -1,6 +1,5 @@
 fac2 = func(n) {
-   __debug (0);
-   result = 1;
+   1
 };
-
+__debug (1)
 __debug ( fac2(5) )

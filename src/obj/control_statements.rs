@@ -1,6 +1,7 @@
 use parsing::identifier::Identifier;
 use parsing::token::Token;
 use parsing::frame::Frame;
+use parsing::Expression;
 use obj::objects::object::{Object, ObjType};
 use obj::objects::boolean;
 use obj::objects::function::Function;
@@ -19,12 +20,12 @@ macro_rules! next_arg {
       }
    }
 }
-fn handle_debug(tokens: &mut Vec<Token>, frame: &mut Frame) {
+fn handle_debug(tokens: &mut Expression, frame: &mut Frame) {
    let args = next_arg!(tokens, frame, "no debug arg");
    println!("debug: {:?} | {:?}", args, frame);
 }
 
-fn handle_if(tokens: &mut Vec<Token>, frame: &mut Frame) {
+fn handle_if(tokens: &mut Expression, frame: &mut Frame) {
    let cond = next_arg!(tokens, frame, "no condition"); /* could go til we get a squiggly block */
    let if_true = next_arg!(tokens, frame, "no if true");
    let has_false = 
@@ -60,7 +61,7 @@ fn handle_if(tokens: &mut Vec<Token>, frame: &mut Frame) {
    }
 }
 
-fn handle_while(tokens: &mut Vec<Token>, frame: &mut Frame) {
+fn handle_while(tokens: &mut Expression, frame: &mut Frame) {
    let cond = next_expr_vec!(tokens);
    let body = next_expr_vec!(tokens);
 
@@ -71,7 +72,7 @@ fn handle_while(tokens: &mut Vec<Token>, frame: &mut Frame) {
       parser::exec_exprs(body.clone(), frame);
    }
 }
-fn handle_func(tokens: &mut Vec<Token>, frame: &mut Frame) {
+fn handle_func(tokens: &mut Expression, frame: &mut Frame) {
    let mut args = next_expr!(tokens);
    let mut ident_args = vec![];
    while !args.is_empty() {
@@ -87,7 +88,7 @@ fn handle_func(tokens: &mut Vec<Token>, frame: &mut Frame) {
    frame.push(Function::new(file, lineno, ident_args, body.clone()).to_rc());
 }
 
-pub fn handle_control(inp: &Identifier, tokens: &mut Vec<Token>, frame: &mut Frame) -> bool {
+pub fn handle_control(inp: &Identifier, tokens: &mut Expression, frame: &mut Frame) -> bool {
    match &**inp {
       "__debug" => handle_debug(tokens, frame),
       "if" => handle_if(tokens, frame),

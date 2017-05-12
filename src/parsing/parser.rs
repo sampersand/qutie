@@ -22,7 +22,6 @@ pub fn parse<'a>(stream: &'a mut Stream<'a>) {
 pub fn exec_exprs(exprs: Vec<Expression>, frame: &mut Frame) {
    for expr in exprs {
       exec_expr(expr, frame);
-      frame.pop(); // since we finished a line, there should be one thing on the stack 
    }
 }
 
@@ -30,7 +29,7 @@ fn next_expr(stream: &mut Stream) -> Expression {
    let mut expr = vec![];
    while let Some(token) = stream.next() {
       match token {
-         Token::LineTerminator => break,
+         Token::LineTerminator => { expr.push(Token::LineTerminator); break },
          Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
          token @ _ => expr.push(token)
       }
@@ -125,10 +124,18 @@ pub fn exec_expr(mut tokens: Expression, frame: &mut Frame) {
                LParen::Square => panic!("what to do with square?"),
                LParen::Curly => frame.push(Block::new((lp, rp), body).to_rc()),
             },
-         Token::Unknown(_)        => unreachable!(),
-         Token::Assignment(_)     => unreachable!(),
-         Token::RParen(_)         => unreachable!(), 
-         Token::LineTerminator => break,
+         Token::Unknown(_)            => unreachable!(),
+         Token::Assignment(_)         => unreachable!(),
+         Token::RParen(_)             => unreachable!(), 
+         Token::LineTerminator        =>
+            {
+               while let Some(oper) = oper_stack.pop() {
+                  oper.exec(frame);
+               }
+               frame.pop();
+               assert!(tokens.is_empty(), "ended without empty tokens: {:?}", tokens);
+               return;
+            },
          Token::Separator => { /* do nothing with separators by default */ }
       }
    };
