@@ -1,7 +1,7 @@
 use std::iter::{Iterator, Peekable};
 use std::str::Chars;
 use parsing::token::{Token, Assignments};
-use obj::objects::block;
+use obj::objects::{block, text};
 use parsing::identifier;
 
 pub struct Stream<'a> {
@@ -93,7 +93,7 @@ impl <'a> Stream <'a> {
    }
 
    fn next_text(&mut self) -> Token {
-      let quote = self.source.next().unwrap();
+      let quote = text::Quote::from(self.source.next().unwrap());
       let mut acc = String::new();
       while let Some(c) = self.source.next() {
          acc.push(
@@ -111,7 +111,7 @@ impl <'a> Stream <'a> {
                         _ =>  panic!("Unknown escape character: {:?}", e)
                      }
                   },
-               _ if c == quote => break,
+               _ if c == char::from(&quote) => break,
                _ => c
             }
          )

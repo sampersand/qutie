@@ -52,6 +52,7 @@ use obj::result::BoolResult;
 impl_defaults!(ToRc; Function);
 impl_defaults!(Object; Function);
 impl_defaults!(ToBoolean; Function);
+impl_defaults!(ToText; Function);
 
 impl_defaults!(QtAdd; Function);
 impl_defaults!(QtSub; Function);

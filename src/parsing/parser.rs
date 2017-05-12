@@ -6,6 +6,7 @@ use parsing::operator::Operator;
 use obj::traits::ToRc;
 use std::rc::Rc;
 use obj::objects::number::Number;
+use obj::objects::text::Text;
 use obj::objects::object::{Object, ObjType};
 use obj::objects::block::{LParen, Block};
 use obj::objects::function::Function;
@@ -119,7 +120,7 @@ pub fn handle(mut tokens: Vec<Token>, frame: &mut Frame) {
                }
                oper_stack.push(oper)
             },
-         Token::Text(quote, body)     => unimplemented!(),
+         Token::Text(quote, body)     => frame.push(Text::new(quote, body).to_rc()),
          Token::Path(path)            => unimplemented!(),
          Token::Block((lp, rp), body) => 
             match lp {

@@ -53,10 +53,16 @@ macro_rules! num_operator {
    }
 }
 
-use obj::traits::conversion::ToBoolean;
+use obj::traits::conversion::{ToBoolean, ToText};
 impl ToBoolean for Number {
-   fn to_boolean(&self) -> BoolResult {
+   fn to_boolean(&self) -> Result<Rc<Boolean>, ObjError> {
       Ok(Boolean::get(self.num != 0).to_rc())
+   }
+}
+use obj::objects::text::Text;
+impl ToText for Number {
+   fn to_text(&self) -> Result<Rc<Text>, ObjError> {
+      Ok(Text::from(self.num.to_string()).to_rc())
    }
 }
 

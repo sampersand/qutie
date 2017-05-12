@@ -35,12 +35,20 @@ pub mod operators {
 pub mod conversion {
    use std::rc::Rc;
    use obj::objects::object::Object;
-   use obj::result::{ObjResult, BoolResult, ObjError};
+   use obj::result::{ObjResult, ObjError};
+   use obj::objects::boolean::Boolean;
+   use obj::objects::text::Text;
    pub trait ToBoolean {
-      fn to_boolean(&self) -> BoolResult {
+      fn to_boolean(&self) -> Result<Rc<Boolean>, ObjError> {
          Err(ObjError::NotImplemented)
       }
    }
+   pub trait ToText {
+      fn to_text(&self) -> Result<Rc<Text>, ObjError> {
+         Err(ObjError::NotImplemented)
+      }
+   }
+
 }
 
 

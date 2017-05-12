@@ -23,17 +23,18 @@ mod obj;
 
 fn main() {
    let inp = "
-
-factorial = func(inp) {
-   if ( inp <= 1) {
-      1
-   } else {
-      inp * factorial(inp - 1)
-   }
-   __debug inp
-};
-
-__debug(factorial(5))
+__debug 'foo: \"' __debug 1
+# 
+# factorial = func(inp) {
+#    if ( inp <= 1) {
+#       1
+#    } else {
+#       inp * factorial(inp - 1)
+#    }
+#    __debug inp
+# };
+# 
+# __debug(factorial(5))
 
 ";
    let mut stream = parsing::stream::Stream::new(inp);

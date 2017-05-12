@@ -1,5 +1,5 @@
 use parsing::operator::Operator;
-use obj::objects::block;
+use obj::objects::{block, text};
 use parsing::identifier;
 use std;
 
@@ -39,7 +39,7 @@ pub enum Token {
    Number(String),
    Operator(Operator),
    Unknown(char),
-   Text(char, String),
+   Text(text::Quote, String),
    Block((block::LParen, block::RParen), Vec<Token>),
    RParen(block::RParen),
 }

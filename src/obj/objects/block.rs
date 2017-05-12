@@ -83,12 +83,14 @@ impl Block {
    }
 }
 
+
 use obj::objects::object::{Object, ObjType};
 impl_defaults!(Display; to_string; Block);
 impl_defaults!(Debug; Block, 'B');
 impl_defaults!(ToRc; Block);
 impl_defaults!(Object; Block);
 impl_defaults!(ToBoolean; Block);
+impl_defaults!(ToText; Block);
 
 impl_defaults!(QtAdd; Block);
 impl_defaults!(QtSub; Block);

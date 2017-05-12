@@ -3,3 +3,4 @@ pub mod number;
 pub mod object;
 pub mod boolean;
 pub mod function;
+pub mod text;

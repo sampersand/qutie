@@ -7,12 +7,12 @@ use obj::traits::operators::{
    QtEql, QtNeq, QtLth, QtGth, QtLeq, QtGeq
 };
 use obj::traits::conversion::{
-   ToBoolean
+   ToBoolean, ToText
 };
 pub trait Object: Debug +
                   QtAdd + QtSub + QtMul + QtDiv + QtMod + QtPow +
                   QtEql + QtNeq + QtLth + QtGth + QtLeq + QtGeq +
-                  ToBoolean {
+                  ToBoolean + ToText {
    fn obj_type(&self) -> ObjType; /* should be a static method, but then object cant be a type */
    fn is_a(&self, ty: ObjType) -> bool {
       self.obj_type() == ty
