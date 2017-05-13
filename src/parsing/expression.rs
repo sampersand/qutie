@@ -18,7 +18,6 @@ impl Expression {
       Expression{ body: body, is_endl: is_endl }
    }
 
-
    pub fn len(&self) -> usize {
       self.body.len()
    }

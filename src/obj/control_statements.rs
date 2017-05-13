@@ -27,7 +27,7 @@ macro_rules! next_arg {
 }
 fn handle_debug(expr: &mut Expression, frame: &mut Frame) {
    let args = next_arg!(expr, frame, "no debug arg");
-   println!("debug: {:?} | {:?}", args, frame);
+   println!("debug: {:?}", args);
 }
 
 fn handle_if(expr: &mut Expression, frame: &mut Frame) {
@@ -79,6 +79,7 @@ fn handle_while(expr: &mut Expression, frame: &mut Frame) {
       body.clone().exec(frame);
    }
 }
+
 fn handle_func(expr: &mut Expression, frame: &mut Frame) {
    let mut args = expr.next_block().
                          expect("no function args found").
@@ -98,9 +99,10 @@ fn handle_func(expr: &mut Expression, frame: &mut Frame) {
    frame.push(Function::new(file, lineno, ident_args, body.clone()).to_rc());
 }
 fn handle_return(expr: &mut Expression, frame: &mut Frame) {
-   // Expression::strip_exec_expr(expr, frame); /* ignore the was endl */
-   // let val = frame.pop().expect("cant set a key to nothing!");
-   // println!("ret: {:?}", val);
+   // expr.clone().exec(frame);
+   // expr.clear();
+   let val = frame.pop().expect("cant set a key to nothing!");
+   println!("ret: {:?}", val);
    panic!("<return>")
 }
 

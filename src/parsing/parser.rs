@@ -13,12 +13,6 @@ use obj::objects::block::{LParen, Block};
 use obj::objects::function::Function;
 
 
-pub fn parse<'a>(mut stream: Stream<'a>) {
-   let ref mut frame = Frame::new(None);
-   while !stream.is_empty() {
-      stream.next_expr().exec(frame);
-   }
-}
 
 // fn handle_identifier(id: Identifier, expr: &mut Expression, frame: &mut Frame) {
 //    use obj::constants;

@@ -44,7 +44,10 @@ fn main() {
    let path = "/Users/westerhack/code/rust/qutie/examples/example.qt";
    let inp = execute::read_file(path);
    let mut stream = parsing::stream::Stream::new(&inp);
-   let res = parsing::parser::parse(stream);
+   let ref mut frame = parsing::frame::Frame::new(None);
+   while !stream.is_empty() {
+      stream.next_expr().exec(frame);
+   }
    // println!("{:?}\n", res);
 }
 
