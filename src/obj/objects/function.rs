@@ -3,7 +3,6 @@ use obj::objects::block::Block;
 use parsing::identifier::Identifier;
 use parsing::frame::Frame;
 use parsing::token::Token;
-use parsing::parser;
 use parsing::expression::Expression;
 use std::rc::Rc;
 pub struct Function {
