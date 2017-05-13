@@ -72,7 +72,6 @@ pub struct Block {
 }
 impl Block {
    pub fn new(parens: (LParen, RParen), body: Vec<Expression>) -> Block {
-      println!("new block: {:?}", body);
       Block{ parens: parens, body: body }
    }
    pub fn to_string(&self) -> String {

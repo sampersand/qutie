@@ -1,5 +1,9 @@
 fac2 = func(n) {
-   1
+   if ( n < 2 ) {
+      1
+   } else {
+      n * fac2(n - 1)
+   }
 };
 __debug (1)
 __debug ( fac2(5) )

@@ -81,9 +81,15 @@ fn handle_assignment(mut tokens: Expression, frame: &mut Frame) {
          Token::Assignment(assign_type) => assign_type,
          other @ _ => unreachable!("The second thing should always be an assignment value, not {:?}!", other)
       };
-   exec_expr(tokens, frame);
+   let is_endl = does_match!(*tokens.last().unwrap(), Token::LineTerminator);
+   if is_endl {
+      assert_match!(tokens.pop(), Some(Token::LineTerminator));
+   }
+      exec_expr(tokens, frame);
    let val = frame.pop().expect("cant set a key to nothing!");
-   frame.push(val.clone());
+   if !is_endl {
+      frame.push(val.clone());
+   }
    frame.set(identifier, val);
 }
 
