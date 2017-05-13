@@ -1,9 +1,10 @@
 fac2 = func(n) {
-   if ( n < 2 ) {
-      1
-   } else {
-      n * fac2(n - 1)
-   }
+   res = 1;
+   while ( n >= 2) {
+      res = res * n;
+      n = n - 1;
+   };
+   res
 };
 __debug (1)
 __debug ( fac2(5) )
