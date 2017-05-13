@@ -1,6 +1,6 @@
 fac2 = func(n) {
    if ( n < 2 ) {
-      return 'a';
+      return 1 + 2;
    };
    res = 1;
    while ( n >= 2) {

@@ -14,7 +14,12 @@ macro_rules! next_obj {
    ($expr:expr, $frame:expr) => {{
       parser::exec_expr($expr, $frame);
       $frame.pop().expect("can't find next arg")
+   }};
+   (block; $expr:expr, $frame:expr) => {{
+      parser::exec_exprs($expr, $frame);
+      $frame.pop().expect("can't find next arg")
    }}
+
 }
 macro_rules! next_arg {
    ($tokens:expr, $frame:expr, $err:expr) => {
@@ -70,7 +75,7 @@ fn handle_while(tokens: &mut Expression, frame: &mut Frame) {
    let cond = next_expr_vec!(tokens);
    let body = next_expr_vec!(tokens);
 // {parser::exec_exprs(cond.clone(), frame); frame.pop().unwrap() }
-   while next_obj!(cond.clone(), frame)
+   while next_obj!(block; cond.clone(), frame)
             .to_boolean()
             .expect("can't convert condition to boolean")
             .val {
@@ -93,8 +98,9 @@ fn handle_func(tokens: &mut Expression, frame: &mut Frame) {
    frame.push(Function::new(file, lineno, ident_args, body.clone()).to_rc());
 }
 fn handle_return(tokens: &mut Expression, frame: &mut Frame) {
-   let ret_val = next_obj!(tokens, frame);
-   println!("ret: {:?}", ret_val);
+   parser::strip_exec_expr(tokens, frame); /* ignore the was endl */
+   let val = frame.pop().expect("cant set a key to nothing!");
+   println!("ret: {:?}", val);
 }
 
 pub fn handle_control(inp: &Identifier, tokens: &mut Expression, frame: &mut Frame) -> bool {

@@ -81,16 +81,20 @@ fn handle_assignment(mut tokens: Expression, frame: &mut Frame) {
          Token::Assignment(assign_type) => assign_type,
          other @ _ => unreachable!("The second thing should always be an assignment value, not {:?}!", other)
       };
+
+   let was_endl = strip_exec_expr(tokens, frame);
+   let val = frame.pop().expect("cant set a key to nothing!");
+   if !was_endl { frame.push(val.clone()); }
+   frame.set(identifier, val);
+}
+
+pub fn strip_exec_expr(mut tokens: Expression, frame: &mut Frame) -> bool {
    let is_endl = does_match!(*tokens.last().unwrap(), Token::LineTerminator);
    if is_endl {
       assert_match!(tokens.pop(), Some(Token::LineTerminator));
    }
-      exec_expr(tokens, frame);
-   let val = frame.pop().expect("cant set a key to nothing!");
-   if !is_endl {
-      frame.push(val.clone());
-   }
-   frame.set(identifier, val);
+   exec_expr(tokens, frame);
+   is_endl
 }
 
 pub fn exec_expr(mut tokens: Expression, frame: &mut Frame) {
