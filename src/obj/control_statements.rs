@@ -10,13 +10,18 @@ use std::rc::Rc;
 use parsing::parser;
 use obj::objects::block::Block;
 
+macro_rules! next_obj { 
+   ($expr:expr, $frame:expr) => {{
+      parser::exec_expr($expr, $frame);
+      $frame.pop().expect("can't find next arg")
+   }}
+}
 macro_rules! next_arg {
    ($tokens:expr, $frame:expr, $err:expr) => {
       if $tokens.is_empty() {
          panic!($err)
       } else {
-         parser::exec_expr(vec![$tokens.remove(0)], $frame);
-         $frame.pop().expect("can't find next arg")
+         next_obj!(vec![$tokens.remove(0)], $frame)
       }
    }
 }
@@ -64,8 +69,8 @@ fn handle_if(tokens: &mut Expression, frame: &mut Frame) {
 fn handle_while(tokens: &mut Expression, frame: &mut Frame) {
    let cond = next_expr_vec!(tokens);
    let body = next_expr_vec!(tokens);
-
-   while {parser::exec_exprs(cond.clone(), frame); frame.pop().unwrap() }
+// {parser::exec_exprs(cond.clone(), frame); frame.pop().unwrap() }
+   while next_obj!(cond.clone(), frame)
             .to_boolean()
             .expect("can't convert condition to boolean")
             .val {
@@ -87,6 +92,10 @@ fn handle_func(tokens: &mut Expression, frame: &mut Frame) {
    let lineno = frame.lineno;
    frame.push(Function::new(file, lineno, ident_args, body.clone()).to_rc());
 }
+fn handle_return(tokens: &mut Expression, frame: &mut Frame) {
+   let ret_val = next_obj!(tokens, frame);
+   println!("ret: {:?}", ret_val);
+}
 
 pub fn handle_control(inp: &Identifier, tokens: &mut Expression, frame: &mut Frame) -> bool {
    match &**inp {
@@ -94,6 +103,7 @@ pub fn handle_control(inp: &Identifier, tokens: &mut Expression, frame: &mut Fra
       "if" => handle_if(tokens, frame),
       "while" => handle_while(tokens, frame),
       "func" => handle_func(tokens, frame),
+      "return" => handle_return(tokens, frame),
       _ => return false
    } ;
    true
