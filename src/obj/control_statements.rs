@@ -1,7 +1,7 @@
 use parsing::identifier::Identifier;
 use parsing::token::Token;
 use parsing::frame::Frame;
-use parsing::Expression;
+use parsing::expression::Expression;
 use obj::objects::object::{Object, ObjType};
 use obj::objects::boolean;
 use obj::objects::function::Function;
@@ -22,24 +22,24 @@ macro_rules! next_obj {
 
 }
 macro_rules! next_arg {
-   ($tokens:expr, $frame:expr, $err:expr) => {
-      if $tokens.is_empty() {
+   ($expr:expr, $frame:expr, $err:expr) => {
+      if $expr.is_empty() {
          panic!($err)
       } else {
-         next_obj!(vec![$tokens.remove(0)], $frame)
+         next_obj!(vec![$expr.pop_front()], $frame)
       }
    }
 }
-fn handle_debug(tokens: &mut Expression, frame: &mut Frame) {
-   let args = next_arg!(tokens, frame, "no debug arg");
+fn handle_debug(expr: &mut Expression, frame: &mut Frame) {
+   let args = next_arg!(expr, frame, "no debug arg");
    println!("debug: {:?} | {:?}", args, frame);
 }
 
-fn handle_if(tokens: &mut Expression, frame: &mut Frame) {
-   let cond = next_arg!(tokens, frame, "no condition"); /* could go til we get a squiggly block */
-   let if_true = next_arg!(tokens, frame, "no if true");
+fn handle_if(expr: &mut Expression, frame: &mut Frame) {
+   let cond = next_arg!(expr, frame, "no condition"); /* could go til we get a squiggly block */
+   let if_true = next_arg!(expr, frame, "no if true");
    let has_false = 
-      match tokens.first() {
+      match expr.first() {
          None => false,
          Some(e) =>
             match e {
@@ -49,8 +49,8 @@ fn handle_if(tokens: &mut Expression, frame: &mut Frame) {
       };
    let if_false = 
       if has_false {
-         tokens.remove(0); /* else */
-         Some(next_arg!(tokens, frame, "no false condition"))
+         expr.pop_front(); /* else */
+         Some(next_arg!(expr, frame, "no false condition"))
       } else {
          None
       };
@@ -71,9 +71,9 @@ fn handle_if(tokens: &mut Expression, frame: &mut Frame) {
    }
 }
 
-fn handle_while(tokens: &mut Expression, frame: &mut Frame) {
-   let cond = next_expr_vec!(tokens);
-   let body = next_expr_vec!(tokens);
+fn handle_while(expr: &mut Expression, frame: &mut Frame) {
+   let cond = expr.next_block().expect("no cond found for while loop");
+   let body = expr.next_block().expect("no body found for while loop");
 // {parser::exec_exprs(cond.clone(), frame); frame.pop().unwrap() }
    while next_obj!(block; cond.clone(), frame)
             .to_boolean()
@@ -82,34 +82,38 @@ fn handle_while(tokens: &mut Expression, frame: &mut Frame) {
       parser::exec_exprs(body.clone(), frame);
    }
 }
-fn handle_func(tokens: &mut Expression, frame: &mut Frame) {
-   let mut args = next_expr!(tokens);
+fn handle_func(expr: &mut Expression, frame: &mut Frame) {
+   let mut args = expr.next_block().
+                         expect("no function args found").
+                         pop_single_expr().
+                         expect("need single expression for arg");
    let mut ident_args = vec![];
    while !args.is_empty() {
-      match args.remove(0) {
+      match args.pop_front().unwrap() {
          Token::Identifier(ident) => ident_args.push(ident),
          Token::Separator => { /* do nothing cause its a separator */ }
          arg @ _ => panic!("unexpected non-ident token type: {:?}", arg)
       }   
    }
-   let body = next_expr_vec!(tokens);
+   let body = expr.next_block().expect("no body found");
    let file = frame.file.clone();
    let lineno = frame.lineno;
    frame.push(Function::new(file, lineno, ident_args, body.clone()).to_rc());
 }
-fn handle_return(tokens: &mut Expression, frame: &mut Frame) {
-   parser::strip_exec_expr(tokens, frame); /* ignore the was endl */
-   let val = frame.pop().expect("cant set a key to nothing!");
-   println!("ret: {:?}", val);
+fn handle_return(expr: &mut Expression, frame: &mut Frame) {
+   // parser::strip_exec_expr(expr, frame); /* ignore the was endl */
+   // let val = frame.pop().expect("cant set a key to nothing!");
+   // println!("ret: {:?}", val);
+   panic!("<return>")
 }
 
-pub fn handle_control(inp: &Identifier, tokens: &mut Expression, frame: &mut Frame) -> bool {
+pub fn handle_control(inp: &Identifier, expr: &mut Expression, frame: &mut Frame) -> bool {
    match &**inp {
-      "__debug" => handle_debug(tokens, frame),
-      "if" => handle_if(tokens, frame),
-      "while" => handle_while(tokens, frame),
-      "func" => handle_func(tokens, frame),
-      "return" => handle_return(tokens, frame),
+      "__debug" => handle_debug(expr, frame),
+      "if" => handle_if(expr, frame),
+      "while" => handle_while(expr, frame),
+      "func" => handle_func(expr, frame),
+      "return" => handle_return(expr, frame),
       _ => return false
    } ;
    true

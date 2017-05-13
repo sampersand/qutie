@@ -3,6 +3,7 @@ use std::str::Chars;
 use parsing::token::{Token, Assignments};
 use obj::objects::{block, text};
 use parsing::identifier;
+use parsing::expression::Expression;
 
 pub struct Stream<'a> {
    source: Peekable<Chars<'a>>
@@ -27,6 +28,17 @@ impl <'a> Stream<'a> {
          }
          self.source.next();
       }
+   }
+   pub fn next_expr(&mut self) -> Expression {
+      let mut expr = vec![];
+      while let Some(token) = self.next() {
+         match token {
+            Token::LineTerminator => { expr.push(Token::LineTerminator); break },
+            Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
+            token @ _ => expr.push(token)
+         }
+      }
+      Expression::new(expr)
    }
 }
 
@@ -123,7 +135,7 @@ impl <'a> Stream <'a> {
       let lparen = block::LParen::from(self.source.next().unwrap());
       let rparen = lparen.get_rparen();
       let mut ret = vec![];
-      let mut acc = vec![];
+      let mut acc = Expression::new_empty();
       loop {
          match self.next() {
             None => panic!("no rhs found for lparen: {:?}", lparen),
@@ -137,8 +149,8 @@ impl <'a> Stream <'a> {
                      },
                   Token::LineTerminator =>
                      {
-                        ret.push(acc.clone());
-                        acc.clear();
+                        ret.push(acc);
+                        acc = Expression::new_empty();
                      },
                   _ => acc.push(token)
                }
@@ -162,7 +174,7 @@ impl <'a> Stream <'a> {
       self.next()
    }
 
-   pub fn next(&mut self) -> Option<Token> {
+   fn next(&mut self) -> Option<Token> {
       macro_rules! next_chr { () => (self.source.next().unwrap()) }
       self.strip_whitespace();
       if self.is_empty() {

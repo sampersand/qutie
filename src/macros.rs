@@ -2,23 +2,9 @@ macro_rules! assert_match {
    ($lhs:expr, $rhs:pat) => (assert_match!($lhs, $rhs, "Explicit assert error"));
    ($lhs:expr, $rhs:pat, $msg:expr) => ( assert!(does_match!($lhs, $rhs), $msg) )
 }
+
 macro_rules! does_match {
    ($lhs:expr, $rhs:pat) => (match $lhs { $rhs => true, _ => false })
-}
-macro_rules! next_expr_vec {
-    ($tokens:expr) => {
-      match $tokens.remove(0) {
-         Token::Block((_, _), body) => body,
-         o @ _ => panic!("expected a block, not {:?}", o)
-      }
-    }
-}
-macro_rules! next_expr {
-   ($tokens:expr) => {{
-      let mut expr = next_expr_vec!($tokens);
-      assert_eq!(expr.len(), 1, "Got multiple expressions where one was expected!");
-      expr.remove(0)
-   }}
 }
 
 macro_rules! concat_all {

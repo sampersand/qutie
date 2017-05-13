@@ -64,7 +64,7 @@ impl_defaults!(Display; to_string; LParen);
 impl_defaults!(Display; to_string; RParen);
 
 use parsing::token::Token;
-use parsing::Expression;
+use parsing::expression::Expression;
 pub struct Block {
    parens: (LParen, RParen),
    pub body: Vec<Expression>,
@@ -81,6 +81,16 @@ impl Block {
       ret.push_str("...");
       ret.push_str(self.parens.1.to_string().as_str());
       return ret
+   }
+   pub fn is_single(&self) -> bool {
+      self.body.len() == 0
+   }
+   pub fn pop_single_expr(&self) -> Option<Expression> {
+      if !self.is_single() {
+         None
+      } else {
+         self.body.remove(0)
+      }
    }
 }
 

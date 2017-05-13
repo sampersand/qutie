@@ -4,7 +4,7 @@ use parsing::identifier::Identifier;
 use parsing::frame::Frame;
 use parsing::token::Token;
 use parsing::parser;
-use parsing::Expression;
+use parsing::expression::Expression;
 use std::rc::Rc;
 pub struct Function {
    file: String, /* todo: update this */

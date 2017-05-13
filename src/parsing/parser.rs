@@ -2,7 +2,7 @@ use parsing::stream::Stream;
 use parsing::frame::Frame;
 use parsing::identifier::Identifier;
 use parsing::token::Token;
-use parsing::Expression;
+use parsing::expression::Expression;
 use parsing::operator::Operator;
 use obj::traits::ToRc;
 use std::rc::Rc;
@@ -13,10 +13,11 @@ use obj::objects::block::{LParen, Block};
 use obj::objects::function::Function;
 
 
-pub fn parse<'a>(stream: &'a mut Stream<'a>) {
+pub fn parse<'a>(mut stream: Stream<'a>) {
    let ref mut frame = Frame::new(None);
-   let exprs = get_exprs(stream);
-   exec_exprs(exprs, frame);
+   while !stream.is_empty() {
+      exec_expr(stream.next_expr(), frame);
+   }
 }
 
 pub fn exec_exprs(exprs: Vec<Expression>, frame: &mut Frame) {
@@ -25,96 +26,79 @@ pub fn exec_exprs(exprs: Vec<Expression>, frame: &mut Frame) {
    }
 }
 
-fn next_expr(stream: &mut Stream) -> Expression {
-   let mut expr = vec![];
-   while let Some(token) = stream.next() {
-      match token {
-         Token::LineTerminator => { expr.push(Token::LineTerminator); break },
-         Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
-         token @ _ => expr.push(token)
-      }
-   }
-   expr
-}
-
-fn get_exprs(stream: &mut Stream) -> Vec<Expression> {
-   let mut ret = vec![];
-   while !stream.is_empty() {
-      ret.push(next_expr(stream));
-   }
-   ret
-}
-
-fn handle_identifier(id: Identifier, tokens: &mut Expression, frame: &mut Frame) {
+fn handle_identifier(id: Identifier, expr: &mut Expression, frame: &mut Frame) {
    use obj::constants;
    use obj::control_statements;
    if let Some(constant) = constants::get_constant(&id) {
       frame.push(constant);
       return
    }
-   if control_statements::handle_control(&id, tokens, frame) {
+   if control_statements::handle_control(&id, expr, frame) {
       /* do nothing, was already handeled */
       return
    }
-   if let Some(ref val) = frame.get(&id) {
-      if val.is_a(ObjType::Function) {
-         let args = next_expr!(tokens);
-         let res = cast_as!(val, Function).qt_call(args, frame);
-         frame.push(res);
-      } else {
-         frame.push(val.clone())
-      }
-      return
+   match frame.get(&id) {
+      None => panic!("unknown identifier: {:?}", id),
+      Some(ref val) => 
+         if val.is_a(ObjType::Function) && 
+               !expr.is_empty() &&
+               does_match!(expr.peek_front().unwrap(), &Token::Block((_, _), _)) {
+            let args = expr.next_block().unwrap().pop_single_expr().expect("only one expr for args");
+            let res = cast_as!(val, Function).qt_call(args, frame);
+            frame.push(res);
+         } else {
+            frame.push(val.clone())
+         }
    }
-   panic!("unknown identifier: {:?}", id);
 }
 
-fn handle_assignment(mut tokens: Expression, frame: &mut Frame) {
-   assert!(2 < tokens.len(), "need at least 3 operands for assignment!");
+fn handle_assignment(mut expr: Expression, frame: &mut Frame) {
+   assert!(2 < expr.len(), "need at least 3 operands for assignment!");
    let identifier = 
-      match tokens.remove(0) {
+      match expr.pop_front().unwrap() {
          Token::Identifier(identifier) => identifier,
          other @ _ => panic!("can only assign to identifiers not {:?}", other)
       };
    let assign_type = 
-      match tokens.remove(0) {
+      match expr.pop_front().unwrap() {
          Token::Assignment(assign_type) => assign_type,
          other @ _ => unreachable!("The second thing should always be an assignment value, not {:?}!", other)
       };
 
-   let was_endl = strip_exec_expr(tokens, frame);
+   let was_endl = strip_exec_expr(expr, frame);
    let val = frame.pop().expect("cant set a key to nothing!");
    if !was_endl { frame.push(val.clone()); }
    frame.set(identifier, val);
 }
 
-pub fn strip_exec_expr(mut tokens: Expression, frame: &mut Frame) -> bool {
-   let is_endl = does_match!(*tokens.last().unwrap(), Token::LineTerminator);
+pub fn strip_exec_expr(mut expr: Expression, frame: &mut Frame) -> bool {
+   let is_endl = expr.is_endl;
    if is_endl {
-      assert_match!(tokens.pop(), Some(Token::LineTerminator));
+      expr.is_endl = false;
    }
-   exec_expr(tokens, frame);
+   exec_expr(expr, frame);
+   exor.is_endl = is_endl;
    is_endl
 }
 
-pub fn exec_expr(mut tokens: Expression, frame: &mut Frame) {
-   if tokens.is_empty() { return }
+pub fn exec_expr(mut expr: Expression, frame: &mut Frame) {
+   if expr.is_empty() { return }
 
    let is_assignment = 
-      2 < tokens.len() && 
-      match tokens.get(1).unwrap() {
+      2 < expr.len() && 
+      match expr.get(1).unwrap() {
          &Token::Assignment(_) => true,
          _ => false
       };
    if is_assignment {
-      handle_assignment(tokens, frame);
+      handle_assignment(expr, frame);
       return
    }
    let mut oper_stack = Vec::<Operator>::new();
-   while !tokens.is_empty() {
-      let token = tokens.remove(0);
+   while !expr.is_empty() {
+      let token = expr.pop_front();
       match token {
-         Token::Identifier(id)        => handle_identifier(id, &mut tokens, frame),
+         Token::Identifier(id)        => handle_identifier(id, &mut expr, frame),
          Token::Number(num)           => frame.push(Number::from(num.as_str()).to_rc()),
          Token::Operator(oper)        => 
             {
@@ -137,13 +121,13 @@ pub fn exec_expr(mut tokens: Expression, frame: &mut Frame) {
          Token::Unknown(_)            => unreachable!(),
          Token::Assignment(_)         => unreachable!(),
          Token::RParen(_)             => unreachable!(), 
-         Token::LineTerminator        =>
+         Token::LineTerminator        => unreachable!(),
             {
                while let Some(oper) = oper_stack.pop() {
                   oper.exec(frame);
                }
                frame.pop();
-               assert!(tokens.is_empty(), "ended without empty tokens: {:?}", tokens);
+               assert!(expr.is_empty(), "ended without empty expr: {:?}", expr);
                return;
             },
          Token::Separator => { /* do nothing with separators by default */ }
@@ -152,7 +136,7 @@ pub fn exec_expr(mut tokens: Expression, frame: &mut Frame) {
    while let Some(oper) = oper_stack.pop() {
       oper.exec(frame);
    }
-   assert!(tokens.is_empty(), "ended without empty tokens: {:?}", tokens)
+   assert!(expr.is_empty(), "ended without empty expr: {:?}", expr)
 }
 
 

@@ -1,7 +1,7 @@
 use parsing::operator::Operator;
 use obj::objects::{block, text};
 use parsing::identifier;
-use parsing::Expression;
+use parsing::expression::Expression;
 use std;
 
 #[derive(Debug, Clone, Copy)]
