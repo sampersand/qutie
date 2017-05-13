@@ -30,15 +30,15 @@ impl <'a> Stream<'a> {
       }
    }
    pub fn next_expr(&mut self) -> Expression {
-      let mut expr = vec![];
+      let mut tokens = vec![];
       while let Some(token) = self.next() {
          match token {
-            Token::LineTerminator => { expr.push(Token::LineTerminator); break },
+            Token::LineTerminator => return Expression::new(tokens, true),
             Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
-            token @ _ => expr.push(token)
+            token @ _ => tokens.push(token)
          }
       }
-      Expression::new(expr)
+      Expression::new(tokens, false)
    }
 }
 
@@ -131,11 +131,11 @@ impl <'a> Stream <'a> {
       Token::Text(quote, acc)
    }
 
-   fn next_expr_vec(&mut self) -> Token {
+   fn next_block(&mut self) -> Token { /* the token is a block */
       let lparen = block::LParen::from(self.source.next().unwrap());
       let rparen = lparen.get_rparen();
       let mut ret = vec![];
-      let mut acc = Expression::new_empty();
+      let mut acc = vec![];
       loop {
          match self.next() {
             None => panic!("no rhs found for lparen: {:?}", lparen),
@@ -149,15 +149,15 @@ impl <'a> Stream <'a> {
                      },
                   Token::LineTerminator =>
                      {
-                        ret.push(acc);
-                        acc = Expression::new_empty();
+                        ret.push(Expression::new(acc.clone(), true));
+                        acc.clear();
                      },
                   _ => acc.push(token)
                }
          }
       }
       if !acc.is_empty() {
-         ret.push(acc);
+         ret.push(Expression::new(acc, false));
       }
       Token::Block((lparen, rparen), ret)
    }
@@ -190,7 +190,7 @@ impl <'a> Stream <'a> {
          _ if is_alpha!(c)       => Some(self.next_identifier()),
          _ if is_numeric!(c)     => Some(self.next_number()),
          _ if is_quote!(c)       => Some(self.next_text()),
-         _ if is_block_start!(c) => Some(self.next_expr_vec()),
+         _ if is_block_start!(c) => Some(self.next_block()),
          _ if is_block_end!(c)   => Some(Token::RParen(block::RParen::from(next_chr!()))),
          _ if is_symbol!(c)      => Some(self.next_oper()),
          _                       => Some(Token::Unknown(next_chr!()))

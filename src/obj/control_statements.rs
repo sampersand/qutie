@@ -7,18 +7,13 @@ use obj::objects::boolean;
 use obj::objects::function::Function;
 use obj::traits::ToRc;
 use std::rc::Rc;
-use parsing::parser;
 use obj::objects::block::Block;
 
 macro_rules! next_obj { 
    ($expr:expr, $frame:expr) => {{
-      parser::exec_expr($expr, $frame);
+      $expr.exec($frame);
       $frame.pop().expect("can't find next arg")
    }};
-   (block; $expr:expr, $frame:expr) => {{
-      parser::exec_exprs($expr, $frame);
-      $frame.pop().expect("can't find next arg")
-   }}
 
 }
 macro_rules! next_arg {
@@ -26,7 +21,7 @@ macro_rules! next_arg {
       if $expr.is_empty() {
          panic!($err)
       } else {
-         next_obj!(vec![$expr.pop_front()], $frame)
+         next_obj!(Expression::new(vec![$expr.pop_front().unwrap()], false), $frame)
       }
    }
 }
@@ -39,7 +34,7 @@ fn handle_if(expr: &mut Expression, frame: &mut Frame) {
    let cond = next_arg!(expr, frame, "no condition"); /* could go til we get a squiggly block */
    let if_true = next_arg!(expr, frame, "no if true");
    let has_false = 
-      match expr.first() {
+      match expr.peek_front() {
          None => false,
          Some(e) =>
             match e {
@@ -56,14 +51,14 @@ fn handle_if(expr: &mut Expression, frame: &mut Frame) {
       };
    if cond.to_boolean().expect("can't convert condition to boolean").val {
       if if_true.is_a(ObjType::Block) {
-         parser::exec_exprs(cast_as!(&if_true, Block).body.clone(), frame);
+         (**cast_as!(&if_true, Block)).clone().exec(frame);
       } else {
          frame.push(if_true)
       }
    } else {
       if let Some(if_false) = if_false {
          if if_false.is_a(ObjType::Block) {
-            parser::exec_exprs(cast_as!(&if_false, Block).body.clone(), frame);
+            (**cast_as!(&if_false, Block)).clone().exec(frame);
          } else {
             frame.push(if_false)
          }
@@ -74,12 +69,14 @@ fn handle_if(expr: &mut Expression, frame: &mut Frame) {
 fn handle_while(expr: &mut Expression, frame: &mut Frame) {
    let cond = expr.next_block().expect("no cond found for while loop");
    let body = expr.next_block().expect("no body found for while loop");
-// {parser::exec_exprs(cond.clone(), frame); frame.pop().unwrap() }
-   while next_obj!(block; cond.clone(), frame)
-            .to_boolean()
-            .expect("can't convert condition to boolean")
-            .val {
-      parser::exec_exprs(body.clone(), frame);
+// {Expression::exec_exprs(cond.clone(), frame); frame.pop().unwrap() }
+   while cond.clone().
+              exec(frame).
+              expect("no result found from condition").
+              to_boolean().
+              expect("can't convert condition to boolean").
+              val {
+      body.clone().exec(frame);
    }
 }
 fn handle_func(expr: &mut Expression, frame: &mut Frame) {
@@ -101,7 +98,7 @@ fn handle_func(expr: &mut Expression, frame: &mut Frame) {
    frame.push(Function::new(file, lineno, ident_args, body.clone()).to_rc());
 }
 fn handle_return(expr: &mut Expression, frame: &mut Frame) {
-   // parser::strip_exec_expr(expr, frame); /* ignore the was endl */
+   // Expression::strip_exec_expr(expr, frame); /* ignore the was endl */
    // let val = frame.pop().expect("cant set a key to nothing!");
    // println!("ret: {:?}", val);
    panic!("<return>")

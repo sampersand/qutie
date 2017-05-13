@@ -1,3 +1,10 @@
+use parsing::token::Token;
+use parsing::expression::Expression;
+use parsing::frame::Frame;
+use std::rc::Rc;
+use obj::objects::object::{Object, ObjType};
+
+
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum LParen {
    Round, Square, Curly
@@ -63,8 +70,7 @@ impl_defaults!(to_string; char; RParen);
 impl_defaults!(Display; to_string; LParen);
 impl_defaults!(Display; to_string; RParen);
 
-use parsing::token::Token;
-use parsing::expression::Expression;
+#[derive(Clone)]
 pub struct Block {
    parens: (LParen, RParen),
    pub body: Vec<Expression>,
@@ -83,19 +89,24 @@ impl Block {
       return ret
    }
    pub fn is_single(&self) -> bool {
-      self.body.len() == 0
+      self.body.len() == 1
    }
-   pub fn pop_single_expr(&self) -> Option<Expression> {
+   pub fn pop_single_expr(&mut self) -> Option<Expression> {
       if !self.is_single() {
          None
       } else {
-         self.body.remove(0)
+         Some(self.body.remove(0))
       }
+   }
+   pub fn exec(self, frame: &mut Frame) -> Option<Rc<Object>> {
+      for expr in self.body {
+         expr.exec(frame);
+      }
+      frame.pop()
    }
 }
 
 
-use obj::objects::object::{Object, ObjType};
 impl_defaults!(Display; to_string; Block);
 impl_defaults!(Debug; Block, 'B');
 impl_defaults!(ToRc; Block);

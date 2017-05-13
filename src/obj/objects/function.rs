@@ -8,13 +8,13 @@ use parsing::expression::Expression;
 use std::rc::Rc;
 pub struct Function {
    file: String, /* todo: update this */
-   line: usize,
+   line: usize,  /* and this */
    args: Vec<Identifier>,
-   body: Vec<Expression>
+   body: Block,
 }
 
 impl Function {
-   pub fn new(file: String, line: usize, args: Vec<Identifier>, body: Vec<Expression>) -> Function {
+   pub fn new(file: String, line: usize, args: Vec<Identifier>, body: Block) -> Function {
       Function{ file: file, line: line, args: args, body: body }
    }
    pub fn to_string(&self) -> String {
@@ -23,7 +23,7 @@ impl Function {
    pub fn qt_call(&self, args: Expression, frame: &mut Frame) -> Rc<Object> {
       /* this is kinda hacky way to do things */
       let orig_length = frame.stack_len();
-      parser::exec_expr(args, frame);
+      args.exec(frame);
       let mut self_args = self.args.clone();
       let mut i = 0;
       let mut acc = vec![];
@@ -34,8 +34,8 @@ impl Function {
       while !acc.is_empty() {
          new_frame.set(self_args.pop().unwrap(), acc.pop().unwrap());
       }
-      parser::exec_exprs(self.body.clone(), &mut new_frame);
-      if let Some(ret) = new_frame.pop() {
+
+      if let Some(ret) = self.body.clone().exec(&mut new_frame) {
          ret
       } else {
          panic!("todo: None")

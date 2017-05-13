@@ -1,12 +1,12 @@
 fac2 = func(n) {
-   if ( n < 2 ) {
-      return 1 + 2;
-   };
-   res = 1;
-   while ( n >= 2) {
-      res = res * n;
-      n = n - 1;
-   };
-   res
+  if ( n < 2 ) {
+     __debug ("foo")
+  };
+  res = 1;
+  while ( n >= 2) {
+     res = res * n;
+     n = n - 1;
+  };
+  res
 };
 __debug ( fac2(1) )
