@@ -17,11 +17,12 @@ macro_rules! concat_all {
 }
 macro_rules! cast_as {
    ($obj:expr, $ty:ident) => {{
-      assert!($obj.is_a(ObjType::$ty));
+      let obj = $obj;
+      assert!(obj.is_a(ObjType::$ty));
       use std::mem::transmute;
       use std::rc::Rc;
       unsafe {
-         transmute::<&Rc<Object>, &Rc<$ty>>($obj)
+         transmute::<&Rc<Object>, &Rc<$ty>>(obj)
       }
    }};
 }

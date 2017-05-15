@@ -27,7 +27,8 @@ macro_rules! next_arg {
 }
 fn handle_debug(expr: &mut Expression, frame: &mut Frame) {
    let args = next_arg!(expr, frame, "no debug arg");
-   println!("debug: {:?} | {:?}", args, frame);
+   println!("debug: {:?}", args);
+   // println!("debug: {:?} | {:?}", args, frame);
 }
 
 fn handle_if(expr: &mut Expression, frame: &mut Frame) {
@@ -51,16 +52,14 @@ fn handle_if(expr: &mut Expression, frame: &mut Frame) {
       };
    if cond.to_boolean().expect("can't convert condition to boolean").val {
       if if_true.is_a(ObjType::Block) {
-         if let Some(o) = (**cast_as!(&if_true, Block)).clone().exec(frame) {
-            frame.push(o);
-         }
+         (**cast_as!(&if_true, Block)).clone().exec_no_pop(frame);
       } else {
          frame.push(if_true)
       }
    } else {
       if let Some(if_false) = if_false {
          if if_false.is_a(ObjType::Block) {
-            (**cast_as!(&if_false, Block)).clone().exec(frame);
+            (**cast_as!(&if_false, Block)).clone().exec_no_pop(frame);
          } else {
             frame.push(if_false)
          }
@@ -78,7 +77,7 @@ fn handle_while(expr: &mut Expression, frame: &mut Frame) {
               to_boolean().
               expect("can't convert condition to boolean").
               val {
-      body.clone().exec(frame);
+      body.clone().exec_no_pop(frame);
    }
 }
 

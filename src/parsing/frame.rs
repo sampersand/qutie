@@ -45,6 +45,9 @@ impl <'a> Frame<'a> {
       self.stack.push(obj);
    }
 
+   pub fn peek(&self) -> Option<&Rc<Object>> {
+      self.stack.last()
+   }
    pub fn pop(&mut self) -> Option<Rc<Object>> {
       self.stack.pop()
    }

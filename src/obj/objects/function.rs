@@ -24,7 +24,6 @@ impl Function {
       let orig_length = frame.stack_len();
       args.exec(frame);
       let mut self_args = self.args.clone();
-      let mut i = 0;
       let mut acc = vec![];
       while orig_length < frame.stack_len()  {
          acc.insert(0, frame.pop().unwrap());

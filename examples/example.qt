@@ -1,12 +1,32 @@
-i = 1;
-if ( i < 2 ) {
-   __debug(10)
-};
+a = func(n){ __debug(n); 1 };
+(a)(1);
 
-fac1 = func(n) {
-   if ( n < 2 ) {
-      __debug(9);
-      9
-   }
-};
-fac1(1)
+# fac1 = func(n) {
+#    if ( n < 2 ) {
+#       1
+#    } else {
+#       n * fac1(n - 1)
+#    }
+# };
+
+# fac2 = func(n) {
+#    ret = 1;
+#    while( 1 < n ) {
+#       ret = ret * n;
+#       n = n - 1;
+#    };
+#    ret
+# };
+
+# __debug( "fac1:" )
+# __debug( fac1(5) )
+# __debug( fac2(5) )
+
+
+
+
+
+
+
+
+

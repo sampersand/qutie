@@ -66,15 +66,15 @@ impl Expression {
       match frame.get(&id) {
          None => panic!("unknown identifier: {:?}", id),
          Some(ref val) => 
-            if val.is_a(ObjType::Function) && 
-                  !self.is_empty() &&
-                  does_match!(self.peek_front().unwrap(), &Token::Block((_, _), _)) {
-               let args = self.next_block().unwrap().pop_single_expr().expect("only one expr for args");
-               let res = cast_as!(val, Function).qt_call(args, frame);
-               frame.push(res);
-            } else {
+            // if val.is_a(ObjType::Function) && 
+            //       !self.is_empty() &&
+            //       does_match!(self.peek_front().unwrap(), &Token::Block((_, _), _)) {
+            //    let args = self.next_block().unwrap().pop_single_expr().expect("only one expr for args");
+            //    let res = cast_as!(val, Function).qt_call(args, frame);
+            //    frame.push(res);
+            // } else {
                frame.push(val.clone())
-            }
+            // }
       }
    }
 
@@ -136,11 +136,18 @@ impl Expression {
                },
             Token::Text(quote, body)     => frame.push(Text::new(quote, body).to_rc()),
             Token::Path(path)            => unimplemented!(),
-            Token::Block((lp, rp), body) => 
+            Token::Block((lp, rp), mut body) => 
                match lp {
                   LParen::Round  => 
-                     for expr in body {
-                        expr.exec(frame);
+                     if !frame.is_empty() && frame.peek().unwrap().is_a(ObjType::Function) {
+                        assert_eq!(body.len(), 1, "only one expression for function args!");
+                        let args = body.pop().unwrap();
+                        let res = cast_as!(&frame.pop().expect("we just checked"), Function).qt_call(args, frame);
+                        frame.push(res);
+                     } else {
+                        for expr in body {
+                           expr.exec(frame);
+                        }
                      },
                   LParen::Square => panic!("what to do with square?"),
                   LParen::Curly  => { frame.push(Block::new((lp, rp), body).to_rc()); },

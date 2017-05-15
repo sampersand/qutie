@@ -99,10 +99,13 @@ impl Block {
       }
    }
    pub fn exec(self, frame: &mut Frame) -> Option<Rc<Object>> {
+      self.exec_no_pop(frame);
+      frame.pop()
+   }
+   pub fn exec_no_pop(self, frame: &mut Frame) {
       for expr in self.body {
          expr.exec(frame);
       }
-      frame.pop()
    }
 }
 
