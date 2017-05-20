@@ -8,10 +8,10 @@ macro_rules! does_match {
 }
 
 macro_rules! concat_all {
-   ($start:expr $(, $child:expr)+ ) => {{
+   ($start:expr $(, $child:expr)* ) => {{
       let mut ret = String::new();
       ret.push_str($start.to_string().as_str());
-      $(ret.push_str($child.to_string().as_str());)+
+      $(ret.push_str($child.to_string().as_str());)*
       ret
    }}
 }

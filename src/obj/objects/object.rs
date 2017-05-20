@@ -25,5 +25,6 @@ pub enum ObjType {
    Text,
    Block,
    Boolean,
+   List,
    Function
 }

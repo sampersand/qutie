@@ -2,10 +2,12 @@ use parsing::frame::Frame;
 use parsing::operator::Operator;
 use parsing::token::Token;
 use parsing::identifier::Identifier;
+use obj::objects::list::List;
 use obj::objects::block::Block;
 use obj::objects::object::{ObjType, Object};
 use obj::objects::function::Function;
 use obj::traits::ToRc;
+
 
 #[derive(Debug, Clone)]
 pub struct Expression {
@@ -149,7 +151,17 @@ impl Expression {
                            expr.exec(frame);
                         }
                      },
-                  LParen::Square => panic!("what to do with square?"),
+                  LParen::Square => {
+                     let stack = 
+                        {
+                           let mut internal_frame = frame.spawn_child();
+                           for expr in body {
+                              expr.exec(&mut internal_frame)
+                           }
+                           internal_frame.take_stack()
+                        };
+                     frame.push(List::new(stack).to_rc())
+                  },
                   LParen::Curly  => { frame.push(Block::new((lp, rp), body).to_rc()); },
                },
             Token::Unknown(_)            => unreachable!(),

@@ -1,3 +1,6 @@
+a = [3, 1];
+__debug ( a )
+# a = {1: 2};
 # fac1 = func(n) {
 #    if ( n < 2 ) {
 #       1
@@ -5,19 +8,20 @@
 #       n * fac1(n - 1)
 #    }
 # };
+# __debug(fac1(10))
 
-# fac2 = func(n) {
-#    ret = 1;
-#    while( 1 < n ) {
-#       ret = ret * n;
-#       n = n - 1;
-#    };
-#    ret
-# };
+# # fac2 = func(n) {
+# #    ret = 1;
+# #    while( 1 < n ) {
+# #       ret = ret * n;
+# #       n = n - 1;
+# #    };
+# #    ret
+# # };
 
-# __debug( "fac1:" )
-# __debug( fac1(5) )
-# __debug( fac2(5) )
+# # __debug( "fac1:" )
+# # __debug( fac1(5) )
+# # __debug( fac2(5) )
 
 
 

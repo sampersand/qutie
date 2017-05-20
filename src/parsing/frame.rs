@@ -29,6 +29,7 @@ impl <'a> Frame<'a> {
             }
       }
    }
+
    pub fn spawn_child<'b>(&'b self) -> Frame<'b> {
       Frame::new(Some(self)) // TODO: parent = this one 
    }
@@ -76,6 +77,10 @@ impl <'a> Frame<'a> {
          }.insert(key.clone(), val.clone());
       }
       self.locals.insert(key, val);
+   }
+
+   pub fn take_stack(self) -> Vec<Rc<Object>> {
+      self.stack
    }
 }
 

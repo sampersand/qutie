@@ -6,6 +6,11 @@ pub enum ObjError {
    NotImplemented,
    Return(Rc<Object>),
 }
+impl ObjError {
+   pub fn to_string(&self) -> String {
+      "<Error>".to_string()
+   }
+}
 
 pub type ObjResult = Result<Rc<Object>, ObjError>;
 pub type BoolResult = Result<Rc<Boolean>, ObjError>;
