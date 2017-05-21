@@ -1,3 +1,36 @@
+macro_rules! into_mutable {
+   ($obj:ident) => {{
+      use std::mem::transmute;
+      #[allow(mutable_transmutes)]
+      let a: &mut Object = match $obj.obj_type() {
+         ObjType::Number => {{
+            use obj::objects::number::Number;
+            *transmute::<&&Object, &mut &mut Number>(&&*$obj)
+         }},
+         ObjType::Text => {{
+            use obj::objects::text::Text;
+            *transmute::<&&Object, &mut &mut Text>(&&*$obj)
+         }},
+         ObjType::Block => {{
+            use obj::objects::block::Block;
+            *transmute::<&&Object, &mut &mut Block>(&&*$obj)
+         }},
+         ObjType::Boolean => {{
+            use obj::objects::boolean::Boolean;
+            *transmute::<&&Object, &mut &mut Boolean>(&&*$obj)
+         }},
+         ObjType::List => {{
+            use obj::objects::list::List;
+            *transmute::<&&Object, &mut &mut List>(&&*$obj)
+         }},
+         ObjType::Function => {{
+            use obj::objects::function::Function;
+            *transmute::<&&Object, &mut &mut Function>(&&*$obj)
+         }},
+      };
+      a
+   }}
+}
 macro_rules! assert_match {
    ($lhs:expr, $rhs:pat) => (assert_match!($lhs, $rhs, "Explicit assert error"));
    ($lhs:expr, $rhs:pat, $msg:expr) => ( assert!(does_match!($lhs, $rhs), $msg) )
@@ -15,6 +48,7 @@ macro_rules! concat_all {
       ret
    }}
 }
+
 macro_rules! cast_as {
    ($obj:expr, $ty:ident) => {{
       let obj = $obj;
@@ -26,6 +60,7 @@ macro_rules! cast_as {
       }
    }};
 }
+
 macro_rules! todo {
    ($msg:expr $(,$arg:expr)*) => {{
       print!("TODO:\n\t");

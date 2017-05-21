@@ -64,12 +64,12 @@ pub mod data { /* this is also pseudo-operator */
       }
    }
    pub trait SetItem {
-      fn set_item(&self, item: Rc<Object>, value: Rc<Object>, frame: &mut Frame) -> Result<(), ObjError> {
+      fn set_item(&mut self, item: Rc<Object>, value: Rc<Object>, frame: &mut Frame) -> Result<(), ObjError> {
          Err(ObjError::NotImplemented)
       }
    }
    pub trait DelItem {
-      fn del_item(&self, item: Rc<Object>, frame: &mut Frame) -> Result<(), ObjError> {
+      fn del_item(&mut self, item: Rc<Object>, frame: &mut Frame) -> Result<(), ObjError> {
          Err(ObjError::NotImplemented)
       }
    }

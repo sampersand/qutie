@@ -28,7 +28,7 @@ pub trait Object: Debug +
 #[derive(Debug, PartialEq)]
 pub enum ObjType {
    Number,
-   Identifier, /* maybe path ? */
+   // Identifier, /* maybe path ? */
    Text,
    Block,
    Boolean,

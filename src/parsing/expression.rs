@@ -8,6 +8,7 @@ use obj::objects::object::{ObjType, Object};
 use obj::objects::function::Function;
 use obj::traits::ToRc;
 use std::rc::Rc;
+use obj::traits::data::SetItem;
 
 #[derive(Debug, Clone)]
 pub struct Expression {
@@ -81,21 +82,18 @@ impl Expression {
    }
 
    fn handle_assignment(mut self, frame: &mut Frame) {
-      let idents = vec![];
+      let mut keys = vec![];
       let mut assign = None;
       while let Some(token) = self.pop_front() {
          if does_match!(token, Token::Assignment(_)) {
             assign = Some(token);
             break
          } else {
-            idents.push(token)
+            keys.push(token)
          }
       }
-      let assign = 
-         match assign {
-            None => panic!("can't assign to nothing!"),
-            Some(val) => val
-         };
+      // assign is unused
+      let assign = assign.expect("We should have checked for the presence of an assignment");
 
       let was_endl = self.is_endl;
       self.is_endl = false;
@@ -104,8 +102,32 @@ impl Expression {
          frame.push(val.clone());
       }
       /* this could be improved lol */
-      if idents.len() == 1 {
-         frame.set(identifier, val);
+      if keys.len() == 1 {
+         match keys.remove(0) {
+            Token::Identifier(ident) => frame.set(ident, val),
+            other @ _ => panic!("Can only set to Identifier, not {:?}", other)
+         }
+      } else if keys.is_empty() {
+         panic!("cant set to nothing!")
+      } else {
+         if keys.len() != 2 {
+            panic!("TODO: stringed assignment");
+         }
+         /* TODO: THIS */
+         let key = 
+            match keys.get(0).unwrap() {
+               &Token::Identifier(ref ident) => frame.get(ident).expect("Can't find key"),
+               o @ _ => panic!("Cant set to {:?}", o)
+            };
+         let item = Expression::new(vec![keys.pop().unwrap()], false).exec_result(frame).expect("Can't find val");
+         if !item.is_a(ObjType::List) {
+            panic!("Can only assign into list indicies right now!")
+         }
+         unsafe { into_mutable!(key) }.set_item(cast_as!(&item, List).contents.get(0).unwrap().clone(),
+                                                val,
+                                                frame)
+                                      .expect("Can't set item");
+
       }
    }
 
@@ -166,7 +188,6 @@ impl Expression {
                         }
                      },
                   LParen::Square => {
-                     println!("frame: {:?}", frame);
                      if !frame.is_empty() {
                         assert_eq!(body.len(), 1, "only one expression for function args!");
                         let item = body.pop().unwrap().exec_result(frame).expect("No item to find passed!");

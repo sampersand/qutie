@@ -26,7 +26,7 @@ impl List {
       }
       ret.push(']');
       ret
-   }
+   } 
 }
 use std;
 impl_defaults!(Debug; List, "L");
@@ -49,8 +49,7 @@ impl ToBoolean for List {
    }
 }
 
-// use obj::traits::data::{GetItem, SetItem, DelItem};
-use obj::traits::data::{GetItem};
+use obj::traits::data::{GetItem, SetItem};
 use obj::objects::number::Number;
 impl GetItem for List {
    fn get_item(&self, item: Rc<Object>, frame: &mut Frame) -> ObjResult {
@@ -77,7 +76,28 @@ impl GetItem for List {
       }
    }
 }
-impl_traits!(data=SetItem, List);
+impl SetItem for List {
+   fn set_item(&mut self, item: Rc<Object>, val: Rc<Object>, frame: &mut Frame) -> Result<(), ObjError> {
+      match item.obj_type() {
+         ObjType::Number => 
+            {
+               let num = cast_as!(&item, Number).num;
+               if num < 0 && self.contents.len() as i32 + num < 0 {
+                  return Err(ObjError::InvalidKey(item))
+               }
+               let num = 
+                  if num < 0 {
+                     self.contents.len() - (-num) as usize
+                  } else {
+                     num as usize
+                  };
+               self.contents[num] = val;
+               Ok(())
+            },
+         o @ _ => panic!("Idk what to do with type: {:?}", o)
+      }
+   }
+}
 impl_traits!(data=DelItem, List);
 
 impl_defaults!(ToRc; List);
