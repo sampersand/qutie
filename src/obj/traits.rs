@@ -5,7 +5,6 @@ pub trait ToRc : Sized {
    }
 }
 
-/************* operators *************/
 pub mod operators {
    use std::rc::Rc;
    use obj::objects::object::Object;
@@ -32,6 +31,7 @@ pub mod operators {
    def_binary_oper!(QtGeq, qt_geq, BoolResult);
    def_binary_oper!(QtLeq, qt_leq, BoolResult);
 }
+
 pub mod conversion {
    use std::rc::Rc;
    use obj::objects::object::Object;
@@ -48,10 +48,32 @@ pub mod conversion {
          Err(ObjError::NotImplemented)
       }
    }
-
 }
 
 
+pub mod data { /* this is also pseudo-operator */
+   use parsing::identifier::Identifier;
+   use parsing::frame::Frame;
+   use obj::result::{ObjResult, ObjError};
+   use obj::objects::object::Object;
+   use std::rc::Rc;
+
+   pub trait GetItem {
+      fn get_item(&self, item: Rc<Object>, frame: &mut Frame) -> ObjResult {
+         Err(ObjError::NotImplemented)
+      }
+   }
+   pub trait SetItem {
+      fn set_item(&self, item: Rc<Object>, value: Rc<Object>, frame: &mut Frame) -> Result<(), ObjError> {
+         Err(ObjError::NotImplemented)
+      }
+   }
+   pub trait DelItem {
+      fn del_item(&self, item: Rc<Object>, frame: &mut Frame) -> Result<(), ObjError> {
+         Err(ObjError::NotImplemented)
+      }
+   }
+}
 
 
 

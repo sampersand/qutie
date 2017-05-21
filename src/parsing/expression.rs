@@ -7,7 +7,7 @@ use obj::objects::block::Block;
 use obj::objects::object::{ObjType, Object};
 use obj::objects::function::Function;
 use obj::traits::ToRc;
-
+use std::rc::Rc;
 
 #[derive(Debug, Clone)]
 pub struct Expression {
@@ -108,6 +108,11 @@ impl Expression {
       2 < self.len() && does_match!(self.body.get(1).unwrap(), &Token::Assignment(_))
    }
 
+   fn exec_result(mut self, frame: &mut Frame) -> Option<Rc<Object>> {
+      self.exec(frame);
+      frame.pop()
+   }
+
    pub fn exec(mut self, frame: &mut Frame) {
       use obj::objects::number::Number;
       use obj::objects::text::Text;
@@ -152,15 +157,23 @@ impl Expression {
                         }
                      },
                   LParen::Square => {
-                     let stack = 
-                        {
-                           let mut internal_frame = frame.spawn_child();
-                           for expr in body {
-                              expr.exec(&mut internal_frame)
-                           }
-                           internal_frame.take_stack()
-                        };
-                     frame.push(List::new(stack).to_rc())
+                     println!("frame: {:?}", frame);
+                     if !frame.is_empty() {
+                        assert_eq!(body.len(), 1, "only one expression for function args!");
+                        let item = body.pop().unwrap().exec_result(frame).expect("No item to find passed!");
+                        let res = frame.pop().unwrap().get_item(item, frame).expect("Can't access item!");
+                        frame.push(res);
+                     } else {
+                        let stack = 
+                           {
+                              let mut internal_frame = frame.spawn_child();
+                              for expr in body {
+                                 expr.exec(&mut internal_frame)
+                              }
+                              internal_frame.take_stack()
+                           };
+                        frame.push(List::new(stack).to_rc());
+                     }
                   },
                   LParen::Curly  => { frame.push(Block::new((lp, rp), body).to_rc()); },
                },

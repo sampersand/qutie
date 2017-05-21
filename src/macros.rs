@@ -81,20 +81,22 @@ macro_rules! impl_defaults {
          }
       }
    };
-   (ToBoolean; $obj:ident) => { use obj::traits::conversion::ToBoolean; impl ToBoolean for $obj {} };
-   (ToText; $obj:ident) => { use obj::traits::conversion::ToText; impl ToText for $obj {} };
-   (QtAdd; $obj:ident) => { use obj::traits::operators::QtAdd; impl QtAdd for $obj {} };
-   (QtSub; $obj:ident) => { use obj::traits::operators::QtSub; impl QtSub for $obj {} };
-   (QtMul; $obj:ident) => { use obj::traits::operators::QtMul; impl QtMul for $obj {} };
-   (QtDiv; $obj:ident) => { use obj::traits::operators::QtDiv; impl QtDiv for $obj {} };
-   (QtMod; $obj:ident) => { use obj::traits::operators::QtMod; impl QtMod for $obj {} };
-   (QtPow; $obj:ident) => { use obj::traits::operators::QtPow; impl QtPow for $obj {} };
-   (QtEql; $obj:ident) => { use obj::traits::operators::QtEql; impl QtEql for $obj {} };
-   (QtNeq; $obj:ident) => { use obj::traits::operators::QtNeq; impl QtNeq for $obj {} };
-   (QtLth; $obj:ident) => { use obj::traits::operators::QtLth; impl QtLth for $obj {} };
-   (QtGth; $obj:ident) => { use obj::traits::operators::QtGth; impl QtGth for $obj {} };
-   (QtLeq; $obj:ident) => { use obj::traits::operators::QtLeq; impl QtLeq for $obj {} };
-   (QtGeq; $obj:ident) => { use obj::traits::operators::QtGeq; impl QtGeq for $obj {} };
+}
+macro_rules! impl_traits {
+   (conv=$_trait:ident, $obj:ident) => {
+      use obj::traits::conversion::$_trait;
+      impl $_trait for $obj {}
+   };
+
+   (data=$_trait:ident, $obj:ident) => {
+      use obj::traits::data::$_trait;
+       impl $_trait for $obj {}
+   };
+   
+   (oper=$_trait:ident, $obj:ident) => {
+      use obj::traits::operators::$_trait; 
+      impl $_trait for $obj {}
+   };
 }
 
 

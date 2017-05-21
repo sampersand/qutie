@@ -50,17 +50,21 @@ impl ToBoolean for Boolean {
 impl_defaults!(ToRc; Boolean);
 impl_defaults!(Object; Boolean);
 
-impl_defaults!(QtAdd; Boolean);
-impl_defaults!(QtSub; Boolean);
-impl_defaults!(QtMul; Boolean);
-impl_defaults!(QtDiv; Boolean);
-impl_defaults!(QtMod; Boolean);
-impl_defaults!(QtPow; Boolean);
-impl_defaults!(QtNeq; Boolean);
-impl_defaults!(QtLth; Boolean);
-impl_defaults!(QtGth; Boolean);
-impl_defaults!(QtLeq; Boolean);
-impl_defaults!(QtGeq; Boolean);
+impl_traits!(data=GetItem, Boolean);
+impl_traits!(data=SetItem, Boolean);
+impl_traits!(data=DelItem, Boolean);
+
+impl_traits!(oper=QtAdd, Boolean);
+impl_traits!(oper=QtSub, Boolean);
+impl_traits!(oper=QtMul, Boolean);
+impl_traits!(oper=QtDiv, Boolean);
+impl_traits!(oper=QtMod, Boolean);
+impl_traits!(oper=QtPow, Boolean);
+impl_traits!(oper=QtNeq, Boolean);
+impl_traits!(oper=QtLth, Boolean);
+impl_traits!(oper=QtGth, Boolean);
+impl_traits!(oper=QtLeq, Boolean);
+impl_traits!(oper=QtGeq, Boolean);
 
 
 

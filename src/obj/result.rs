@@ -5,6 +5,7 @@ use obj::objects::boolean::Boolean;
 pub enum ObjError {
    NotImplemented,
    Return(Rc<Object>),
+   InvalidKey(Rc<Object>),
 }
 impl ObjError {
    pub fn to_string(&self) -> String {

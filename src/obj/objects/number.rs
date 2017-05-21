@@ -1,7 +1,7 @@
 use obj::objects::object::{Object, ObjType};
 
 pub struct Number {
-   num: i32
+   pub num: i32
 }
 
 impl Number {
@@ -65,6 +65,10 @@ impl ToText for Number {
       Ok(Text::from(self.num.to_string()).to_rc())
    }
 }
+
+impl_traits!(data=GetItem, Number);
+impl_traits!(data=SetItem, Number);
+impl_traits!(data=DelItem, Number);
 
 num_operator!(QtAdd, qt_add, +, ObjResult);
 num_operator!(QtSub, qt_sub, -, ObjResult);

@@ -114,21 +114,26 @@ impl_defaults!(Display; to_string; Block);
 impl_defaults!(Debug; Block, 'B');
 impl_defaults!(ToRc; Block);
 impl_defaults!(Object; Block);
-impl_defaults!(ToBoolean; Block);
-impl_defaults!(ToText; Block);
 
-impl_defaults!(QtAdd; Block);
-impl_defaults!(QtSub; Block);
-impl_defaults!(QtMul; Block);
-impl_defaults!(QtDiv; Block);
-impl_defaults!(QtMod; Block);
-impl_defaults!(QtPow; Block);
-impl_defaults!(QtEql; Block);
-impl_defaults!(QtNeq; Block);
-impl_defaults!(QtLth; Block);
-impl_defaults!(QtGth; Block);
-impl_defaults!(QtLeq; Block);
-impl_defaults!(QtGeq; Block);
+impl_traits!(data=GetItem, Block);
+impl_traits!(data=SetItem, Block);
+impl_traits!(data=DelItem, Block);
+
+impl_traits!(conv=ToBoolean, Block);
+impl_traits!(conv=ToText, Block);
+
+impl_traits!(oper=QtAdd, Block);
+impl_traits!(oper=QtSub, Block);
+impl_traits!(oper=QtMul, Block);
+impl_traits!(oper=QtDiv, Block);
+impl_traits!(oper=QtMod, Block);
+impl_traits!(oper=QtPow, Block);
+impl_traits!(oper=QtEql, Block);
+impl_traits!(oper=QtNeq, Block);
+impl_traits!(oper=QtLth, Block);
+impl_traits!(oper=QtGth, Block);
+impl_traits!(oper=QtLeq, Block);
+impl_traits!(oper=QtGeq, Block);
 
 
 

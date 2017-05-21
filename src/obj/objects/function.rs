@@ -50,21 +50,26 @@ use obj::result::BoolResult;
 
 impl_defaults!(ToRc; Function);
 impl_defaults!(Object; Function);
-impl_defaults!(ToBoolean; Function);
-impl_defaults!(ToText; Function);
 
-impl_defaults!(QtAdd; Function);
-impl_defaults!(QtSub; Function);
-impl_defaults!(QtMul; Function);
-impl_defaults!(QtDiv; Function);
-impl_defaults!(QtMod; Function);
-impl_defaults!(QtPow; Function);
-impl_defaults!(QtEql; Function);
-impl_defaults!(QtNeq; Function);
-impl_defaults!(QtLth; Function);
-impl_defaults!(QtGth; Function);
-impl_defaults!(QtLeq; Function);
-impl_defaults!(QtGeq; Function);
+impl_traits!(conv=ToBoolean, Function);
+impl_traits!(conv=ToText, Function);
+
+impl_traits!(data=GetItem, Function);
+impl_traits!(data=SetItem, Function);
+impl_traits!(data=DelItem, Function);
+
+impl_traits!(oper=QtAdd, Function);
+impl_traits!(oper=QtSub, Function);
+impl_traits!(oper=QtMul, Function);
+impl_traits!(oper=QtDiv, Function);
+impl_traits!(oper=QtMod, Function);
+impl_traits!(oper=QtPow, Function);
+impl_traits!(oper=QtEql, Function);
+impl_traits!(oper=QtNeq, Function);
+impl_traits!(oper=QtLth, Function);
+impl_traits!(oper=QtGth, Function);
+impl_traits!(oper=QtLeq, Function);
+impl_traits!(oper=QtGeq, Function);
 
 
 

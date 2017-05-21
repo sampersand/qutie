@@ -71,18 +71,22 @@ impl ToText for Text {
 impl_defaults!(ToRc; Text);
 impl_defaults!(Object; Text);
 
-impl_defaults!(QtAdd; Text);
-impl_defaults!(QtSub; Text);
-impl_defaults!(QtMul; Text);
-impl_defaults!(QtDiv; Text);
-impl_defaults!(QtMod; Text);
-impl_defaults!(QtPow; Text);
-impl_defaults!(QtEql; Text);
-impl_defaults!(QtNeq; Text);
-impl_defaults!(QtLth; Text);
-impl_defaults!(QtGth; Text);
-impl_defaults!(QtLeq; Text);
-impl_defaults!(QtGeq; Text);
+impl_traits!(data=GetItem, Text);
+impl_traits!(data=SetItem, Text);
+impl_traits!(data=DelItem, Text);
+
+impl_traits!(oper=QtAdd, Text);
+impl_traits!(oper=QtSub, Text);
+impl_traits!(oper=QtMul, Text);
+impl_traits!(oper=QtDiv, Text);
+impl_traits!(oper=QtMod, Text);
+impl_traits!(oper=QtPow, Text);
+impl_traits!(oper=QtEql, Text);
+impl_traits!(oper=QtNeq, Text);
+impl_traits!(oper=QtLth, Text);
+impl_traits!(oper=QtGth, Text);
+impl_traits!(oper=QtLeq, Text);
+impl_traits!(oper=QtGeq, Text);
 
 
 
