@@ -151,6 +151,8 @@ impl <'a> Stream <'a> {
       }
       if !acc.is_empty() {
          ret.push(Expression::new(acc, false));
+      } else {
+         ret.push(Expression::new(vec![], false));
       }
       Token::Block((lparen, rparen), ret)
    }

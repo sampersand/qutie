@@ -1,10 +1,13 @@
 use obj::objects::object::{Object, ObjType};
 use obj::objects::block::Block;
+use obj::objects::null::Null;
+
 use parsing::identifier::Identifier;
 use parsing::frame::Frame;
 use parsing::token::Token;
 use parsing::expression::Expression;
 use std::rc::Rc;
+
 pub struct Function {
    file: String, /* todo: update this */
    line: usize,  /* and this */
@@ -14,6 +17,7 @@ pub struct Function {
 
 impl Function {
    pub fn new(file: String, line: usize, args: Vec<Identifier>, body: Block) -> Function {
+      println!("body in constr: {:?}", body.body);
       Function{ file: file, line: line, args: args, body: body }
    }
    pub fn to_string(&self) -> String {
@@ -32,11 +36,11 @@ impl Function {
       while !acc.is_empty() {
          new_frame.set(self_args.pop().unwrap(), acc.pop().unwrap());
       }
-
+      println!("body in func: {:?}", self.body.body);
       if let Some(ret) = self.body.clone().exec(&mut new_frame) {
          ret
       } else {
-         panic!("todo: None")
+         Null::get().to_rc()
       }
    }
 }

@@ -1,0 +1,25 @@
+# a = func(){ __debug 'a' };
+# b = func(){ __debug 'b' };
+# c = func(){ __debug 'c' };
+
+# b = func(){
+#    __debug('a');
+#    __debug('b');
+#    __debug('c');
+#    __debug('d');
+# };
+# b();
+
+(func(){
+   __debug('a');
+   __debug('b');
+})()
+
+
+# a = [];
+# b = [];
+# c = [];
+# list = [a, b, c];
+# a[0] = 3;
+# list[2][3] = a;
+# __debug ( list )

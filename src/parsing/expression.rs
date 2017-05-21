@@ -180,6 +180,7 @@ impl Expression {
                      if !frame.is_empty() && frame.peek().unwrap().is_a(ObjType::Function) {
                         assert_eq!(body.len(), 1, "only one expression for function args!");
                         let args = body.pop().unwrap();
+                        println!("frame: {:?}|args:{:?}, body:{:?}", frame, args, body);
                         let res = cast_as!(&frame.pop().expect("we just checked"), Function).qt_call(args, frame);
                         frame.push(res);
                      } else {

@@ -1,35 +1,36 @@
 macro_rules! into_mutable {
    ($obj:ident) => {{
+      let obj = $obj;
       use std::mem::transmute;
       #[allow(mutable_transmutes)]
-      let a: &mut Object = match $obj.obj_type() {
+      let a: &mut Object = match obj.obj_type() {
          ObjType::Number => {{
             use obj::objects::number::Number;
-            *transmute::<&&Object, &mut &mut Number>(&&*$obj)
+            *transmute::<&&Object, &mut &mut Number>(&&*obj)
          }},
          ObjType::Text => {{
             use obj::objects::text::Text;
-            *transmute::<&&Object, &mut &mut Text>(&&*$obj)
+            *transmute::<&&Object, &mut &mut Text>(&&*obj)
          }},
          ObjType::Block => {{
             use obj::objects::block::Block;
-            *transmute::<&&Object, &mut &mut Block>(&&*$obj)
+            *transmute::<&&Object, &mut &mut Block>(&&*obj)
          }},
          ObjType::Boolean => {{
             use obj::objects::boolean::Boolean;
-            *transmute::<&&Object, &mut &mut Boolean>(&&*$obj)
+            *transmute::<&&Object, &mut &mut Boolean>(&&*obj)
          }},
          ObjType::List => {{
             use obj::objects::list::List;
-            *transmute::<&&Object, &mut &mut List>(&&*$obj)
+            *transmute::<&&Object, &mut &mut List>(&&*obj)
          }},
          ObjType::Function => {{
             use obj::objects::function::Function;
-            *transmute::<&&Object, &mut &mut Function>(&&*$obj)
+            *transmute::<&&Object, &mut &mut Function>(&&*obj)
          }},
          ObjType::Null => {{
             use obj::objects::null::Null;
-            *transmute::<&&Object, &mut &mut Null>(&&*$obj)
+            *transmute::<&&Object, &mut &mut Null>(&&*obj)
          }},
       };
       a
@@ -56,7 +57,9 @@ macro_rules! concat_all {
 macro_rules! cast_as {
    ($obj:expr, $ty:ident) => {{
       let obj = $obj;
+      println!("casting {:?} to {:?}", obj, ObjType::$ty);
       assert!(obj.is_a(ObjType::$ty));
+
       use std::mem::transmute;
       use std::rc::Rc;
       unsafe {
