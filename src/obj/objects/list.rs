@@ -91,6 +91,10 @@ impl SetItem for List {
                   } else {
                      num as usize
                   };
+               while self.contents.len() <= num {
+                  // self.contents.append(Null::new().to_rc())
+                  self.contents.push(Boolean::get(true).to_rc())
+               }
                self.contents[num] = val;
                Ok(())
             },
