@@ -81,31 +81,41 @@ impl Expression {
    }
 
    fn handle_assignment(mut self, frame: &mut Frame) {
-      assert!(2 < self.len(), "need at least 3 operands for assignment!");
-      let identifier = 
-         match self.pop_front().unwrap() {
-            Token::Identifier(identifier) => identifier,
-            other @ _ => panic!("can only assign to identifiers not {:?}", other)
-         };
-
-      let assign_type = 
-         match self.pop_front().unwrap() {
-            Token::Assignment(assign_type) => assign_type,
-            other @ _ => unreachable!("The second thing should always be an assignment value, not {:?}!", other)
+      let idents = vec![];
+      let mut assign = None;
+      while let Some(token) = self.pop_front() {
+         if does_match!(token, Token::Assignment(_)) {
+            assign = Some(token);
+            break
+         } else {
+            idents.push(token)
+         }
+      }
+      let assign = 
+         match assign {
+            None => panic!("can't assign to nothing!"),
+            Some(val) => val
          };
 
       let was_endl = self.is_endl;
       self.is_endl = false;
-      self.exec(frame);
-      let val = frame.pop().expect("cant set a key to nothing!");
+      let val = self.exec_result(frame).expect("cant set a key to nothing!");
       if !was_endl {
          frame.push(val.clone());
       }
-      frame.set(identifier, val);
+      /* this could be improved lol */
+      if idents.len() == 1 {
+         frame.set(identifier, val);
+      }
    }
 
    fn is_assignment(&self) -> bool {
-      2 < self.len() && does_match!(self.body.get(1).unwrap(), &Token::Assignment(_))
+      for token in &self.body {
+         if does_match!(token, &Token::Assignment(_)) {
+            return true
+         }
+      }
+      false
    }
 
    fn exec_result(mut self, frame: &mut Frame) -> Option<Rc<Object>> {
