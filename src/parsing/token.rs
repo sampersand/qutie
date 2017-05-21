@@ -33,7 +33,6 @@ impl_defaults!(Display; to_string; Assignments);
 #[derive(Clone)]
 pub enum Token {
    Identifier(identifier::Identifier),
-   Path(String), /* todo: this */
    Assignment(Assignments),
    Separator, /* ie , */
    LineTerminator, /* ie ; */
@@ -50,7 +49,6 @@ impl std::fmt::Debug for Token {
       use self::Token::*;
       match self {
          &Identifier(ref s) => write!(f, "I({})", s),
-         &Path(ref s) => write!(f, "P({})", s),
          &Assignment(ref s) => write!(f, "A({})", s),
          &LineTerminator => write!(f, "Endl(;)"),
          &Separator => write!(f, "Sep(,)"),
@@ -69,7 +67,6 @@ impl std::fmt::Display for Token {
       use self::Token::*;
       match self {
          &Identifier(ref s) => write!(f, "I({})", s),
-         &Path(ref s) => write!(f, "P({})", s),
          &Assignment(ref s) => write!(f, "A({})", s),
          &LineTerminator => write!(f, "Endl(;)"),
          &Separator => write!(f, "Sep(,)"),

@@ -60,22 +60,15 @@ macro_rules! is_symbol { ($c:expr) => (
 impl <'a> Stream <'a> {
    fn next_identifier(&mut self) -> Token {
       let mut acc = String::new();
-      let mut is_path = false;
       loop {
          match self.source.peek() {
             Some(c) if is_aplhanumeric!(*c) => {},
-            Some(c) if is_path_separator!(*c) => { is_path = true; },
             _ => break
          }
          acc.push(self.source.next().unwrap());
       }
       assert!(!acc.is_empty());
-      if is_path {
-         if acc.chars().last().unwrap() == '.' { panic!("bad identifier: {:?}", acc) }
-         Token::Path(acc)
-      } else {
-         Token::Identifier(identifier::Identifier::from(acc))
-      }
+      Token::Identifier(identifier::Identifier::from(acc))
    }
    fn next_number(&mut self) -> Token {
       let mut acc = String::new();

@@ -142,7 +142,6 @@ impl Expression {
                   oper_stack.push(oper)
                },
             Token::Text(quote, body)     => frame.push(Text::new(quote, body).to_rc()),
-            Token::Path(path)            => unimplemented!(),
             Token::Block((lp, rp), mut body) => 
                match lp {
                   LParen::Round  => 
