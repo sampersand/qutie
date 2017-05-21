@@ -33,5 +33,6 @@ pub enum ObjType {
    Block,
    Boolean,
    List,
-   Function
+   Function,
+   Null
 }

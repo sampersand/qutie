@@ -1,6 +1,7 @@
 use obj::objects::object::{Object, ObjType};
 use std::rc::Rc;
 use parsing::frame::Frame;
+use obj::objects::null::Null;
 
 pub struct List {
    pub contents: Vec<Rc<Object>>
@@ -92,8 +93,7 @@ impl SetItem for List {
                      num as usize
                   };
                while self.contents.len() <= num {
-                  // self.contents.append(Null::new().to_rc())
-                  self.contents.push(Boolean::get(true).to_rc())
+                  self.contents.push(Null::get().to_rc())
                }
                self.contents[num] = val;
                Ok(())

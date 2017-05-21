@@ -5,3 +5,4 @@ pub mod boolean;
 pub mod function;
 pub mod text;
 pub mod list;
+pub mod null;

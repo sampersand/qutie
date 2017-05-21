@@ -27,6 +27,10 @@ macro_rules! into_mutable {
             use obj::objects::function::Function;
             *transmute::<&&Object, &mut &mut Function>(&&*$obj)
          }},
+         ObjType::Null => {{
+            use obj::objects::null::Null;
+            *transmute::<&&Object, &mut &mut Null>(&&*$obj)
+         }},
       };
       a
    }}
