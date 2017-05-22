@@ -3,6 +3,7 @@ use parsing::operator::Operator;
 use parsing::token::Token;
 use parsing::identifier::Identifier;
 use obj::objects::list::List;
+use obj::objects::map::Map;
 use obj::objects::block::Block;
 use obj::objects::object::{ObjType, Object};
 use obj::objects::function::Function;
@@ -131,7 +132,7 @@ impl Expression {
          let item: Rc<List> = item.force_cast();
          unsafe {
             into_mutable!(key)
-         }.set_item(item.contents.get(0).unwrap().clone(), val, frame).expect("Can't set item");
+         }.set_item(item.get(0).unwrap().clone(), val, frame).expect("Can't set item");
 
       }
    }
@@ -217,9 +218,8 @@ impl Expression {
                         frame.push(List::new(stack).to_rc());
                      }
                   },
-                  LParen::Curly  => {
-                     panic!("curly!");
-                     frame.push(Block::new((lp, rp), body).to_rc()); },
+                  LParen::Curly  => frame.push(Map::from(body).to_rc()),
+                     // frame.push(Block::new((lp, rp), body).to_rc()); },
                },
             Token::Unknown(_)            => unreachable!(),
             Token::Assignment(_)         => unreachable!(),

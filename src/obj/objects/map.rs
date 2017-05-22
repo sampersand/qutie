@@ -1,6 +1,7 @@
 use obj::objects::object::{Object, ObjType};
 use std::rc::Rc;
 use parsing::frame::Frame;
+use parsing::expression::Expression;
 use obj::objects::null::Null;
 use obj::traits::Castable;
 use std::collections::HashMap;
@@ -25,18 +26,20 @@ impl Hash for ObjWrapper{
 
 
 pub struct Map {
-   pub contents: HashMap<ObjWrapper, Rc<Object>>
+   contents: HashMap<ObjWrapper, Rc<Object>>
 }
 
 impl Map {
-   pub fn new() -> Map {
-      Map { contents: HashMap::new() }
+   pub fn from(inp: Vec<Expression>) -> Map {
+      let mut map = HashMap::new();
+      
+      Map { contents: map }
    }
 
    pub fn to_string(&self) -> String {
       let mut text_contents: Vec<String> = vec![];
       for (key, val) in self.contents.iter() {
-         let to_insert = key.0.as_text_string();
+         let mut to_insert = key.0.as_text_string();
          to_insert.push_str(": ");
          to_insert.push_str(&val.as_text_string());
          text_contents.push(to_insert);
@@ -73,11 +76,11 @@ use obj::traits::data::{GetItem, SetItem};
 use obj::objects::number::Number;
 impl GetItem for Map {
    fn get_item(&self, item: Rc<Object>, frame: &mut Frame) -> ObjResult {
-      let key = ObjWrapper(item);
+      let key = ObjWrapper(item.clone());
       if let Some(val) = self.contents.get(&key) {
          Ok(val.clone())
       } else {
-         Err(ObjError::InvalidKey(item.clone()))
+         Err(ObjError::InvalidKey(item))
       }
    }
 }

@@ -5,7 +5,7 @@ use obj::objects::null::Null;
 use obj::traits::Castable;
 
 pub struct List {
-   pub contents: Vec<Rc<Object>>
+   contents: Vec<Rc<Object>>
 }
 
 impl List {
@@ -22,6 +22,9 @@ impl List {
       ret.push(']');
       ret
    } 
+   pub fn get(&self, pos: usize) -> Option<&Rc<Object>>  {
+      self.contents.get(pos)
+   }
 }
 use std;
 impl_defaults!(Debug; List, "L");

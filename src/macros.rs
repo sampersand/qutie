@@ -4,41 +4,7 @@ macro_rules! into_mutable {
       let obj = $obj;
       use std::mem::transmute;
       #[allow(mutable_transmutes)]
-      let a: &mut Object = match obj.obj_type() {
-         ObjType::Number => {{
-            use obj::objects::number::Number;
-            *transmute::<&&Object, &mut &mut Number>(&&*obj)
-         }},
-         ObjType::Text => {{
-            use obj::objects::text::Text;
-            *transmute::<&&Object, &mut &mut Text>(&&*obj)
-         }},
-         ObjType::Block => {{
-            use obj::objects::block::Block;
-            *transmute::<&&Object, &mut &mut Block>(&&*obj)
-         }},
-         ObjType::Boolean => {{
-            use obj::objects::boolean::Boolean;
-            *transmute::<&&Object, &mut &mut Boolean>(&&*obj)
-         }},
-         ObjType::List => {{
-            use obj::objects::list::List;
-            *transmute::<&&Object, &mut &mut List>(&&*obj)
-         }},
-         ObjType::Function => {{
-            use obj::objects::function::Function;
-            *transmute::<&&Object, &mut &mut Function>(&&*obj)
-         }},
-         ObjType::Null => {{
-            use obj::objects::null::Null;
-            *transmute::<&&Object, &mut &mut Null>(&&*obj)
-         }},
-         ObjType::BuiltinFunction => {{
-            use obj::objects::builtin_function::BuiltinFunction;
-            *transmute::<&&Object, &mut &mut BuiltinFunction>(&&*obj)
-         }}
-      };
-      a
+      transmute::<&Object, &mut Object>(&*obj)
    }}
 }
 macro_rules! assert_match {
