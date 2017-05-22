@@ -6,7 +6,7 @@ use obj::objects::list::List;
 use obj::objects::block::Block;
 use obj::objects::object::{ObjType, Object};
 use obj::objects::function::Function;
-use obj::traits::ToRc;
+use obj::traits::{ToRc, Castable};
 use std::rc::Rc;
 use obj::traits::data::SetItem;
 
@@ -73,7 +73,7 @@ impl Expression {
             //       !self.is_empty() &&
             //       does_match!(self.peek_front().unwrap(), &Token::Block((_, _), _)) {
             //    let args = self.next_block().unwrap().pop_single_expr().expect("only one expr for args");
-            //    let res = cast_as!(val, Function).qt_call(args, frame);
+            //    let res = force_cast!(val, Function).qt_call(args, frame);
             //    frame.push(res);
             // } else {
                frame.push(val.clone())
@@ -123,10 +123,10 @@ impl Expression {
          if !item.is_a(ObjType::List) {
             panic!("Can only assign into list indicies right now!")
          }
-         unsafe { into_mutable!(key) }.set_item(cast_as!(&item, List).contents.get(0).unwrap().clone(),
-                                                val,
-                                                frame)
-                                      .expect("Can't set item");
+         let item: Rc<List> = item.force_cast();
+         unsafe {
+            into_mutable!(key)
+         }.set_item(item.contents.get(0).unwrap().clone(), val, frame).expect("Can't set item");
 
       }
    }
@@ -176,14 +176,22 @@ impl Expression {
             Token::Text(quote, body)     => frame.push(Text::new(quote, body).to_rc()),
             Token::Block((lp, rp), mut body) => 
                match lp {
-                  LParen::Round  => 
-                     if !frame.is_empty() && frame.peek().unwrap().is_a(ObjType::Function) {
-                        assert_eq!(body.len(), 1, "only one expression for function args!");
-                        let args = body.pop().unwrap();
-                        println!("frame: {:?}|args:{:?}, body:{:?}", frame, args, body);
-                        let res = cast_as!(&frame.pop().expect("we just checked"), Function).qt_call(args, frame);
-                        frame.push(res);
-                     } else {
+                  LParen::Round =>
+                     {
+                        /* todo: remove this peek */
+                        if let Some(obj) = frame.pop() {
+                           if let Some(func) = obj.cast() {
+                              assert_eq!(body.len(), 1, "only one expression for function args!");
+                              let args = body.pop().unwrap();
+                              println!("frame: {:?}|args:{:?}, body:{:?}", frame, args, body);
+                              /* check ehreto see if we can refactor this around */
+                              let res = (func as Rc<Function>).qt_call(args, frame);
+                              frame.push(res);
+                              continue
+                           } else {
+                              frame.push(obj)
+                           }
+                        }
                         for expr in body {
                            expr.exec(frame);
                         }

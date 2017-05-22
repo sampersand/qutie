@@ -2,6 +2,7 @@ use obj::objects::object::{Object, ObjType};
 use std::rc::Rc;
 use parsing::frame::Frame;
 use obj::objects::null::Null;
+use obj::traits::Castable;
 
 pub struct List {
    pub contents: Vec<Rc<Object>>
@@ -54,51 +55,47 @@ use obj::traits::data::{GetItem, SetItem};
 use obj::objects::number::Number;
 impl GetItem for List {
    fn get_item(&self, item: Rc<Object>, frame: &mut Frame) -> ObjResult {
-      match item.obj_type() {
-         ObjType::Number => 
-            {
-               let num = cast_as!(&item, Number).num;
-               if num < 0 && self.contents.len() as i32 + num < 0 {
-                  return Err(ObjError::InvalidKey(item))
-               }
-               let num = 
-                  if num < 0 {
-                     self.contents.len() - (-num) as usize
-                  } else {
-                     num as usize
-                  };
-               if let Some(res) = self.contents.get(num) {
-                  Ok(res.clone())
-               } else {
-                  Err(ObjError::InvalidKey(item))
-               }
-            },
-         o @ _ => panic!("Idk what to do with type: {:?}", o)
+      if let Some(item_num) = item.cast() {
+         let num = (item_num as Rc<Number>).num;
+         if num < 0 && self.contents.len() as i32 + num < 0 {
+            return Err(ObjError::InvalidKey(item))
+         }
+         let num = 
+            if num < 0 {
+               self.contents.len() - (-num) as usize
+            } else {
+               num as usize
+            };
+         if let Some(res) = self.contents.get(num) {
+            Ok(res.clone())
+         } else {
+            Err(ObjError::InvalidKey(item))
+         }
+      } else {
+         panic!("Idk what to do with type: {:?}", item.obj_type())
       }
    }
 }
 impl SetItem for List {
    fn set_item(&mut self, item: Rc<Object>, val: Rc<Object>, frame: &mut Frame) -> Result<(), ObjError> {
-      match item.obj_type() {
-         ObjType::Number => 
-            {
-               let num = cast_as!(&item, Number).num;
-               if num < 0 && self.contents.len() as i32 + num < 0 {
-                  return Err(ObjError::InvalidKey(item))
-               }
-               let num = 
-                  if num < 0 {
-                     self.contents.len() - (-num) as usize
-                  } else {
-                     num as usize
-                  };
-               while self.contents.len() <= num {
-                  self.contents.push(Null::get().to_rc())
-               }
-               self.contents[num] = val;
-               Ok(())
-            },
-         o @ _ => panic!("Idk what to do with type: {:?}", o)
+      if let Some(item_num) = item.cast() {
+         let num = (item_num as Rc<Number>).num;
+         if num < 0 && self.contents.len() as i32 + num < 0 {
+            return Err(ObjError::InvalidKey(item))
+         }
+         let num = 
+            if num < 0 {
+               self.contents.len() - (-num) as usize
+            } else {
+               num as usize
+            };
+         while self.contents.len() <= num {
+            self.contents.push(Null::get().to_rc())
+         }
+         self.contents[num] = val;
+         Ok(())
+      } else {
+         panic!("Idk what to do with type: {:?}", item.obj_type())
       }
    }
 }

@@ -4,8 +4,9 @@ use parsing::frame::Frame;
 use parsing::expression::Expression;
 use obj::objects::object::{Object, ObjType};
 use obj::objects::boolean;
+use obj::objects::null::Null;
 use obj::objects::function::Function;
-use obj::traits::ToRc;
+use obj::traits::{ToRc, Castable};
 use std::rc::Rc;
 use obj::objects::block::Block;
 
@@ -46,23 +47,21 @@ fn handle_if(expr: &mut Expression, frame: &mut Frame) {
    let if_false = 
       if has_false {
          expr.pop_front(); /* else */
-         Some(next_arg!(expr, frame, "no false condition"))
+         next_arg!(expr, frame, "no false condition")
       } else {
-         None
+         Null::get().to_rc()
       };
    if cond.to_boolean().expect("can't convert condition to boolean").val {
-      if if_true.is_a(ObjType::Block) {
-         (**cast_as!(&if_true, Block)).clone().exec_no_pop(frame);
+      if let Some(block) = if_true.clone().cast(){
+         (block as Rc<Block>).clone().exec_no_pop(frame);
       } else {
          frame.push(if_true)
       }
    } else {
-      if let Some(if_false) = if_false {
-         if if_false.is_a(ObjType::Block) {
-            (**cast_as!(&if_false, Block)).clone().exec_no_pop(frame);
-         } else {
-            frame.push(if_false)
-         }
+      if let Some(if_false_block) = if_false.cast(){
+         (if_false_block as Rc<Block>).clone().exec_no_pop(frame);
+      } else {
+         frame.push(if_false)
       }
    }
 }

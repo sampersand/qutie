@@ -54,19 +54,19 @@ macro_rules! concat_all {
    }}
 }
 
-macro_rules! cast_as {
-   ($obj:expr, $ty:ident) => {{
-      let obj = $obj;
-      println!("casting {:?} to {:?}", obj, ObjType::$ty);
-      assert!(obj.is_a(ObjType::$ty));
+// macro_rules! force_cast {
+//    ($obj:expr, $ty:ident) => {{
+//       let obj = $obj;
+//       println!("casting {:?} to {:?}", obj, ObjType::$ty);
+//       assert!(obj.is_a(ObjType::$ty));
 
-      use std::mem::transmute;
-      use std::rc::Rc;
-      unsafe {
-         transmute::<&Rc<Object>, &Rc<$ty>>(obj)
-      }
-   }};
-}
+//       use std::mem::transmute;
+//       use std::rc::Rc;
+//       unsafe {
+//          transmute::<&Rc<Object>, &Rc<$ty>>(obj)
+//       }
+//    }};
+// }
 
 macro_rules! todo {
    ($msg:expr $(,$arg:expr)*) => {{

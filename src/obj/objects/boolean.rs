@@ -1,4 +1,5 @@
 use obj::objects::object::{Object, ObjType};
+use obj::traits::Castable;
 
 pub struct Boolean {
    pub val: bool
@@ -29,8 +30,14 @@ use std::rc::Rc;
 use obj::result::{BoolResult, ObjError};
 impl QtEql for Boolean {
    fn qt_eql(&self, other: &Rc<Object>) -> BoolResult {
-      Ok(Boolean::get(other.is_a(ObjType::Boolean) &&
-                      cast_as!(other, Boolean).val == self.val).to_rc())
+      Ok(Boolean::get(
+            if let Some(other_bool) = other.cast() {
+               (other_bool as Rc<Boolean>).val == self.val
+            } else {
+               false
+            }
+         ).to_rc()
+      )
    }
 }
 use obj::traits::conversion::{ToBoolean, ToText};

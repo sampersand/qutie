@@ -75,6 +75,54 @@ pub mod data { /* this is also pseudo-operator */
    }
 }
 
+use obj::objects::object::{Object, ObjType};
+
+pub trait Castable<T: Object> {
+   fn cast(&self) -> Option<Rc<T>>;
+   fn force_cast(&self) -> Rc<T> {
+      if let Some(rc) = self.cast(){
+         rc
+      } else {
+         panic!("Cannot cast self to type <??>")
+      }
+   }
+}
+
+unsafe fn __force_cast<T: Object>(inp: &Rc<Object>) -> Rc<T> {
+   use std::mem::transmute;
+   use std::rc::Rc;
+   transmute::<&Rc<Object>, &Rc<T>>(inp).clone()
+}
+
+macro_rules! impl_castable {
+   ($obj_ty:ty, $first:ident::$obj_ident:ident) => {
+      use obj::objects::$first::$obj_ident;
+      impl Castable<$obj_ty> for Rc<Object> {
+         fn cast(&self) -> Option<Rc<$obj_ty>> {
+            if self.is_a(ObjType::$obj_ident) {
+               Some(unsafe{ __force_cast::<$obj_ty>(self) })
+            } else {
+               None
+            }
+         }
+      }
+   }
+}
+impl_castable!(Number, number::Number);
+impl_castable!(Block, block::Block);
+impl_castable!(Boolean, boolean::Boolean);
+impl_castable!(Function, function::Function);
+impl_castable!(List, list::List);
+impl_castable!(Null, null::Null);
+impl_castable!(Text, text::Text);
+
+
+
+
+
+
+
+
 
 
 

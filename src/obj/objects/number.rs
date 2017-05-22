@@ -1,5 +1,5 @@
 use obj::objects::object::{Object, ObjType};
-
+use obj::traits::Castable;
 pub struct Number {
    pub num: i32
 }
@@ -33,10 +33,11 @@ macro_rules! num_operator {
       use obj::traits::operators::$oper_trait;
       impl $oper_trait for Number {
          fn $func(&self, other: &Rc<Object>) -> ObjResult {
-            if !other.is_a(ObjType::Number) {
+            if let Some(other_num) = other.cast() {
+               Ok(Number::new(self.num $oper (other_num as Rc<Number>).num).to_rc())
+            } else {
                return Err(ObjError::NotImplemented)
             }
-            Ok(Number::new(self.num $oper cast_as!(other, Number).num).to_rc())
          }
       }
    };
@@ -44,10 +45,11 @@ macro_rules! num_operator {
       use obj::traits::operators::$oper_trait;
       impl $oper_trait for Number {
          fn $func(&self, other: &Rc<Object>) -> BoolResult {
-            if !other.is_a(ObjType::Number) {
+            if let Some(other_num) = other.cast() {
+               Ok(Boolean::get(self.num $oper (other_num as Rc<Number>).num).to_rc())
+            } else {
                return Err(ObjError::NotImplemented)
             }
-            Ok(Boolean::get(self.num $oper cast_as!(other, Number).num).to_rc())
          }
       }
    }

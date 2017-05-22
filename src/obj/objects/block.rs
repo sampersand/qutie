@@ -102,9 +102,9 @@ impl Block {
       self.exec_no_pop(frame);
       frame.pop()
    }
-   pub fn exec_no_pop(self, frame: &mut Frame) {
-      for expr in self.body {
-         expr.exec(frame);
+   pub fn exec_no_pop(&self, frame: &mut Frame) {
+      for expr in &self.body {
+         expr.clone().exec(frame);
       }
    }
 }
