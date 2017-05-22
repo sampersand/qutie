@@ -7,3 +7,4 @@ pub mod text;
 pub mod list;
 pub mod null;
 pub mod builtin_function;
+pub mod map;

@@ -30,6 +30,13 @@ pub trait Object: Debug +
    fn as_text_string(&self) -> String {
       self.to_text().expect("Can't convert to text").to_string()
    } 
+   fn _eql(&self, other: &Object) -> bool {
+      if let Ok(obj) = self.qt_eql(other) {
+         obj.bool_val
+      } else {
+         false
+      }
+   }
 }
 
 #[derive(Debug, PartialEq)]
@@ -40,6 +47,7 @@ pub enum ObjType {
    Boolean,
    Null,
    List,
+   Map,
    Function,
    BuiltinFunction,
 }
