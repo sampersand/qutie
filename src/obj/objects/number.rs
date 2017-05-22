@@ -1,5 +1,6 @@
 use obj::objects::object::{Object, ObjType};
 use obj::traits::Castable;
+
 pub struct Number {
    pub num: i32
 }

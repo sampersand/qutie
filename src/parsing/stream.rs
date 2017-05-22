@@ -1,6 +1,7 @@
 use std::iter::{Iterator, Peekable};
 use std::str::Chars;
 use parsing::token::{Token, Assignments};
+use parsing::operator::Operator;
 use obj::objects::{block, text};
 use parsing::identifier;
 use parsing::expression::Expression;
@@ -58,6 +59,16 @@ macro_rules! is_symbol { ($c:expr) => (
 ) }
 
 impl <'a> Stream <'a> {
+   fn handle_assignment(&mut self) -> Token {
+      /* in the future, when i add in `+=` and the ilk, update this */
+      assert_eq!(self.source.next().unwrap(), '=');
+      match self.source.peek() {
+         Some(chr) if *chr == '=' => {},
+         _ => return Token::Assignment(Assignments::from('='))
+      }
+      self.source.next();
+      Token::Operator(Operator::from("=="))
+   }
    fn next_identifier(&mut self) -> Token {
       let mut acc = String::new();
       loop {
@@ -84,7 +95,6 @@ impl <'a> Stream <'a> {
    }
 
    fn next_oper(&mut self) -> Token {
-      use parsing::operator::Operator;
       let mut acc = String::new();
       loop {
          match self.source.peek() {
@@ -178,7 +188,7 @@ impl <'a> Stream <'a> {
       let c = *self.source.peek().unwrap();
 
       match c {
-         _ if is_assignment!(c)  => Some(Token::Assignment(Assignments::from(next_chr!()))),
+         _ if is_assignment!(c)  => Some(self.handle_assignment()),
          _ if is_terminator!(c)  => Some({next_chr!(); Token::LineTerminator}),
          _ if is_separator!(c)   => Some({next_chr!(); Token::Separator}),
          _ if is_comment!(c)     =>      self.handle_comment() /* will be some or none*/,

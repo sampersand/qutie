@@ -1,1 +1,10 @@
-(func(){__debug 1})()
+# drive = func(dist, song){
+#    if ( dist == 0 ){
+#       __debug 1
+#    }
+# };
+# drive(1, "Wheels on the bus")
+__debug ( if ( true  ) { 1 } else { 2 } )
+__debug ( if ( false ) { 1 } else { 2 } )
+__debug ( if ( true ) { 1 } )
+__debug ( if ( false ) { 1 } )
