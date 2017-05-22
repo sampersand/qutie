@@ -17,7 +17,6 @@ pub struct Function {
 
 impl Function {
    pub fn new(file: String, line: usize, args: Vec<Identifier>, body: Block) -> Function {
-      println!("body in constr: {:?}", body.body);
       Function{ file: file, line: line, args: args, body: body }
    }
    pub fn to_string(&self) -> String {
@@ -36,7 +35,6 @@ impl Function {
       while !acc.is_empty() {
          new_frame.set(self_args.pop().unwrap(), acc.pop().unwrap());
       }
-      println!("body in func: {:?}", self.body.body);
       if let Some(ret) = self.body.clone().exec(&mut new_frame) {
          ret
       } else {

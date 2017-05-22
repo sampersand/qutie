@@ -53,13 +53,13 @@ fn handle_if(expr: &mut Expression, frame: &mut Frame) {
       };
    if cond.to_boolean().expect("can't convert condition to boolean").val {
       if let Some(block) = if_true.clone().cast(){
-         (block as Rc<Block>).clone().exec_no_pop(frame);
+         (block as Rc<Block>).exec_no_pop(frame);
       } else {
          frame.push(if_true)
       }
    } else {
       if let Some(if_false_block) = if_false.cast(){
-         (if_false_block as Rc<Block>).clone().exec_no_pop(frame);
+         (if_false_block as Rc<Block>).exec_no_pop(frame);
       } else {
          frame.push(if_false)
       }

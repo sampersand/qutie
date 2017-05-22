@@ -183,8 +183,6 @@ impl Expression {
                            if let Some(func) = obj.cast() {
                               assert_eq!(body.len(), 1, "only one expression for function args!");
                               let args = body.pop().unwrap();
-                              println!("frame: {:?}|args:{:?}, body:{:?}", frame, args, body);
-                              /* check ehreto see if we can refactor this around */
                               let res = (func as Rc<Function>).qt_call(args, frame);
                               frame.push(res);
                               continue
