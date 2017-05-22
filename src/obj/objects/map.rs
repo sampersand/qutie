@@ -31,7 +31,14 @@ pub struct Map {
 
 impl Map {
    pub fn from(inp: Vec<Expression>) -> Map {
+      assert_eq!(inp.len(), 1, "Only one expression should be in the body of maps!");
+      let inp = inp.pop().unwrap();
+      use parsing::token::Separator;
       let mut map = HashMap::new();
+      while !inp.is_empty() {
+         let val = inp.pop().expect("Can't find a value!");
+         assert_match!(inp.pop().expect("Cant find colon!"), Separator::Colon(_));
+      }
       Map { contents: map }
    }
 

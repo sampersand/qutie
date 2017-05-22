@@ -230,7 +230,7 @@ impl Expression {
                      // frame.push(Block::new((lp, rp), body).to_rc()); },
                },
             Token::RParen(paren)         => panic!("unmatched right paren: {:?}", paren), 
-            Token::Unknown(_)            => unreachable!(),
+            Token::Unknown(chr)          => panic!("Unknown character: {:?}", chr),
             Token::Assignment(_)         => unreachable!(),
             Token::LineTerminator        => unreachable!(),
             Token::Separator(sep)   => panic!("Found Separator: {:?}", sep)

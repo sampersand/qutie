@@ -35,7 +35,6 @@ impl <'a> Stream<'a> {
       while let Some(token) = self.next() {
          match token {
             Token::LineTerminator => return Expression::new(tokens, true),
-            Token::Unknown(chr) => panic!("Unknown character: {:?}", chr),
             token @ _ => tokens.push(token)
          }
       }
