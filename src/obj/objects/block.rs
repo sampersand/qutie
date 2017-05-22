@@ -108,6 +108,22 @@ impl Block {
       }
    }
 }
+use obj::traits::misc::QtCall;
+use obj::result::ObjResult;
+use obj::objects::null::Null;
+impl QtCall for Block {
+   fn qt_call(&self, args: Expression, frame: &mut Frame) -> ObjResult {
+      assert!(args.is_empty(), "Don't pass args to a block!");
+      if let Some(obj) = self.clone().exec(frame) {
+         Ok(obj)
+      } else {
+         Ok(Null::get().to_rc())
+      }
+   }
+   fn is_callable(&self) -> bool {
+      true
+   }
+}
 
 
 impl_defaults!(Display; to_string; Block);
@@ -134,7 +150,6 @@ impl_traits!(operators=QtLth, Block);
 impl_traits!(operators=QtGth, Block);
 impl_traits!(operators=QtLeq, Block);
 impl_traits!(operators=QtGeq, Block);
-impl_traits!(misc=QtCall, Block);
 
 
 

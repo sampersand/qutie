@@ -217,7 +217,9 @@ impl Expression {
                         frame.push(List::new(stack).to_rc());
                      }
                   },
-                  LParen::Curly  => { frame.push(Block::new((lp, rp), body).to_rc()); },
+                  LParen::Curly  => {
+                     panic!("curly!");
+                     frame.push(Block::new((lp, rp), body).to_rc()); },
                },
             Token::Unknown(_)            => unreachable!(),
             Token::Assignment(_)         => unreachable!(),

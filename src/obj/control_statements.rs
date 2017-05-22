@@ -7,6 +7,7 @@ use obj::objects::boolean;
 use obj::objects::null::Null;
 use obj::objects::function::Function;
 use obj::traits::{ToRc, Castable};
+use obj::traits::conversion::ToBoolean;
 use std::rc::Rc;
 use obj::objects::block::Block;
 
@@ -33,35 +34,25 @@ fn handle_debug(expr: &mut Expression, frame: &mut Frame) {
 }
 
 fn handle_if(expr: &mut Expression, frame: &mut Frame) {
-   let cond = next_arg!(expr, frame, "no condition"); /* could go til we get a squiggly block */
-   let if_true = next_arg!(expr, frame, "no if true");
-   let has_false = 
-      match expr.peek_front() {
-         None => false,
-         Some(e) =>
-            match e {
-               &Token::Identifier(ref o) => &**o == "else",
-               _ => false
-            }
-      };
+   let cond = expr.next_block().expect("no condition"); /* could go til we get a squiggly block */
+   let if_true = expr.next_block().expect("no if true");
    let if_false = 
-      if has_false {
-         expr.pop_front(); /* else */
-         next_arg!(expr, frame, "no false condition")
+      if let Some(block) = expr.next_block() {
+         Some(block)
       } else {
-         Null::get().to_rc()
+         None
       };
-   if cond.to_boolean().expect("can't convert condition to boolean").val {
-      if let Some(block) = if_true.clone().cast(){
-         (block as Rc<Block>).exec_no_pop(frame);
-      } else {
-         frame.push(if_true)
-      }
+   if cond.exec(frame).
+         expect("No condition found!").
+         to_boolean().
+         expect("can't convert condition to boolean").
+         val {
+      if_true.exec_no_pop(frame);
    } else {
-      if let Some(block) = if_false.cast(){
-         (block as Rc<Block>).exec_no_pop(frame);
+      if let Some(if_false) = if_false {
+         if_false.exec_no_pop(frame);
       } else {
-         frame.push(if_false)
+         frame.push(Null::get().to_rc())
       }
    }
 }

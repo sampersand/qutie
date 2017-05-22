@@ -1,9 +1,0 @@
-list = [1, 2, '3'];
-list[0] =  
-   if( true ){
-      3
-   } else {
-      5
-   };
-__debug (list)
-disp( 1_1 )
