@@ -28,14 +28,43 @@ impl <'a> From<&'a Assignments> for char {
 impl_defaults!(to_string; char; Assignments);
 impl_defaults!(Display; to_string; Assignments);
 
+/************/
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Separator {
+   Comma,
+   Colon
+}
+
+impl From<char> for Separator {
+   fn from(inp: char) -> Separator {
+      match inp {
+         ':' => Separator::Colon,
+         ',' => Separator::Comma,
+         _ => unreachable!("Bad assignment char: {:?}", inp)
+      }
+   }
+}
+impl <'a> From<&'a Separator> for char {
+   fn from(assign: &'a Separator) -> char {
+      match *assign {
+         Separator::Comma => ',',
+         Separator::Colon => ':',
+      }
+   }
+}
+
+impl_defaults!(to_string; char; Separator);
+impl_defaults!(Display; to_string; Separator);
+
 /*****************/
 
 #[derive(Clone)]
 pub enum Token {
    Identifier(identifier::Identifier),
    Assignment(Assignments),
-   Separator, /* ie , */
-   LineTerminator, /* ie ; */
+   Separator(Separator), // , and :
+   LineTerminator, // ; 
    Number(String),
    Operator(Operator),
    Unknown(char),
@@ -51,7 +80,7 @@ impl std::fmt::Debug for Token {
          &Identifier(ref s) => write!(f, "I({})", s),
          &Assignment(ref s) => write!(f, "A({})", s),
          &LineTerminator => write!(f, "Endl(;)"),
-         &Separator => write!(f, "Sep(,)"),
+         &Separator(ref s) => write!(f, "Sep({})", s),
          &Number(ref s) => write!(f, "N({})", s),
          &Operator(ref s) => write!(f, "O({})", s),
          &Unknown(ref s) => write!(f, "U({})", s),
@@ -69,7 +98,7 @@ impl std::fmt::Display for Token {
          &Identifier(ref s) => write!(f, "I({})", s),
          &Assignment(ref s) => write!(f, "A({})", s),
          &LineTerminator => write!(f, "Endl(;)"),
-         &Separator => write!(f, "Sep(,)"),
+         &Separator(ref s) => write!(f, "Sep({})", s),
          &Number(ref s) => write!(f, "N({})", s),
          &Operator(ref s) => write!(f, "O({})", s),
          &Unknown(ref s) => write!(f, "U({})", s),

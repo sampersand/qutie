@@ -1,6 +1,6 @@
 use std::iter::{Iterator, Peekable};
 use std::str::Chars;
-use parsing::token::{Token, Assignments};
+use parsing::token::{Token, Assignments, Separator};
 use parsing::operator::Operator;
 use obj::objects::{block, text};
 use parsing::identifier;
@@ -46,7 +46,7 @@ impl <'a> Stream<'a> {
 macro_rules! is_path_separator { ($c:expr) => ( $c == '.' ) }
 macro_rules! is_assignment { ($c:expr) => ( $c == '=' ) }
 macro_rules! is_terminator { ($c:expr) => ( $c == ';' ) }
-macro_rules! is_separator { ($c:expr) => ( $c == ',' ) }
+macro_rules! is_separator { ($c:expr) => ( $c == ',' || $c == ':' ) }
 macro_rules! is_comment { ($c:expr) => ( $c == '#' ) }
 macro_rules! is_alpha { ($c:expr) => ( $c.is_alphabetic() || $c == '_' ) }
 macro_rules! is_numeric { ($c:expr) => ( $c.is_numeric() || $c == '_' ) }
@@ -190,7 +190,7 @@ impl <'a> Stream <'a> {
       match c {
          _ if is_assignment!(c)  => Some(self.handle_assignment()),
          _ if is_terminator!(c)  => Some({next_chr!(); Token::LineTerminator}),
-         _ if is_separator!(c)   => Some({next_chr!(); Token::Separator}),
+         _ if is_separator!(c)   => Some(Token::Separator(Separator::from(next_chr!()))),
          _ if is_comment!(c)     =>      self.handle_comment() /* will be some or none*/,
          _ if is_alpha!(c)       => Some(self.next_identifier()),
          _ if is_numeric!(c)     => Some(self.next_number()),

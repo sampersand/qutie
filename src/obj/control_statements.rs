@@ -80,7 +80,7 @@ fn handle_func(expr: &mut Expression, frame: &mut Frame) {
    while !args.is_empty() {
       match args.pop_front().unwrap() {
          Token::Identifier(ident) => ident_args.push(ident),
-         Token::Separator => { /* do nothing cause its a separator */ }
+         Token::Separator(sep)    => unreachable!("Found sep: {:?}", sep),
          arg @ _ => panic!("unexpected non-ident token type: {:?}", arg)
       }   
    }

@@ -1,4 +1,4 @@
-a = {
-   1, 2
+a = func(a, b){
+   disp("hi:", a, 'and', b)
 };
-disp(a)
+a(1, 2);

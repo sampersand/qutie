@@ -1,6 +1,6 @@
 use parsing::frame::Frame;
 use parsing::operator::Operator;
-use parsing::token::Token;
+use parsing::token::{Token, Separator};
 use parsing::identifier::Identifier;
 use obj::objects::list::List;
 use obj::objects::map::Map;
@@ -18,7 +18,15 @@ pub struct Expression {
 }
 
 impl Expression {
-   pub fn new(body: Vec<Token>, is_endl: bool) -> Expression {
+   pub fn new(mut body: Vec<Token>, is_endl: bool) -> Expression {
+      let mut i = 0;
+      while i < body.len() {
+         match body.get(i).unwrap() {
+            &Token::Separator(ref sep) if sep == &Separator::Comma => {},
+            _ => { i = i + 1; continue }
+         }
+         body.remove(i);
+      }
       Expression{ body: body, is_endl: is_endl }
    }
 
@@ -221,11 +229,11 @@ impl Expression {
                   LParen::Curly  => frame.push(Map::from(body).to_rc()),
                      // frame.push(Block::new((lp, rp), body).to_rc()); },
                },
+            Token::RParen(paren)         => panic!("unmatched right paren: {:?}", paren), 
             Token::Unknown(_)            => unreachable!(),
             Token::Assignment(_)         => unreachable!(),
-            Token::RParen(_)             => unreachable!(), 
             Token::LineTerminator        => unreachable!(),
-            Token::Separator => { /* do nothing with separators by default */ }
+            Token::Separator(sep)   => panic!("Found Separator: {:?}", sep)
          }
       };
 

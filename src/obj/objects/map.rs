@@ -32,7 +32,6 @@ pub struct Map {
 impl Map {
    pub fn from(inp: Vec<Expression>) -> Map {
       let mut map = HashMap::new();
-      
       Map { contents: map }
    }
 
