@@ -72,6 +72,7 @@ impl ToText for Number {
 impl_traits!(data=GetItem, Number);
 impl_traits!(data=SetItem, Number);
 impl_traits!(data=DelItem, Number);
+impl_traits!(misc=QtCall, Number);
 
 num_operator!(QtAdd, qt_add, +, ObjResult);
 num_operator!(QtSub, qt_sub, -, ObjResult);

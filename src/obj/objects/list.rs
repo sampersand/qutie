@@ -106,18 +106,19 @@ impl_defaults!(Object; List);
 
 
 
-impl_traits!(oper=QtAdd, List);
-impl_traits!(oper=QtSub, List);
-impl_traits!(oper=QtMul, List);
-impl_traits!(oper=QtDiv, List);
-impl_traits!(oper=QtMod, List);
-impl_traits!(oper=QtPow, List);
-impl_traits!(oper=QtEql, List);
-impl_traits!(oper=QtNeq, List);
-impl_traits!(oper=QtLth, List);
-impl_traits!(oper=QtGth, List);
-impl_traits!(oper=QtLeq, List);
-impl_traits!(oper=QtGeq, List);
+impl_traits!(operators=QtAdd, List);
+impl_traits!(operators=QtSub, List);
+impl_traits!(operators=QtMul, List);
+impl_traits!(operators=QtDiv, List);
+impl_traits!(operators=QtMod, List);
+impl_traits!(operators=QtPow, List);
+impl_traits!(operators=QtEql, List);
+impl_traits!(operators=QtNeq, List);
+impl_traits!(operators=QtLth, List);
+impl_traits!(operators=QtGth, List);
+impl_traits!(operators=QtLeq, List);
+impl_traits!(operators=QtGeq, List);
+impl_traits!(misc=QtCall, List);
 
 
 

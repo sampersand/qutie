@@ -1,5 +1,6 @@
 macro_rules! into_mutable {
    ($obj:ident) => {{
+      /* so hacky */
       let obj = $obj;
       use std::mem::transmute;
       #[allow(mutable_transmutes)]
@@ -32,6 +33,10 @@ macro_rules! into_mutable {
             use obj::objects::null::Null;
             *transmute::<&&Object, &mut &mut Null>(&&*obj)
          }},
+         ObjType::BuiltinFunction => {{
+            use obj::objects::builtin_function::BuiltinFunction;
+            *transmute::<&&Object, &mut &mut BuiltinFunction>(&&*obj)
+         }}
       };
       a
    }}
@@ -125,18 +130,8 @@ macro_rules! impl_defaults {
    };
 }
 macro_rules! impl_traits {
-   (conv=$_trait:ident, $obj:ident) => {
-      use obj::traits::conversion::$_trait;
-      impl $_trait for $obj {}
-   };
-
-   (data=$_trait:ident, $obj:ident) => {
-      use obj::traits::data::$_trait;
-       impl $_trait for $obj {}
-   };
-   
-   (oper=$_trait:ident, $obj:ident) => {
-      use obj::traits::operators::$_trait; 
+   ($package:ident=$_trait:ident, $obj:ident) => {
+      use obj::traits::$package::$_trait;
       impl $_trait for $obj {}
    };
 }

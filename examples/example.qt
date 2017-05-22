@@ -1,10 +1,11 @@
-drive = func(dist, song){
-   if ( dist == 0 ){
-      __debug "Vroom Vroom!"
-   } else {
-      __debug "I drove "
-      __debug dist
-      __debug "miles listening to"
-   }
-};
-drive(1, "Wheels on the bus")
+# drive = func(dist, song){
+#    if ( dist == 0 ){
+#       disp("Vroom Vroom!")
+#    } else {
+#       __debug "I drove "
+#       __debug dist
+#       __debug "miles listening to"
+#    }
+# };
+# drive(0, "Wheels on the bus")
+__debug ( disp('a', 'b', 'c') )

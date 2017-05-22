@@ -62,6 +62,11 @@ impl Expression {
          frame.push(constant);
          return
       }
+      if let Some(func) = constants::get_function(&id) {
+         frame.push(func);
+         return
+      }
+
       if control_statements::handle_control(&id, self, frame) {
          /* do nothing, was already handeled */
          return
@@ -180,11 +185,11 @@ impl Expression {
                      {
                         /* todo: remove this peek */
                         if let Some(obj) = frame.pop() {
-                           if let Some(func) = obj.cast() {
+                           if obj.is_callable() {
                               assert_eq!(body.len(), 1, "only one expression for function args!");
                               let args = body.pop().unwrap();
-                              let res = (func as Rc<Function>).qt_call(args, frame);
-                              frame.push(res);
+                              let res = obj.qt_call(args, frame);
+                              frame.push(res.expect("Callable returned err!"));
                               continue
                            } else {
                               frame.push(obj)

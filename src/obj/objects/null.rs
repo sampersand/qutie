@@ -48,17 +48,18 @@ impl_traits!(data=GetItem, Null);
 impl_traits!(data=SetItem, Null);
 impl_traits!(data=DelItem, Null);
 
-impl_traits!(oper=QtAdd, Null);
-impl_traits!(oper=QtSub, Null);
-impl_traits!(oper=QtMul, Null);
-impl_traits!(oper=QtDiv, Null);
-impl_traits!(oper=QtMod, Null);
-impl_traits!(oper=QtPow, Null);
-impl_traits!(oper=QtNeq, Null);
-impl_traits!(oper=QtLth, Null);
-impl_traits!(oper=QtGth, Null);
-impl_traits!(oper=QtLeq, Null);
-impl_traits!(oper=QtGeq, Null);
+impl_traits!(operators=QtAdd, Null);
+impl_traits!(operators=QtSub, Null);
+impl_traits!(operators=QtMul, Null);
+impl_traits!(operators=QtDiv, Null);
+impl_traits!(operators=QtMod, Null);
+impl_traits!(operators=QtPow, Null);
+impl_traits!(operators=QtNeq, Null);
+impl_traits!(operators=QtLth, Null);
+impl_traits!(operators=QtGth, Null);
+impl_traits!(operators=QtLeq, Null);
+impl_traits!(operators=QtGeq, Null);
+impl_traits!(misc=QtCall, Null);
 
 
 

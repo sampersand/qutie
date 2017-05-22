@@ -119,21 +119,22 @@ impl_traits!(data=GetItem, Block);
 impl_traits!(data=SetItem, Block);
 impl_traits!(data=DelItem, Block);
 
-impl_traits!(conv=ToBoolean, Block);
-impl_traits!(conv=ToText, Block);
+impl_traits!(conversion=ToBoolean, Block);
+impl_traits!(conversion=ToText, Block);
 
-impl_traits!(oper=QtAdd, Block);
-impl_traits!(oper=QtSub, Block);
-impl_traits!(oper=QtMul, Block);
-impl_traits!(oper=QtDiv, Block);
-impl_traits!(oper=QtMod, Block);
-impl_traits!(oper=QtPow, Block);
-impl_traits!(oper=QtEql, Block);
-impl_traits!(oper=QtNeq, Block);
-impl_traits!(oper=QtLth, Block);
-impl_traits!(oper=QtGth, Block);
-impl_traits!(oper=QtLeq, Block);
-impl_traits!(oper=QtGeq, Block);
+impl_traits!(operators=QtAdd, Block);
+impl_traits!(operators=QtSub, Block);
+impl_traits!(operators=QtMul, Block);
+impl_traits!(operators=QtDiv, Block);
+impl_traits!(operators=QtMod, Block);
+impl_traits!(operators=QtPow, Block);
+impl_traits!(operators=QtEql, Block);
+impl_traits!(operators=QtNeq, Block);
+impl_traits!(operators=QtLth, Block);
+impl_traits!(operators=QtGth, Block);
+impl_traits!(operators=QtLeq, Block);
+impl_traits!(operators=QtGeq, Block);
+impl_traits!(misc=QtCall, Block);
 
 
 

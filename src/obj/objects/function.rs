@@ -1,6 +1,7 @@
 use obj::objects::object::{Object, ObjType};
 use obj::objects::block::Block;
 use obj::objects::null::Null;
+use obj::result::ObjResult;
 
 use parsing::identifier::Identifier;
 use parsing::frame::Frame;
@@ -22,7 +23,10 @@ impl Function {
    pub fn to_string(&self) -> String {
       concat_all!("<", self.file, ">")
    }
-   pub fn qt_call(&self, args: Expression, frame: &mut Frame) -> Rc<Object> {
+}
+use obj::traits::misc::QtCall;
+impl QtCall for Function {
+   fn qt_call(&self, args: Expression, frame: &mut Frame) -> ObjResult {
       /* this is kinda hacky way to do things */
       let orig_length = frame.stack_len();
       args.exec(frame);
@@ -36,10 +40,13 @@ impl Function {
          new_frame.set(self_args.pop().unwrap(), acc.pop().unwrap());
       }
       if let Some(ret) = self.body.clone().exec(&mut new_frame) {
-         ret
+         Ok(ret)
       } else {
-         Null::get().to_rc()
+         Ok(Null::get().to_rc())
       }
+   }
+   fn is_callable(&self) -> bool {
+      true
    }
 }
 
@@ -53,25 +60,25 @@ use obj::result::BoolResult;
 impl_defaults!(ToRc; Function);
 impl_defaults!(Object; Function);
 
-impl_traits!(conv=ToBoolean, Function);
-impl_traits!(conv=ToText, Function);
+impl_traits!(conversion=ToBoolean, Function);
+impl_traits!(conversion=ToText, Function);
 
 impl_traits!(data=GetItem, Function);
 impl_traits!(data=SetItem, Function);
 impl_traits!(data=DelItem, Function);
 
-impl_traits!(oper=QtAdd, Function);
-impl_traits!(oper=QtSub, Function);
-impl_traits!(oper=QtMul, Function);
-impl_traits!(oper=QtDiv, Function);
-impl_traits!(oper=QtMod, Function);
-impl_traits!(oper=QtPow, Function);
-impl_traits!(oper=QtEql, Function);
-impl_traits!(oper=QtNeq, Function);
-impl_traits!(oper=QtLth, Function);
-impl_traits!(oper=QtGth, Function);
-impl_traits!(oper=QtLeq, Function);
-impl_traits!(oper=QtGeq, Function);
+impl_traits!(operators=QtAdd, Function);
+impl_traits!(operators=QtSub, Function);
+impl_traits!(operators=QtMul, Function);
+impl_traits!(operators=QtDiv, Function);
+impl_traits!(operators=QtMod, Function);
+impl_traits!(operators=QtPow, Function);
+impl_traits!(operators=QtEql, Function);
+impl_traits!(operators=QtNeq, Function);
+impl_traits!(operators=QtLth, Function);
+impl_traits!(operators=QtGth, Function);
+impl_traits!(operators=QtLeq, Function);
+impl_traits!(operators=QtGeq, Function);
 
 
 

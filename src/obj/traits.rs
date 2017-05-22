@@ -50,7 +50,6 @@ pub mod conversion {
    }
 }
 
-
 pub mod data { /* this is also pseudo-operator */
    use parsing::identifier::Identifier;
    use parsing::frame::Frame;
@@ -74,6 +73,25 @@ pub mod data { /* this is also pseudo-operator */
       }
    }
 }
+
+pub mod misc {
+   use obj::result::{ObjResult, ObjError};
+   use parsing::expression::Expression;
+   use parsing::frame::Frame;
+   pub trait QtCall {
+      fn qt_call(&self, args: Expression, frame: &mut Frame) -> ObjResult {
+         Err(ObjError::NotImplemented)
+      }
+      fn is_callable(&self) -> bool {
+         false
+      }
+   }
+}
+
+
+
+
+
 
 use obj::objects::object::{Object, ObjType};
 
