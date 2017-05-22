@@ -58,8 +58,8 @@ fn handle_if(expr: &mut Expression, frame: &mut Frame) {
          frame.push(if_true)
       }
    } else {
-      if let Some(if_false_block) = if_false.cast(){
-         (if_false_block as Rc<Block>).exec_no_pop(frame);
+      if let Some(block) = if_false.cast(){
+         (block as Rc<Block>).exec_no_pop(frame);
       } else {
          frame.push(if_false)
       }

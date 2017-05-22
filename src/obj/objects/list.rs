@@ -13,19 +13,12 @@ impl List {
       List { contents: contents }
    }
    pub fn to_string(&self) -> String {
-      let string_iter = 
-         self.contents.iter().map(|item: &Rc<Object>|
-            match item.to_text() { 
-               Ok(text) => text.to_string(),
-               Err(err) => concat_all!("<to_string err: ", err, ">")
-            }
-         );
-      /* TODO: This; see if there's a `join` method or something */
-      let mut ret = String::from("[");
-      for mut item in string_iter {
-         item.push_str(", ");
-         ret.push_str(item.as_str())
+      let mut text_contents: Vec<String> = vec![];
+      for item in &self.contents {
+         text_contents.push(item.as_text_string());
       }
+      let mut ret = String::from("[");
+      ret.push_str(&text_contents.join(", "));
       ret.push(']');
       ret
    } 

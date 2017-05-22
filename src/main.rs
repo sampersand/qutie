@@ -48,6 +48,7 @@ fn main() {
    while !stream.is_empty() {
       stream.next_expr().exec(frame);
    }
+   println!("done");
    // println!("{:?}\n", res);
 }
 
